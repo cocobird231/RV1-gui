@@ -1,0 +1,36 @@
+#config/common.yaml
+# Set publishInterval less then 0 to disable related topic publisher
+---
+topic_GPS:
+    nodeName : "gps_publisher_node"
+    topicName : "topic_GPS"
+    publishInterval : 0.5
+
+topic_IMU:
+    nodeName : "imu_publisher_node"
+    topicName : "imu_0"
+    publishInterval : 0.05
+
+topic_ENV:
+    nodeName : "env_publisher_node"
+    topicName : "environment_0"
+    publishInterval : 1.0
+
+topic_Ultrasound:
+    nodeName : "ultrasound_publisher_node"
+    topicName : "topic_Ultrasound"
+    publishInterval : 0.05
+
+topic_WheelState:
+    nodeName : "wheelstate_publisher_node"
+    topicName : "topic_WheelState"
+    publishInterval : 0.05
+
+topic_IDTable:
+    nodeName : "idtable_publisher_node"
+    topicName : "topic_IDTable"
+    publishInterval : 1.0
+
+node_prop:
+    nodeName : "sense_0_node" #primary
+    namespace : "V0"
