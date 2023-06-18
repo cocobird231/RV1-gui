@@ -21,6 +21,10 @@ ros_qt_sen/vehicle_interfaces/build
 ros_qt_sen/vehicle_interfaces/install
 ros_qt_sen/vehicle_interfaces/log
 ros_qt_sen/ros_qt_sen.pro.user
-ros_qt_sen/ros_qt_sen.pro.user
+
 *.user
 ros_qt_sen/ros_qt_sen.pro.user
+ros_qt_sen/src/moc_form.cpp
+ros_qt_sen/src/moc_form.cpp_parameters
+ros_qt_sen/src/moc_mainwindow.cpp_parameters
+

@@ -25,12 +25,12 @@ void gui_node::run(){
 
 }
 
-void gui_node::topic_env_callback(const vehicle_interfaces::msg::Environment & environment ){
+void gui_node::topic_env_callback(const vehicle_interfaces::msg::Environment::SharedPtr environment ){
 
     env_dataCount++;
-    temperature_points.append(QPointF((double)env_dataCount,environment.temperature));
-    relative_humidity_points.append(QPointF((double)env_dataCount,environment.relative_humidity));
-    pressure_points.append(QPointF((double)env_dataCount,environment.pressure));
+    temperature_points.append(QPointF((double)env_dataCount,environment->temperature));
+    relative_humidity_points.append(QPointF((double)env_dataCount,environment->relative_humidity));
+    pressure_points.append(QPointF((double)env_dataCount,environment->pressure));
     if (env_dataCount > 100)
     {
         for(int i= 0;i<env_dataCount;i++){
@@ -48,10 +48,10 @@ void gui_node::topic_env_callback(const vehicle_interfaces::msg::Environment & e
 
 }
 
-void gui_node:: topic_Ultrasound_callback(const vehicle_interfaces::msg::Distance & distance)
+void gui_node:: topic_Ultrasound_callback(const vehicle_interfaces::msg::Distance::SharedPtr distance)
 {
     dataCount++;
-    Distance_points.append(QPointF((double)dataCount,distance.distance));
+    Distance_points.append(QPointF((double)dataCount,distance->distance));
 
     if (dataCount > 100)
     {
