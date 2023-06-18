@@ -32,8 +32,8 @@ public slots:
 protected:
     void run();
 private:
-    void topic_Ultrasound_callback(const vehicle_interfaces::msg::Distance & distance);
-    void topic_env_callback(const vehicle_interfaces::msg::Environment & environment );
+    void topic_Ultrasound_callback(const vehicle_interfaces::msg::Distance::SharedPtr distance);
+    void topic_env_callback(const vehicle_interfaces::msg::Environment::SharedPtr environment );
 
     rclcpp::Subscription<vehicle_interfaces::msg::Distance>::SharedPtr topic_Ultrasound_subscription_;
     rclcpp::Subscription<vehicle_interfaces::msg::Environment>::SharedPtr topic_Environment_subscription_;
