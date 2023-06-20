@@ -130,9 +130,8 @@ colorList << QColor(255, 0, 0)
     pressure_chartView->hide();
 
     main_gui_node = new gui_node();
+    main_gui_node->start();
     connect(Distance_chart->scene(), &QGraphicsScene::changed,main_gui_node, &gui_node::handleSceneChanged);
-
-
 
 
     main_gui_node->startUpdates(seriesList);
@@ -175,6 +174,7 @@ void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
 
 MainWindow::~MainWindow()
 {
+    delete main_gui_node;
     delete ui;
 }
 

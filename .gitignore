@@ -1,4 +1,8 @@
 
+
+ros_qt_sen/cpp_sensorsim/build/
+ros_qt_sen/cpp_sensorsim/install/
+ros_qt_sen/cpp_sensorsim/log/
 ros_qt_sen/build/
 ros_qt_sen/CMakeCache.txt
 ros_qt_sen/cmake_install.cmake

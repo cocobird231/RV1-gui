@@ -1,5 +1,4 @@
-#ifndef SENSORMODEL_H
-#define SENSORMODEL_H
+
 
 #include <string>
 using namespace std;
@@ -87,4 +86,3 @@ public:
 };
 
 }
-#endif

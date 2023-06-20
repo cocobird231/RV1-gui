@@ -10,7 +10,6 @@ gui_node::gui_node()
     node = rclcpp::Node::make_shared("gui_subscriber");
     topic_Ultrasound_subscription_ = node->create_subscription<vehicle_interfaces::msg::Distance>("topic_Ultrasound", 10, std::bind(&gui_node::topic_Ultrasound_callback, this, _1));
     topic_Environment_subscription_=node->create_subscription<vehicle_interfaces::msg::Environment>("topic_ENV", 10, std::bind(&gui_node::topic_env_callback, this, _1));
-    this->start();
 }
 void gui_node::run(){
 
@@ -21,7 +20,6 @@ void gui_node::run(){
         loop_rate.sleep();
     }
 
-    rclcpp::shutdown();
 
 }
 
@@ -149,3 +147,7 @@ void gui_node::startUpdates(const QList<QLineSeries *> &seriesList)
 }
 
 
+gui_node::~gui_node(){
+
+    rclcpp::shutdown();
+}

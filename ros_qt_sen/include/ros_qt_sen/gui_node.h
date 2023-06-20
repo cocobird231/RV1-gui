@@ -23,6 +23,7 @@ class gui_node : public QThread
 
 public:
     explicit gui_node();
+    ~gui_node();
     void startUpdates(const QList<QLineSeries *> &seriesList);
 
 public slots:
@@ -58,8 +59,6 @@ private:
     int dataCount = 0;
 
     int env_dataCount = 0;
-
-
 
 };
 #endif

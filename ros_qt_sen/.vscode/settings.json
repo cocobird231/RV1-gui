@@ -3,6 +3,7 @@
         "*.tcc": "cpp",
         "string": "cpp",
         "complex": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "unordered_map": "cpp"
     }
 }
