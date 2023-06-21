@@ -1,9 +1,0 @@
--I/home/tony/ros_qt_sen/include
--I/usr/include/x86_64-linux-gnu/qt5
--I/usr/include/x86_64-linux-gnu/qt5/QtWidgets
--I/usr/include/x86_64-linux-gnu/qt5/QtGui
--I/usr/include/x86_64-linux-gnu/qt5/QtCore
--I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
--o
-/home/tony/ros_qt_sen/src/moc_mainwindow.cpp
-/home/tony/ros_qt_sen/src/mainwindow.h

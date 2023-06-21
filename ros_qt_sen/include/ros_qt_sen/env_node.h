@@ -16,15 +16,14 @@
 #include <QtCharts/QChartView>
 
 using namespace QtCharts;
-class gui_node : public QThread
+class env_node : public QThread
 {
     Q_OBJECT
 
 public:
-    explicit gui_node();
+    explicit env_node();
     ~gui_node();
     void startUpdates(const QList<QLineSeries *> &seriesList);
-    
 
 public slots:
     void update(QAbstractSeries *series, int seriesIndex);
@@ -33,22 +32,17 @@ public slots:
 protected:
     void run();
 private:
-    void topic_Ultrasound_callback(const vehicle_interfaces::msg::Distance::SharedPtr distance);
     void topic_env_callback(const vehicle_interfaces::msg::Environment::SharedPtr environment );
 
-    rclcpp::Subscription<vehicle_interfaces::msg::Distance>::SharedPtr topic_Ultrasound_subscription_;
     rclcpp::Subscription<vehicle_interfaces::msg::Environment>::SharedPtr topic_Environment_subscription_;
 
 
 
     std::shared_ptr<rclcpp::Node> node;
-    //topic_Ultrasound
-    QList<QPointF> Distance_points;
+
     //topic_ENV
     QList<QPointF> temperature_points,relative_humidity_points,pressure_points ;
-    //topic_IMU
-    QList<QPointF> linear_acceleration_x_points,linear_acceleration_y_points,linear_acceleration_z_points;
-    QList<QPointF> angular_velocity_x_points,angular_velocity_y_points ,angular_velocity_z_points ;
+
 
     QList<QList<QList<QPointF>>> m_data;
     int m_index;

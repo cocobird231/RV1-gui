@@ -1,17 +1,5 @@
 #include "mainwindow.h"
-#include "../ui_mainwindow.h"
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QMainWindow>
-
-#include <QtCharts/QChartView>
-#include <QtCharts/QLineSeries>
-#include <QtCharts/QScatterSeries>
-#include <QtCharts/QValueAxis>
-
-#include <QtCharts/QLogValueAxis>
 #include <QDebug>
-#include "../include/ros_qt_sen/gui_node.h"
-
 #define ADD_SIMPLE_SERIES
 using namespace QtCharts;
 
@@ -22,8 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-
     //connect(ui->comboBox, SIGNAL(currentIndexChanged(const QString&)),this, SLOT(on_comboBox_currentIndexChanged(const QString&)));
+    connect(ui->pushButton, SIGNAL(clicked()),this, SLOT(on_PushButtun_clicked()));
 
     QStringList colors;
     colors << "red" << "blue" << "green" << "black";
@@ -143,9 +131,7 @@ void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
 {
 
 
-
     if(arg1=="topic_Ultrasound"){
-        test =arg1;
         Distance_chartView->show();
         connect(Distance_chart->scene(), &QGraphicsScene::changed,main_gui_node,  &gui_node::handleSceneChanged);
 
@@ -158,8 +144,6 @@ void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
     }
 
     if(arg1=="topic_ENV"){
-        test =arg1;
-
         temperature_chartView->show();
         relative_humidity_chartView->show();
         pressure_chartView->show();
@@ -172,9 +156,23 @@ void MainWindow::on_comboBox_currentIndexChanged(const QString &arg1)
     }
 }
 
+void MainWindow::on_PushButtun_clicked(){
+
+
+    name_node =rclcpp::Node::make_shared("get_name");
+    auto topic_name_map = name_node->get_topic_names_and_types();;
+    QList<QString> topic_list;
+    for(const auto& i :topic_name_map){
+        topic_list.append(QString::fromStdString(i.first).remove("/"));
+    }
+    //ui->comboBox->clear();
+    ui->comboBox->addItems(topic_list);
+}
+
 MainWindow::~MainWindow()
 {
     delete main_gui_node;
+    rclcpp::shutdown();
     delete ui;
 }
 

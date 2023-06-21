@@ -1,17 +1,29 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include "../include/ros_qt_sen/gui_node.h"
-#include <QMainWindow>
 #include <QtCharts/QLineSeries>
 #include <QtWidgets/QLayout>
-#include <QGraphicsScene>
 
+#include "./../ui_mainwindow.h"
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QGraphicsScene>
+
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QScatterSeries>
+#include <QtCharts/QValueAxis>
+
+#include <QtCharts/QLogValueAxis>
+#include <QDebug>
+#include "../include/ros_qt_sen/gui_node.h"
+#include "rclcpp/rclcpp.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 using namespace QtCharts;
 QT_END_NAMESPACE
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow 
 {
     Q_OBJECT
 
@@ -37,10 +49,12 @@ private:
     QChartView* relative_humidity_chartView;
     QChart* pressure_chart ;
     QChartView* pressure_chartView;
+    std::shared_ptr<rclcpp::Node> name_node;
 
 
 private slots:
     void on_comboBox_currentIndexChanged(const QString&);
+    void on_PushButtun_clicked();
 
 };
 #endif // MAINWINDOW_H

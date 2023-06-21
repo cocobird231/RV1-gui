@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.3
+** Created by: Qt User Interface Compiler version 5.12.8
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -14,7 +14,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
@@ -29,11 +29,11 @@ public:
     QHBoxLayout *horizontalLayout;
     QVBoxLayout *verticalLayout;
     QComboBox *comboBox;
+    QPushButton *pushButton;
     QScrollArea *scrollArea;
     QWidget *scrollAreaWidgetContents;
     QHBoxLayout *horizontalLayout_2;
     QVBoxLayout *verticalLayout_2;
-    QMenuBar *menubar;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -54,12 +54,17 @@ public:
 
         verticalLayout->addWidget(comboBox);
 
+        pushButton = new QPushButton(centralwidget);
+        pushButton->setObjectName(QString::fromUtf8("pushButton"));
+
+        verticalLayout->addWidget(pushButton);
+
         scrollArea = new QScrollArea(centralwidget);
         scrollArea->setObjectName(QString::fromUtf8("scrollArea"));
         scrollArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 903, 616));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 903, 601));
         scrollAreaWidgetContents->setMinimumSize(QSize(800, 600));
         horizontalLayout_2 = new QHBoxLayout(scrollAreaWidgetContents);
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
@@ -76,10 +81,6 @@ public:
         horizontalLayout->addLayout(verticalLayout);
 
         MainWindow->setCentralWidget(centralwidget);
-        menubar = new QMenuBar(MainWindow);
-        menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 925, 22));
-        MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
         MainWindow->setStatusBar(statusbar);
@@ -91,10 +92,11 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        comboBox->setItemText(0, QCoreApplication::translate("MainWindow", "topic_Ultrasound", nullptr));
-        comboBox->setItemText(1, QCoreApplication::translate("MainWindow", "topic_ENV", nullptr));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
+        comboBox->setItemText(0, QApplication::translate("MainWindow", "topic_Ultrasound", nullptr));
+        comboBox->setItemText(1, QApplication::translate("MainWindow", "topic_ENV", nullptr));
 
+        pushButton->setText(QApplication::translate("MainWindow", "\346\233\264\346\226\260", nullptr));
     } // retranslateUi
 
 };
