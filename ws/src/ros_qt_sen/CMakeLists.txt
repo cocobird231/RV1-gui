@@ -38,7 +38,6 @@ qt5_wrap_cpp(header_SRC
     src/mainwindow.h
     src/form.h
     include/${PROJECT_NAME}/gui_node.h
-    include/${PROJECT_NAME}/sensorModel.h
 )
 qt5_wrap_ui(UIS_HDRS 
 	src/mainwindow.ui

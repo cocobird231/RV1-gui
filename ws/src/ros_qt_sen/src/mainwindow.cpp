@@ -163,7 +163,7 @@ void MainWindow::on_PushButtun_clicked(){
     auto topic_name_map = name_node->get_topic_names_and_types();;
     QList<QString> topic_list;
     for(const auto& i :topic_name_map){
-        topic_list.append(QString::fromStdString(i.first).remove("/"));
+        topic_list.append(QString::fromStdString(i.first));
     }
     //ui->comboBox->clear();
     ui->comboBox->addItems(topic_list);
