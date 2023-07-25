@@ -1,0 +1,3 @@
+[submodule "ws/src/vehicle_interfaces"]
+	path = ws/src/vehicle_interfaces
+	url = https://github.com/davidweitaiwan/RV-1.0-vehicle_interfaces.git
