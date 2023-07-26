@@ -1,6 +1,0 @@
-string request_code
-string content1
-string content2
----
-bool response
-string content

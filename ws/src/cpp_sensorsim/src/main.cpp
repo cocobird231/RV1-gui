@@ -104,19 +104,18 @@ private:
     rclcpp::Publisher<vehicle_interfaces::msg::WheelState>::SharedPtr wsPub_;
     rclcpp::Publisher<vehicle_interfaces::msg::IDTable>::SharedPtr idtablePub_;
 
-    Timer* gpsTimer_;
-    Timer* imuTimer_;
-    Timer* envTimer_;
-    Timer* ultrasoundTimer_;
-    Timer* wsTimer_;
-    Timer* idtableTimer_;
+    vehicle_interfaces::Timer* gpsTimer_;
+    vehicle_interfaces::Timer* imuTimer_;
+    vehicle_interfaces::Timer* envTimer_;
+    vehicle_interfaces::Timer* ultrasoundTimer_;
+    vehicle_interfaces::Timer* wsTimer_;
+    vehicle_interfaces::Timer* idtableTimer_;
 
     std::string nodeName_;
     
     std::random_device rd_;
     std::mt19937 gen_{rd_()};
-
-private:
+    private:
     void _gpsTimerCallback()
     {
         static std::normal_distribution<> gaussDistrib{0, 0.02};
@@ -136,7 +135,7 @@ private:
         msg.header.stamp_type = vehicle_interfaces::msg::Header::STAMPTYPE_NONE_UTC_SYNC;
         msg.header.stamp = this->get_clock()->now();
 
-        msg.gps_status = vehicle_interfaces::msg::GPS::GPS_STABLE;
+        msg.gps_status = vehicle_interfaces::msg::GPS::GPS_NONE;
         msg.latitude = lat;
         msg.longitude = lon;
 
@@ -331,42 +330,42 @@ public:
         if (params.topic_GPS_pubInterval > 0)
         {
             this->gpsPub_ = this->create_publisher<vehicle_interfaces::msg::GPS>(params.topic_GPS_topicName, 10);
-            this->gpsTimer_ = new Timer(params.topic_GPS_pubInterval * 1000.0, std::bind(&SimulatorNode::_gpsTimerCallback, this));
+            this->gpsTimer_ = new vehicle_interfaces::Timer(params.topic_GPS_pubInterval * 1000.0, std::bind(&SimulatorNode::_gpsTimerCallback, this));
             this->gpsTimer_->start();
         }
 
         if (params.topic_IMU_pubInterval > 0)
         {
             this->imuPub_ = this->create_publisher<vehicle_interfaces::msg::IMU>(params.topic_IMU_topicName, 10);
-            this->imuTimer_ = new Timer(params.topic_IMU_pubInterval * 1000.0, std::bind(&SimulatorNode::_imuTimerCallback, this));
+            this->imuTimer_ = new vehicle_interfaces::Timer(params.topic_IMU_pubInterval * 1000.0, std::bind(&SimulatorNode::_imuTimerCallback, this));
             this->imuTimer_->start();
         }
 
         if (params.topic_ENV_pubInterval > 0)
         {
             this->envPub_ = this->create_publisher<vehicle_interfaces::msg::Environment>(params.topic_ENV_topicName, 10);
-            this->envTimer_ = new Timer(params.topic_ENV_pubInterval * 1000.0, std::bind(&SimulatorNode::_envTimerCallback, this));
+            this->envTimer_ = new vehicle_interfaces::Timer(params.topic_ENV_pubInterval * 1000.0, std::bind(&SimulatorNode::_envTimerCallback, this));
             this->envTimer_->start();
         }
 
         if (params.topic_Ultrasound_pubInterval > 0)
         {
             this->ultrasoundPub_ = this->create_publisher<vehicle_interfaces::msg::Distance>(params.topic_Ultrasound_topicName, 10);
-            this->ultrasoundTimer_ = new Timer(params.topic_Ultrasound_pubInterval * 1000.0, std::bind(&SimulatorNode::_ultrasoundTimerCallback, this));
+            this->ultrasoundTimer_ = new vehicle_interfaces::Timer(params.topic_Ultrasound_pubInterval * 1000.0, std::bind(&SimulatorNode::_ultrasoundTimerCallback, this));
             this->ultrasoundTimer_->start();
         }
 
         if (params.topic_WheelState_pubInterval > 0)
         {
             this->wsPub_ = this->create_publisher<vehicle_interfaces::msg::WheelState>(params.topic_WheelState_topicName, 10);
-            this->wsTimer_ = new Timer(params.topic_WheelState_pubInterval * 1000.0, std::bind(&SimulatorNode::_wsTimerCallback, this));
+            this->wsTimer_ = new vehicle_interfaces::Timer(params.topic_WheelState_pubInterval * 1000.0, std::bind(&SimulatorNode::_wsTimerCallback, this));
             this->wsTimer_->start();
         }
 
         if (params.topic_IDTable_pubInterval > 0)
         {
             this->idtablePub_ = this->create_publisher<vehicle_interfaces::msg::IDTable>(params.topic_IDTable_topicName, 10);
-            this->idtableTimer_ = new Timer(params.topic_IDTable_pubInterval * 1000.0, std::bind(&SimulatorNode::_idtableTimerCallback, this));
+            this->idtableTimer_ = new vehicle_interfaces::Timer(params.topic_IDTable_pubInterval * 1000.0, std::bind(&SimulatorNode::_idtableTimerCallback, this));
             this->idtableTimer_->start();
         }
     }
