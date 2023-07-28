@@ -36,20 +36,23 @@ include_directories(
 
 qt5_wrap_cpp(header_SRC
     src/mainwindow.h
-    src/form.h
+    src/qos_device_dialog/qosdevicedialog.h
+    src/sensor_form/sensor_form.h
     include/${PROJECT_NAME}/gui_node.h
 )
 qt5_wrap_ui(UIS_HDRS 
 	src/mainwindow.ui
-	src/form.ui
+  src/qos_device_dialog/qosdevicedialog.ui
+	src/sensor_form/sensor_form.ui
 )
 
 ## Build
 add_executable(ros_qt_sen
     src/main.cpp
+    src/qos_device_dialog/qosdevicedialog.cpp
     src/mainwindow.cpp
-    src/gui_node.cpp
-    src/form.cpp
+    src/node/gui_node.cpp
+    src/sensor_form/sensor_form.cpp
     ${header_SRC}
     ${SRC}
     ${UIS_HDRS}
