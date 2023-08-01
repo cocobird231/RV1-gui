@@ -64,6 +64,8 @@
         "variant": "cpp",
         "bit": "cpp",
         "qlineseries": "cpp",
-        "qgraphicsscene": "cpp"
+        "qgraphicsscene": "cpp",
+        "csignal": "cpp",
+        "shared_mutex": "cpp"
     }
 }

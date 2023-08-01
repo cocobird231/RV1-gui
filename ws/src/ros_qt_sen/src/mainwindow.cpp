@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     qosdevicedialog->show();
+    the_install_shell->show();
     connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::on_QosPushButton_clicked);
     connect(ui->pushButton_5, &QPushButton::clicked, this, &MainWindow::on_SensorPushButton_clicked);
 }
