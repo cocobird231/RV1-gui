@@ -27,7 +27,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(vehicle_interfaces REQUIRED)
-find_package(Qt5  COMPONENTS Charts Core Gui Widgets REQUIRED)
+find_package(Qt5  COMPONENTS Charts Core Gui Widgets Network REQUIRED)
 find_package(libssh REQUIRED)
 include_directories(
     include
@@ -66,7 +66,7 @@ add_executable(ros_qt_sen
 
 ament_target_dependencies(ros_qt_sen rclcpp vehicle_interfaces )
 
-target_link_libraries(ros_qt_sen  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets ssh)
+target_link_libraries(ros_qt_sen  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network ssh)
 
 ## Install
 install(TARGETS

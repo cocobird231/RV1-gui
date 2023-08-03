@@ -44,13 +44,13 @@ public:
         install_shell->resize(887, 562);
         pushButton = new QPushButton(install_shell);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(240, 20, 89, 25));
+        pushButton->setGeometry(QRect(610, 20, 89, 25));
         comboBox = new QComboBox(install_shell);
         comboBox->setObjectName(QString::fromUtf8("comboBox"));
-        comboBox->setGeometry(QRect(30, 20, 191, 25));
+        comboBox->setGeometry(QRect(30, 20, 571, 25));
         pushButton_2 = new QPushButton(install_shell);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(350, 20, 89, 25));
+        pushButton_2->setGeometry(QRect(720, 20, 89, 25));
         listView = new QListView(install_shell);
         listView->setObjectName(QString::fromUtf8("listView"));
         listView->setGeometry(QRect(40, 70, 256, 192));
