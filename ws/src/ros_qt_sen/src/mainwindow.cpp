@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
 }
 MainWindow::~MainWindow()
 {
+    delete the_sensor_form;
+    delete qosdevicedialog;
+    delete the_install_shell;
     delete ui;
 
 }

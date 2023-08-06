@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "./../../ui_install_shell.h"
+#include<QHostInfo>
 
 #include <netinet/in.h> 
 #include <arpa/inet.h>
@@ -25,7 +26,8 @@ private:
     void on_Interface_Update_PushButtun_clicked();
     void on_Interface_Choose_PushButtun_clicked();
     QList<QString> getSubnetList(const QString& ipAddress, const QString& subnetMask);
-
+private slots:
+        void lookedUpCallback(const QHostInfo &host);
 
 };
 

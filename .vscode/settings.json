@@ -66,6 +66,9 @@
         "qlineseries": "cpp",
         "qgraphicsscene": "cpp",
         "csignal": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "qhostaddress": "cpp",
+        "qjsonarray": "cpp",
+        "qhostinfo": "cpp"
     }
 }
