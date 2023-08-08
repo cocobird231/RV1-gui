@@ -15,6 +15,7 @@
 #include <QHostAddress>
 #include <QtNetwork>
 #include <thread>
+#include <QMessageBox>
 QList<QNetworkAddressEntry> entryList;
 QString selected_self_IP;
 QJsonDocument install_setting_json_document ;
@@ -355,10 +356,25 @@ void install_shell::on_current_HostName_changed(QListWidgetItem * item){
 }
 void install_shell::on_infor_push_button_clicked(){
 
-    QString host_name = ui->lineEdit->text();
-    QString ip = ui->lineEdit_2->text();
+    QString host_name = ui->lineEdit_2->text();
+    QString ip = ui->lineEdit->text();
     // need something to check the host is alive or can be use to change
     // icmp ping "IP" to check server is alive;
     // something to define is manual properties ,like swap the front of "/" or ip to be sign of the host Name.
+    QProcess ping_process;
+    QString command_string = "ping "+ip+" -c 1 -w 1 -W 1 ";
+    //qDebug()<<command_string;
+    ping_process.start(command_string,QIODevice::ReadOnly);
+    ping_process.waitForFinished(-1);
+    QString result = QString::fromLocal8Bit(ping_process.readAllStandardOutput());
+    qDebug()<<result;
+    ping_process.kill();
+    if(result.contains("ttl")){
     host_name_item->setText(host_name+"/"+ip);
+    }else{
+        QMessageBox exception_ip_not_found;
+        exception_ip_not_found.setText("這個IP無法訪問");
+        exception_ip_not_found.exec();
+    }
+
 }
