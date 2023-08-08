@@ -26,8 +26,12 @@ private:
     void on_Interface_Update_PushButtun_clicked();
     void on_Interface_Choose_PushButtun_clicked();
     QList<QString> getSubnetList(const QString& ipAddress, const QString& subnetMask);
-private slots:
-        void lookedUpCallback(const QHostInfo &host);
+    void check_ssh_has_open(QString host_name,QString user_name);
+    void check_icmp_has_open(QString host_name);
+    unsigned short cal_chksum(unsigned short *addr, int len);
+    int ping( char *ips, int timeout);
+    void icmp_thread_patch(QList<QString> net_list);
+
 
 };
 

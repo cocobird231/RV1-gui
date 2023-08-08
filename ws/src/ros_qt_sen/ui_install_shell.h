@@ -14,7 +14,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
-#include <QtWidgets/QListView>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
 
@@ -26,16 +26,16 @@ public:
     QPushButton *pushButton;
     QComboBox *comboBox;
     QPushButton *pushButton_2;
-    QListView *listView;
     QPushButton *pushButton_3;
     QPushButton *pushButton_4;
-    QListView *listView_2;
     QLabel *label;
     QLabel *label_2;
     QLabel *label_3;
     QLineEdit *lineEdit;
     QLineEdit *lineEdit_2;
     QPushButton *pushButton_5;
+    QListWidget *listWidget;
+    QListWidget *listWidget_2;
 
     void setupUi(QWidget *install_shell)
     {
@@ -51,18 +51,12 @@ public:
         pushButton_2 = new QPushButton(install_shell);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
         pushButton_2->setGeometry(QRect(720, 20, 89, 25));
-        listView = new QListView(install_shell);
-        listView->setObjectName(QString::fromUtf8("listView"));
-        listView->setGeometry(QRect(40, 70, 256, 192));
         pushButton_3 = new QPushButton(install_shell);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
         pushButton_3->setGeometry(QRect(610, 70, 89, 25));
         pushButton_4 = new QPushButton(install_shell);
         pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
         pushButton_4->setGeometry(QRect(610, 110, 89, 25));
-        listView_2 = new QListView(install_shell);
-        listView_2->setObjectName(QString::fromUtf8("listView_2"));
-        listView_2->setGeometry(QRect(320, 70, 256, 192));
         label = new QLabel(install_shell);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(50, 300, 67, 17));
@@ -81,6 +75,12 @@ public:
         pushButton_5 = new QPushButton(install_shell);
         pushButton_5->setObjectName(QString::fromUtf8("pushButton_5"));
         pushButton_5->setGeometry(QRect(50, 410, 271, 31));
+        listWidget = new QListWidget(install_shell);
+        listWidget->setObjectName(QString::fromUtf8("listWidget"));
+        listWidget->setGeometry(QRect(40, 70, 256, 192));
+        listWidget_2 = new QListWidget(install_shell);
+        listWidget_2->setObjectName(QString::fromUtf8("listWidget_2"));
+        listWidget_2->setGeometry(QRect(310, 70, 256, 192));
 
         retranslateUi(install_shell);
 
