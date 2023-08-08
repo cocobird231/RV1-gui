@@ -235,7 +235,6 @@ void install_shell::check_icmp_has_open(QString host_name){
             QString result = QString::fromLocal8Bit(ping_process.readAllStandardOutput());
             //qDebug()<<result;
             ping_process.kill();
-            is_opened_host_map.clear();
             if(result.contains("ttl")){
                 //lookup
                 is_opened_host_address.append(host_name);
@@ -251,10 +250,9 @@ void install_shell::check_icmp_has_open(QString host_name){
                 QString DNS_host_name =dns_result.split("name = ")[1].split(".")[0];
                 is_opened_host_name.append(DNS_host_name);
                 is_opened_host.append(DNS_host_name+"/"+host_name);
-                is_opened_host_map.insert(DNS_host_name,host_name);
-
-
-
+                QString function_in_call_host_name  = host_name;
+                is_opened_host_map[DNS_host_name]=function_in_call_host_name;
+                qDebug()<<is_opened_host_map;
 
                 }else{
                     is_opened_host.append(QString("Unknow")+"/"+host_name);
@@ -300,16 +298,21 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         //host_list_file.write(install_setting_json_document.toJson());
         QByteArray host_list_file_BA_file = host_list_file.readAll();
         QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
-        QJsonArray root_Array = host_list_doc.array();
+        QJsonObject root = host_list_doc.object();
+        QJsonArray host_name_json_list = root["host_name_array"].toArray();
         for(QString host_name : is_opened_host_name){
-            if(!root_Array.contains(host_name)){
-                root_Array.append(host_name);
+            if(!host_name_json_list.contains(host_name)){
+                host_name_json_list.append(host_name);
+                root[host_name]=is_opened_host_map[host_name];
+
             }
         }
-        host_list_doc.setArray(root_Array);
+        root["host_name_array"]=host_name_json_list;
+        host_list_doc.setObject(root);
+        host_list_file.resize(0);
         host_list_file.write(host_list_doc.toJson());
         host_list_file.close();
 
-
+        ui->listWidget->clear();
         ui->listWidget->addItems(host_list);
 }

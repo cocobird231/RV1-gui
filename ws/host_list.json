@@ -1,5 +1,10 @@
-[
-    "OpenWrt",
-    "raspitest3",
-    "tony-desktop"
-]
+{
+    "OpenWrt": "192.168.1.1",
+    "host_name_array": [
+        "OpenWrt",
+        "raspitest3",
+        "tony-desktop"
+    ],
+    "raspitest3": "192.168.1.100",
+    "tony-desktop": "192.168.1.157"
+}
