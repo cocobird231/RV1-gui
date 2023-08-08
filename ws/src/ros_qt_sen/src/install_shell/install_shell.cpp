@@ -359,6 +359,6 @@ void install_shell::on_infor_push_button_clicked(){
     QString ip = ui->lineEdit_2->text();
     // need something to check the host is alive or can be use to change
     // icmp ping "IP" to check server is alive;
-    // something to define is manual properties ,like swap the front of "/" or else.
+    // something to define is manual properties ,like swap the front of "/" or ip to be sign of the host Name.
     host_name_item->setText(host_name+"/"+ip);
 }
