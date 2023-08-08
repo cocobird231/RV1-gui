@@ -23,16 +23,17 @@ public:
 
 private:
     Ui::install_shell *ui;
-    void on_Interface_Update_PushButtun_clicked();
-    void on_Interface_Choose_PushButtun_clicked();
     QList<QString> getSubnetList(const QString& ipAddress, const QString& subnetMask);
     void check_ssh_has_open(QString host_name,QString user_name);
     void check_icmp_has_open(QString host_name);
     unsigned short cal_chksum(unsigned short *addr, int len);
     int ping( char *ips, int timeout);
     void icmp_thread_patch(QList<QString> net_list);
-
-
+private slots:
+    void on_current_HostName_changed(QListWidgetItem * item);
+    void on_Interface_Update_PushButtun_clicked();
+    void on_Interface_Choose_PushButtun_clicked();
+    void on_infor_push_button_clicked();
 };
 
 #endif // INSTALL_SHELL_H

@@ -23,6 +23,7 @@ QList<QString> is_opened_host_name;
 QList<QString> is_opened_host;
 QMap<QString ,QString> is_opened_host_map;
 QStringList host_list;
+QListWidgetItem* host_name_item;
  install_shell::install_shell(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::install_shell)
@@ -30,7 +31,9 @@ QStringList host_list;
     ui->setupUi(this);
     connect(ui->pushButton, &QPushButton::clicked, this, &install_shell::on_Interface_Update_PushButtun_clicked);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &install_shell::on_Interface_Choose_PushButtun_clicked);
+    connect(ui->pushButton_5, &QPushButton::clicked, this, &install_shell::on_infor_push_button_clicked);
 
+    connect(ui->listWidget,&QListWidget::currentItemChanged,this,&install_shell::on_current_HostName_changed);
     QFile install_file("install_setting.json");
     if(!install_file.open(QIODevice::ReadWrite)) {
       qDebug() << "File open error,the premission may denied.";
@@ -123,7 +126,12 @@ void install_shell::on_Interface_Update_PushButtun_clicked(){
 }
     void install_shell::on_Interface_Choose_PushButtun_clicked(){
         ui->pushButton_2->setEnabled(false);
+        ui->listWidget->clear();
         is_opened_host_address.clear();
+        is_opened_host_name.clear();
+        is_opened_host.clear();
+        is_opened_host_map.clear();
+
         QString the_item_select = ui->comboBox->currentText();
         the_item_select= the_item_select.remove(" ");
         the_item_select = the_item_select.trimmed();
@@ -252,10 +260,32 @@ void install_shell::check_icmp_has_open(QString host_name){
                 is_opened_host.append(DNS_host_name+"/"+host_name);
                 QString function_in_call_host_name  = host_name;
                 is_opened_host_map[DNS_host_name]=function_in_call_host_name;
-                qDebug()<<is_opened_host_map;
 
                 }else{
+                    //compares host_list.json and fix display Item
+                    //and update value with is_opne_host map
+                    QFile host_list_file("host_list.json");
+                    if(!host_list_file.open(QIODevice::ReadWrite)) {
+                    qDebug() << "ip_mapping open error,the premission may denied.";
+                    } else {
+                    qDebug() <<"ip_mapping File open!";
+                    }
+                    QByteArray host_list_file_BA_file = host_list_file.readAll();
+                    QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
+                    QJsonObject root = host_list_doc.object();
+                    QJsonArray host_name_json_list = root["host_name_array"].toArray();
+                    QJsonObject ip_list = root["IP_list"].toObject();
+                    QString Dns_name;
+                    for(const QString& key : ip_list.keys()) {
+                        QJsonValue value = ip_list.value(key);
+                        if (value.toString() == host_name){
+                            Dns_name=value.toString();
+                            is_opened_host.append(Dns_name+"/"+host_name);
+                        }
+                    }
+                    if(Dns_name.isEmpty()){
                     is_opened_host.append(QString("Unknow")+"/"+host_name);
+                    }
                     qDebug()<<"Can not found:"+host_name;
                 }
             }
@@ -282,9 +312,9 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         } 
     
         ui->pushButton_2->setEnabled(true);
-        qDebug()<<is_opened_host_address;
-        qDebug()<<is_opened_host_name;
-        qDebug()<<is_opened_host;
+        // qDebug()<<is_opened_host_address;
+        // qDebug()<<is_opened_host_name;
+        // qDebug()<<is_opened_host;
         host_list<<is_opened_host;
 
         QFile host_list_file("host_list.json");
@@ -300,19 +330,35 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
         QJsonObject root = host_list_doc.object();
         QJsonArray host_name_json_list = root["host_name_array"].toArray();
+        QJsonObject contant;
         for(QString host_name : is_opened_host_name){
             if(!host_name_json_list.contains(host_name)){
                 host_name_json_list.append(host_name);
-                root[host_name]=is_opened_host_map[host_name];
-
+                contant[host_name] = is_opened_host_map[host_name];
             }
         }
+        root["IP_list"]=contant;
         root["host_name_array"]=host_name_json_list;
         host_list_doc.setObject(root);
         host_list_file.resize(0);
         host_list_file.write(host_list_doc.toJson());
         host_list_file.close();
-
-        ui->listWidget->clear();
         ui->listWidget->addItems(host_list);
+}
+void install_shell::on_current_HostName_changed(QListWidgetItem * item){
+    host_name_item=item;
+    QString item_text = item->text();
+    QString host_name = item_text.split("/")[0];
+    QString ip = item_text.split("/")[1];
+    ui->lineEdit->setText(ip);
+    ui->lineEdit_2->setText(host_name);
+}
+void install_shell::on_infor_push_button_clicked(){
+
+    QString host_name = ui->lineEdit->text();
+    QString ip = ui->lineEdit_2->text();
+    // need something to check the host is alive or can be use to change
+    // icmp ping "IP" to check server is alive;
+    // something to define is manual properties ,like swap the front of "/" or else.
+    host_name_item->setText(host_name+"/"+ip);
 }
