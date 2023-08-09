@@ -70,5 +70,6 @@
         "qhostaddress": "cpp",
         "qjsonarray": "cpp",
         "qhostinfo": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

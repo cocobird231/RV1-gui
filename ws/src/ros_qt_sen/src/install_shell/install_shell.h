@@ -29,11 +29,18 @@ private:
     unsigned short cal_chksum(unsigned short *addr, int len);
     int ping( char *ips, int timeout);
     void icmp_thread_patch(QList<QString> net_list);
+    void dispatch_mission_refresh();
+    QList<QString> subnet_list;
+
 private slots:
     void on_current_HostName_changed(QListWidgetItem * item);
     void on_Interface_Update_PushButtun_clicked();
     void on_Interface_Choose_PushButtun_clicked();
-    void on_infor_push_button_clicked();
+    void on_update_host_information_push_button_clicked();
+    void on_creat_host_information_push_button_clicked();
+    void on_delet_host_information_push_button_clicked();
+    void on_current_host_information_changed(QListWidgetItem * item);
+    void on_identity_hos_name_manual_state_changed(int state);
 };
 
 #endif // INSTALL_SHELL_H

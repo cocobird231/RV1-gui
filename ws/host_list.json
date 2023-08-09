@@ -1,9 +1,30 @@
 {
     "IP_list": {
+        "OpenWrt": {
+            "Device": "未定義主機類型",
+            "ip_address": "192.168.1.1",
+            "manual": false
+        },
+        "raspitest3": {
+            "Device": "未定義主機類型",
+            "ip_address": "192.168.1.100",
+            "manual": false
+        },
+        "tony-deskto": {
+            "Device": "jetson",
+            "ip_address": "192.168.1.157",
+            "manual": true
+        },
+        "tony-desktop": {
+            "Device": "未定義主機類型",
+            "ip_address": "192.168.1.157",
+            "manual": false
+        }
     },
     "host_name_array": [
         "OpenWrt",
+        "tony-desktop",
         "raspitest3",
-        "tony-desktop"
+        "tony-deskto"
     ]
 }
