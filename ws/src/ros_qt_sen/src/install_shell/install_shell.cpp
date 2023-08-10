@@ -5,7 +5,7 @@
  #include <iostream>
 
 #include <string.h> 
-
+#include<iostream>
 #include <QFile>
 
 #include<QJsonDocument>
@@ -25,7 +25,7 @@ QList<QString> is_opened_host;
 QMap<QString ,QString> is_opened_host_map;
 QStringList host_list;
 QList<QString> subnet_list;
-QListWidgetItem* host_name_item;
+QListWidgetItem* host_name_item =new QListWidgetItem;
 std::shared_ptr<std::thread> the_thread;
 
  install_shell::install_shell(QWidget *parent) :
@@ -94,6 +94,7 @@ std::shared_ptr<std::thread> the_thread;
         for(auto host_name_in_json : host_name_json_list){
                 ui->listWidget_3->addItem(host_name_in_json.toString());
         }
+        ui->listWidget_3->setCurrentRow(0);
         host_list_file.close();
 }
     
@@ -451,6 +452,8 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         for(auto host_name_in_json : host_name_json_list){
                 ui->listWidget_3->addItem(host_name_in_json.toString());
         }
+                ui->listWidget_3->setCurrentRow(0);
+
        int list_count_1=ui->listWidget->count();
         for (int i = list_count_1 - 1; i >= 0; --i) {
             QListWidgetItem *item1 = ui->listWidget->takeItem(i);
@@ -484,12 +487,12 @@ void install_shell::on_current_host_information_changed(QListWidgetItem * item){
         host_list_file.close();
 }
 void install_shell::on_update_host_information_push_button_clicked(){
-
     QString host_name = ui->lineEdit_2->text();
     QString ip = ui->lineEdit->text();
     QString device = ui->comboBox_2->currentText();
     bool manual = !ui->checkBox->isChecked();
-    if(host_name ==host_name_item->text()&& !manual){
+
+    if(host_name ==host_name_item->text()&& !manual ){
         QProcess ping_process;
         QString command_string = "ping "+ip+" -c 1 -w 1 -W 1 ";
         //qDebug()<<command_string;
@@ -553,7 +556,7 @@ void install_shell::on_update_host_information_push_button_clicked(){
                 QJsonObject contant=root["IP_list"].toObject();
                 contant.remove(host_name_item->text());
                 for(int i =0;i<host_name_json_list.size();i++){
-                    if(host_name_json_list[i].toString()==host_name_item->text()){
+                    if(host_name_json_list[i].toString()==host_name){
                         host_name_json_list.removeAt(i);
                         bool array_duplication_check = false;
                         for(int i =0;i<host_name_json_list.size();i++){
@@ -602,7 +605,6 @@ void install_shell::on_creat_host_information_push_button_clicked(){
     QString ip = ui->lineEdit->text();
     QString device = ui->comboBox_2->currentText();
     bool manual = !ui->checkBox->isChecked();
-
     QFile host_list_file("host_list.json");
     if(!host_list_file.open(QIODevice::ReadWrite)) {
     qDebug() << "ip_mapping open error,the premission may denied.";
@@ -617,7 +619,7 @@ void install_shell::on_creat_host_information_push_button_clicked(){
     QJsonObject host_contant = contant[host_name].toObject();
     bool array_duplication_check = false;
     for(int i =0;i<host_name_json_list.size();i++){
-        if(host_name_json_list[i].toString()==host_name_item->text()){
+        if(host_name_json_list[i].toString()==host_name){
             array_duplication_check = true;
         };
     }
@@ -669,6 +671,8 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     host_list_file.write(host_list_doc.toJson());
     host_list_file.close();
     delete host_name_item;
+    ui->listWidget_3->setCurrentRow(0);
+
 }
 void install_shell::on_identity_hos_name_manual_state_changed(int state){
     if(state){
