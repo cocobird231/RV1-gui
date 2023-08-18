@@ -1,0 +1,12 @@
+{
+    "rpi_sensoers":{
+        "pack_names":["py_gps","py_sense","py_singlerf","py_ultrasound","cpp_webcam","webrtc"]
+    },
+    "jetson_sensors":{
+        "pack_names":["cpp_zedcam"]
+    },
+    "chassis":{
+        "pack_names":["py_chassis"]
+    }
+
+}

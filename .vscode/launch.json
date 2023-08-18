@@ -7,8 +7,8 @@
             "request": "launch",
             "type": "cppdbg",
             "miDebuggerServerAddress": "localhost:3000",
-            "cwd": "/",
-            "program": "~/ws/build/ros_qt_sen/ros_qt_sen"
+            "cwd": "${workspaceFolder}",
+            "program": "./ws/build/ros_qt_sen/ros_qt_sen"
         }
     ]
 }

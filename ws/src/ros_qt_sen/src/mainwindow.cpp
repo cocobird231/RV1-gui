@@ -20,11 +20,11 @@ MainWindow::~MainWindow()
 
 }
 
-
-
 void MainWindow::on_QosPushButton_clicked(){
 
     qosdevicedialog->show();
+  
+
 }
 void MainWindow::on_SensorPushButton_clicked(){
     the_sensor_form->show();

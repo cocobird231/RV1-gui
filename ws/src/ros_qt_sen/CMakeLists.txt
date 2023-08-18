@@ -40,6 +40,9 @@ qt5_wrap_cpp(header_SRC
     src/qos_device_dialog/qosdevicedialog.h
     src/sensor_form/sensor_form.h
     src/install_shell/install_shell.h
+    src/install_shell/install_option/install_option.h
+    src/install_shell/install_device_infor/install_device_infor.h
+
 
     include/${PROJECT_NAME}/gui_node.h
 )
@@ -48,6 +51,8 @@ qt5_wrap_ui(UIS_HDRS
   src/qos_device_dialog/qosdevicedialog.ui
 	src/sensor_form/sensor_form.ui
   src/install_shell/install_shell.ui
+  src/install_shell/install_option/install_option.ui
+  src/install_shell/install_device_infor/install_device_infor.ui
 
 )
 
@@ -56,6 +61,10 @@ add_executable(ros_qt_sen
     src/main.cpp
     src/qos_device_dialog/qosdevicedialog.cpp
     src/install_shell/install_shell.cpp
+    src/install_shell/install_option/install_option.cpp
+    src/install_shell/install_device_infor/install_device_infor.cpp
+
+
     src/mainwindow.cpp
     src/node/gui_node.cpp
     src/sensor_form/sensor_form.cpp

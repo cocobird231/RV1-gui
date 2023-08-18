@@ -29,11 +29,10 @@ private:
     unsigned short cal_chksum(unsigned short *addr, int len);
     int ping( char *ips, int timeout);
     void icmp_thread_patch(QList<QString> net_list);
-    void dispatch_mission_refresh();
     QList<QString> subnet_list;
-
+    void check_ssh_device_information(std::string host_name ,std::string user_name,std::string Password,std::string device_type);
 private slots:
-    void on_current_HostName_changed(QListWidgetItem * item);
+    void on_current_online_device_changed(QListWidgetItem * item);
     void on_Interface_Update_PushButtun_clicked();
     void on_Interface_Choose_PushButtun_clicked();
     void on_update_host_information_push_button_clicked();
@@ -41,6 +40,7 @@ private slots:
     void on_delet_host_information_push_button_clicked();
     void on_current_host_information_changed(QListWidgetItem * item);
     void on_identity_hos_name_manual_state_changed(int state);
+    void on_host_check_infor_push_button_clicked();
 };
 
 #endif // INSTALL_SHELL_H

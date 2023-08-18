@@ -16,6 +16,7 @@
 #include <QtNetwork>
 #include <thread>
 #include <QMessageBox>
+#include"install_device_infor/install_device_infor.h"
 QList<QNetworkAddressEntry> entryList;
 QString selected_self_IP;
 QJsonDocument install_setting_json_document ;
@@ -25,7 +26,13 @@ QList<QString> is_opened_host;
 QMap<QString ,QString> is_opened_host_map;
 QStringList host_list;
 QList<QString> subnet_list;
+
 QListWidgetItem* host_name_item =new QListWidgetItem;
+// std::shared_ptr<QListWidgetItem> online_device_item = std::make_shared<QListWidgetItem>();
+std::shared_ptr<QListWidgetItem> online_device_item ;
+
+// QListWidgetItem* online_device_item =new QListWidgetItem;
+
 std::shared_ptr<std::thread> the_thread;
 
  install_shell::install_shell(QWidget *parent) :
@@ -40,116 +47,66 @@ std::shared_ptr<std::thread> the_thread;
     connect(ui->pushButton, &QPushButton::clicked, this, &install_shell::on_Interface_Update_PushButtun_clicked);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &install_shell::on_Interface_Choose_PushButtun_clicked);
     connect(ui->pushButton_5, &QPushButton::clicked, this, &install_shell::on_update_host_information_push_button_clicked);
-    connect(ui->listWidget,&QListWidget::currentItemChanged,this,&install_shell::on_current_HostName_changed);
+    connect(ui->listWidget,&QListWidget::currentItemChanged,this,&install_shell::on_current_online_device_changed);
     connect(ui->listWidget_3,&QListWidget::currentItemChanged,this,&install_shell::on_current_host_information_changed);
     connect(ui->checkBox,&QCheckBox::stateChanged,this,&install_shell::on_identity_hos_name_manual_state_changed);
     connect(ui->pushButton_6,&QPushButton::clicked,this,&install_shell::on_creat_host_information_push_button_clicked);
     connect(ui->pushButton_7,&QPushButton::clicked,this,&install_shell::on_delet_host_information_push_button_clicked);
+    connect(ui->pushButton_3,&QPushButton::clicked,this,&install_shell::on_host_check_infor_push_button_clicked);
 
     QFile install_file("install_setting.json");
     if(!install_file.open(QIODevice::ReadWrite)) {
-      qDebug() << "File open error,the premission may denied.";
+        qDebug() << "File open error,the premission may denied.";
     } else {
-      qDebug() <<"install_setting File open!";
+        qDebug() <<"install_setting File open!";
     }
     QByteArray install_setting_file = install_file.readAll();
     install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject root = install_setting_json_document.object();
 
     if(!(root["default_interface"].toString()=="" || root["default_ip"].toString()==""|| root["default_net_mask"].toString()=="")){
-    ui->comboBox->addItem("Interface: "+root["default_interface"].toString()+"/ IP Address: "+root["default_ip"].toString()+"/ NetMask: "+root["default_net_mask"].toString());
-    install_file.close();
-    
-    QList<QNetworkInterface> interface_list = QNetworkInterface::allInterfaces();
-    foreach(QNetworkInterface interface,interface_list) 
-    {
-        entryList= interface.addressEntries();
-        foreach(QNetworkAddressEntry entry,entryList)
+        ui->comboBox->addItem("Interface: "+root["default_interface"].toString()+"/ IP Address: "+root["default_ip"].toString()+"/ NetMask: "+root["default_net_mask"].toString());
+        install_file.close();
+        
+        QList<QNetworkInterface> interface_list = QNetworkInterface::allInterfaces();
+        foreach(QNetworkInterface interface,interface_list) 
         {
-        //IPV6 drop
-        if(entry.netmask().toString().contains("f"))
-            continue;
-        // qDebug()<<"IP Address: "<<entry.ip().toString(); 
-        // qDebug()<<"Netmask: "<<entry.netmask().toString(); 
-        // qDebug()<<"Broadcast: "<<entry.broadcast().toString();
-        QString temp_default_interface ="Interface: "+root["default_interface"].toString()+"/ IP Address: "+root["default_ip"].toString()+"/ NetMask: "+root["default_net_mask"].toString();
-        QString temp_interface = "Interface: "+interface.name()+"/ IP Address: "+entry.ip().toString()+"/ NetMask: "+entry.netmask().toString();
-        if(!(temp_default_interface ==temp_interface)){
-            ui->comboBox->addItem("Interface: "+interface.name()+"/ IP Address: "+entry.ip().toString()+"/ NetMask: "+entry.netmask().toString());
-        }else{
-            ui->comboBox->setCurrentText(temp_default_interface);
+            entryList= interface.addressEntries();
+            foreach(QNetworkAddressEntry entry,entryList)
+            {
+                //IPV6 drop
+                if(entry.netmask().toString().contains("f"))
+                    continue;
+                QString temp_default_interface ="Interface: "+root["default_interface"].toString()+"/ IP Address: "+root["default_ip"].toString()+"/ NetMask: "+root["default_net_mask"].toString();
+                QString temp_interface = "Interface: "+interface.name()+"/ IP Address: "+entry.ip().toString()+"/ NetMask: "+entry.netmask().toString();
+                if(!(temp_default_interface ==temp_interface)){
+                    ui->comboBox->addItem("Interface: "+interface.name()+"/ IP Address: "+entry.ip().toString()+"/ NetMask: "+entry.netmask().toString());
+                }else{
+                    ui->comboBox->setCurrentText(temp_default_interface);
+                }
+            }
         }
-        }
-    }
-        QFile host_list_file("host_list.json");
-        if(!host_list_file.open(QIODevice::ReadWrite)) {
-        qDebug() << "ip_mapping open error,the premission may denied.";
-        } else {
-        qDebug() <<"ip_mapping File open!";
-        }
-        QByteArray host_list_file_BA_file = host_list_file.readAll();
-        QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
-        QJsonObject root = host_list_doc.object();
-        QJsonArray host_name_json_list = root["host_name_array"].toArray();
-        for(auto host_name_in_json : host_name_json_list){
+            QFile host_list_file("host_list.json");
+            if(!host_list_file.open(QIODevice::ReadWrite)) {
+                qDebug() << "ip_mapping open error,the premission may denied.";
+            } else {
+                qDebug() <<"ip_mapping File open!";
+            }
+            QByteArray host_list_file_BA_file = host_list_file.readAll();
+            QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
+            QJsonObject root = host_list_doc.object();
+            QJsonArray host_name_json_list = root["host_name_array"].toArray();
+            for(auto host_name_in_json : host_name_json_list){
                 ui->listWidget_3->addItem(host_name_in_json.toString());
-        }
-        ui->listWidget_3->setCurrentRow(0);
-        host_list_file.close();
-}
-    
-    // should intall libssh-dev
-    // test for ssh lib
-    // ssh_session my_ssh_session;
-    // int rc;
-    // int port = 22;
-    // int verbosity = SSH_LOG_PROTOCOL;
-    // char *password;
-    // // Open session and set options
-    // ssh_session my_ssh_session = ssh_new();
-    // if (my_ssh_session == NULL)
-    //     exit(-1);
-    // ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST, "192.168.1.157");
-    // ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
-    // ssh_options_set(my_ssh_session, SSH_OPTIONS_USER, "tony");
-    // ssh_options_set(my_ssh_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
-    // ssh_options_set(my_ssh_session, SSH_OPTIONS_CIPHERS_C_S,"aes128-ctr");
-    // rc = ssh_connect(my_ssh_session);
-    // if (rc != SSH_OK)  
-    // {
-    //     qDebug()<< "Error: "+ QString(ssh_get_error(my_ssh_session)); //HERE IS WHERE I GET THE ERROR 
-    //     ssh_free(my_ssh_session);
-    // }
-
-    // Verify the server's identity
-    // For the source code of verify_knowhost(), check previous example
-/*  if (verify_knownhost(my_ssh_session) < 0)
-    {
-        ssh_disconnect(my_ssh_session);
-        ssh_free(my_ssh_session);
-        exit(-1);
+            }
+            ui->listWidget_3->setCurrentRow(0);
+            host_list_file.close();
     }
-*/  
-    // qDebug()<<"1231231";
-    // password = "tony1234";
-    // rc = ssh_userauth_password(my_ssh_session, NULL, password);
-    // qDebug()<<"rc";
-    // if (rc != SSH_AUTH_SUCCESS)  
-    // {
-    //      qDebug()<< "Error: "+ QString(ssh_get_error(my_ssh_session)); //HERE IS WHERE I GET THE ERROR 
-    //     ssh_free(my_ssh_session);
-    //     exit(-1);
-    // }
-    // ssh_disconnect(my_ssh_session);
-    // ssh_free(my_ssh_session);
 
 }
 void install_shell::on_Interface_Update_PushButtun_clicked(){
 
-    //the_interface_list.clear();
     QList<QNetworkInterface> interface_list = QNetworkInterface::allInterfaces();
-
-
     ui->comboBox->clear();
     foreach(QNetworkInterface interface,interface_list) 
     {
@@ -168,23 +125,17 @@ void install_shell::on_Interface_Update_PushButtun_clicked(){
 
 }
     void install_shell::on_Interface_Choose_PushButtun_clicked(){
-        qDebug()<<"on_Interface_Choose_PushButtun_clicked";
-        this->dispatch_mission_refresh();
-}
-void install_shell::dispatch_mission_refresh(){
         ui->pushButton_2->setEnabled(false);
         int list_count=ui->listWidget->count();
         for (int i = list_count - 1; i >= 0; --i) {
             QListWidgetItem *item = ui->listWidget->takeItem(i);
             delete item; // Remember to delete the item manually
         }
-        qDebug()<<".clear";
+
         is_opened_host_address.clear();
         is_opened_host_name.clear();
         is_opened_host.clear();
         is_opened_host_map.clear();
-        qDebug()<<"clear.";
-
         QString the_item_select = ui->comboBox->currentText();
         the_item_select= the_item_select.remove(" ");
         the_item_select = the_item_select.trimmed();
@@ -211,11 +162,10 @@ void install_shell::dispatch_mission_refresh(){
         install_file.close();
 
         subnet_list = getSubnetList(IP_address_string,Mask);
-        //不確定會被回收時機 一定要+smart pointer
         the_thread = std::make_shared<std::thread>(std::bind(&install_shell::icmp_thread_patch,this,subnet_list));
         the_thread->detach();
-
 }
+
 QList<QString> install_shell::getSubnetList(const QString& ipAddress, const QString& subnetMask) {
     QList<QString> subnetList;
 
@@ -262,7 +212,6 @@ void install_shell::check_ssh_has_open(QString host_name,QString user_name){
     int rc;
     int port = 22;
     int verbosity = SSH_LOG_PROTOCOL;
-    char *password;
     // Open session and set options
     ssh_session my_ssh_session = ssh_new();
     if (my_ssh_session == NULL)
@@ -283,28 +232,168 @@ void install_shell::check_ssh_has_open(QString host_name,QString user_name){
         is_opened_host_address.append(host_name);
 
     }
+}
+void install_shell::on_current_online_device_changed(QListWidgetItem * item){
+    online_device_item =std::make_shared<QListWidgetItem>(*item);
+}
+void install_shell::on_host_check_infor_push_button_clicked(){
+    if(online_device_item == nullptr){
+        return;
+    }
+    QString online_Device_text = online_device_item->text();
+    std::string hostname="";
+    std::string device_type = "";
+    QFile host_list_file("host_list.json");
+    if(!host_list_file.open(QIODevice::ReadWrite)) {
+    qDebug() << "ip_mapping open error,the premission may denied.";
+    } else {
+    qDebug() <<"ip_mapping File open!";
+    }
+    QByteArray host_list_file_BA_file = host_list_file.readAll();
+    QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
+    QJsonObject root = host_list_doc.object();
+    QJsonArray host_name_json_list = root["host_name_array"].toArray();
+    QJsonObject contant=root["IP_list"].toObject();
+    if (online_Device_text.contains("/"))
+    {
+        hostname= online_Device_text.split("/")[1].toStdString();
+        for(int i =0;i<host_name_json_list.size();i++){
+            QJsonObject host_object =contant[host_name_json_list[i].toString()].toObject();
+            std::string host_ip = host_object["ip_address"].toString().toStdString();
+            if (host_ip==hostname)
+            {
+                device_type=host_object["Device"].toString().toStdString();
+            }
+        }
+    }else{
+        hostname= online_Device_text.split(":")[0].toStdString();
+        device_type =contant[QString::fromStdString(hostname)].toObject()["Device"].toString().toStdString();
+    }
+    //need load host and user config in file.
+    check_ssh_device_information(hostname,"user","password",device_type);
 
 }
 
+void install_shell::check_ssh_device_information(std::string host_name ,std::string user_name,std::string Password,std::string device_type){
+
+
+    int rc;
+    int port = 22;
+    char buffer[256];
+    int nbytes;
+    int verbosity = SSH_LOG_PROTOCOL;
+
+    // Open session and set options
+    ssh_session my_ssh_session = ssh_new();
+    if (my_ssh_session == NULL)
+        return;
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST,host_name.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
+    ssh_options_set(my_ssh_session,SSH_OPTIONS_PASSWORD_AUTH,Password.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_USER,user_name.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_CIPHERS_C_S,"aes128-ctr");
+    ssh_options_set(my_ssh_session,SSH_OPTIONS_TIMEOUT_USEC,"10");
+    rc = ssh_connect(my_ssh_session);
+    if (rc != SSH_OK)  
+    {
+        ssh_free(my_ssh_session);
+        return ;
+    }
+    qDebug()<<"Auth";
+    rc = ssh_userauth_password(my_ssh_session, user_name.c_str(), Password.c_str());
+
+    qDebug()<<"rc";
+    if (rc != SSH_AUTH_SUCCESS)  
+    {
+        ssh_free(my_ssh_session);
+        QMessageBox exception_ssh;
+        exception_ssh.setText("Auth Error");
+        exception_ssh.exec();
+        return;
+    }
+
+    ssh_channel channel = ssh_channel_new(my_ssh_session);
+    if (channel == NULL)
+        return;
+    rc = ssh_channel_open_session(channel);
+    if (rc != SSH_OK)
+    {
+        ssh_free(my_ssh_session);
+        ssh_channel_free(channel);
+        return ;
+    }
+    //raspberry pi check ros2_docker
+    if(device_type =="raspberry pi"){
+        rc = ssh_channel_request_exec(channel, "cat ros2_docker/common.yaml");
+    }else if (device_type =="jetson")
+    {
+        rc = ssh_channel_request_exec(channel, "cat jetson_sensors/common.yaml");
+        /* code */
+    }else if (device_type =="ADLink")
+    {
+        rc = ssh_channel_request_exec(channel, "cat ros2_ws/.modulesettings");
+    }else{
+        QMessageBox exception_ssh;
+        exception_ssh.setText("請先定義裝置類型");
+        exception_ssh.exec();
+        return;
+    }
+    
+
+    if (rc != SSH_OK)
+    {
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+    }
+    nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+    QByteArray ssh_Qbyte;
+    QByteArray ssh_merge_qbyte;
+    while (nbytes > 0)
+    {
+        ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+        ssh_merge_qbyte.append(ssh_Qbyte);
+        nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+    }
+    QString ssh_infor_string=ssh_merge_qbyte;
+    qDebug().noquote()<<ssh_infor_string;
+    //check install information
+    if(ssh_infor_string !=""){
+    install_device_infor* dialog_device_info = new install_device_infor(nullptr,QString::fromStdString(host_name),ssh_infor_string);
+    dialog_device_info->show();
+    }else{
+        QMessageBox exception_ssh;
+        exception_ssh.setText("未安裝任何東西");
+        exception_ssh.exec();
+    }
+
+
+    if (nbytes < 0)
+    {
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+        qDebug()<< "Error: "+ QString(ssh_get_error(my_ssh_session)); //HERE IS WHERE I GET THE ERROR 
+    }
+
+    ssh_disconnect(my_ssh_session);
+    ssh_free(my_ssh_session);
+
+
+}
 void install_shell::check_icmp_has_open(QString host_name){
             QProcess ping_process;
             QString command_string = "ping "+host_name+" -c 1 -w 1 -W 1 ";
-            //qDebug()<<command_string;
             ping_process.start(command_string,QIODevice::ReadOnly);
             ping_process.waitForFinished(-1);
             QString result = QString::fromLocal8Bit(ping_process.readAllStandardOutput());
-            //qDebug()<<result;
             ping_process.kill();
             if(result.contains("ttl")){
-                //lookup
                 is_opened_host_address.append(host_name);
                 QProcess dns_process;
                 QString dns_command_string = "nslookup "+host_name;
-                //qDebug()<<command_string;
                 dns_process.start(dns_command_string,QIODevice::ReadOnly);
                 dns_process.waitForFinished(-1);
                 QString dns_result = QString::fromLocal8Bit(dns_process.readAllStandardOutput());
-                qDebug()<<result;
                 dns_process.kill();
                 if(dns_result.contains("name = ")){
                 QString DNS_host_name =dns_result.split("name = ")[1].split(".")[0];
@@ -348,14 +437,12 @@ void install_shell::check_icmp_has_open(QString host_name){
 }
 void install_shell::icmp_thread_patch(QList<QString> net_list){
 
-    std::shared_ptr<std::thread> threads[net_list.length()];
-        bool has_join_thread [net_list.length()] = {false};
+    std::shared_ptr<std::thread>* threads = new std::shared_ptr<std::thread>[net_list.length()];
         for(int i =0; i <net_list.length(); i++){
             threads[i] = std::make_shared<std::thread>(std::bind(&install_shell::check_icmp_has_open,this,net_list[i]));
             if (i%50==0 && i!=0){
                 for(int j=i-50; j<i;j++){
                     threads[j]->join();
-                    has_join_thread[j] = true;
                 }
             }
         } 
@@ -369,7 +456,6 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         ui->pushButton_2->setEnabled(true);
         // qDebug()<<is_opened_host_address;
         // qDebug()<<is_opened_host_name;
-         qDebug()<<"icmp_thread_patch_DOne_thread.";
 
 
         QFile host_list_file("host_list.json");
@@ -384,14 +470,12 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         QJsonObject root = host_list_doc.object();
         QJsonArray host_name_json_list = root["host_name_array"].toArray();
         QJsonObject contant=root["IP_list"].toObject();
-                 qDebug()<<"contant.";
         QJsonObject host_contant ;
         //有DNS紀錄的
         for(QString host_name : is_opened_host_name){
                      qDebug()<<host_name;
 
             if(!host_name_json_list.contains(host_name)){
-                qDebug()<<"not todo";
 
                 bool array_duplication_check = false;
                 for(int i =0;i<host_name_json_list.size();i++){
@@ -402,20 +486,13 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
                 if(!array_duplication_check){
                     host_name_json_list.append(host_name);
                 }
-                qDebug()<<"123sdf";
                 host_contant = contant[host_name].toObject();
                 host_contant["ip_address"]=is_opened_host_map[host_name];
-                qDebug()<<"ip_address";
                 host_contant["manual"] = false;
-                qDebug()<<"manual";
-
                 host_contant["Device"] = ui->comboBox_2->itemText(0);
-                qDebug()<<"Device";
 
                 contant[host_name] = host_contant;
             }else{
-                //to do
-                qDebug()<<"todo";
                 if(contant[host_name].toObject()["ip_address"]!=is_opened_host_map[host_name]){
                     bool array_duplication_check = false;
                     for(int i =0;i<host_name_json_list.size();i++){
@@ -440,7 +517,6 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         host_list_file.resize(0);
         host_list_file.write(host_list_doc.toJson());
         host_list_file.close();
-        qDebug()<<"update ui.";
 
 
         int list_count_3=ui->listWidget_3->count();
@@ -460,12 +536,9 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
             delete item1; // Remember to delete the item manually
         }        
         ui->listWidget->addItems(is_opened_host);
-        qDebug()<<"done func";
 
 }
-void install_shell::on_current_HostName_changed(QListWidgetItem * item){
 
-}
 void install_shell::on_current_host_information_changed(QListWidgetItem * item){
         host_name_item=item;
         QFile host_list_file("host_list.json");
@@ -596,7 +669,7 @@ void install_shell::on_update_host_information_push_button_clicked(){
         exception.exec();
     }
     if(ui->pushButton_2->isEnabled()){
-    dispatch_mission_refresh();
+    on_Interface_Choose_PushButtun_clicked();
     }
 
 }
@@ -640,7 +713,7 @@ void install_shell::on_creat_host_information_push_button_clicked(){
     ui->listWidget_3->addItem(host_name);
 
     if(ui->pushButton_2->isEnabled()){
-    dispatch_mission_refresh();
+    on_Interface_Choose_PushButtun_clicked();
     }
 }
 

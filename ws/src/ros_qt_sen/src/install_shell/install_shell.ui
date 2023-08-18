@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1173</width>
+    <width>1003</width>
     <height>591</height>
    </rect>
   </property>
@@ -52,27 +52,27 @@
   <widget class="QPushButton" name="pushButton_3">
    <property name="geometry">
     <rect>
-     <x>610</x>
-     <y>70</y>
-     <width>89</width>
+     <x>310</x>
+     <y>80</y>
+     <width>121</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
-    <string>update</string>
+    <string>檢查設定</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_4">
    <property name="geometry">
     <rect>
-     <x>610</x>
-     <y>110</y>
-     <width>89</width>
+     <x>310</x>
+     <y>120</y>
+     <width>121</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
-    <string>install</string>
+    <string>安裝設定選項</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
@@ -92,7 +92,7 @@
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>410</y>
+     <y>350</y>
      <width>67</width>
      <height>17</height>
     </rect>
@@ -105,7 +105,7 @@
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>370</y>
+     <y>310</y>
      <width>81</width>
      <height>17</height>
     </rect>
@@ -118,7 +118,7 @@
    <property name="geometry">
     <rect>
      <x>450</x>
-     <y>410</y>
+     <y>350</y>
      <width>171</width>
      <height>25</height>
     </rect>
@@ -128,7 +128,7 @@
    <property name="geometry">
     <rect>
      <x>450</x>
-     <y>370</y>
+     <y>310</y>
      <width>171</width>
      <height>25</height>
     </rect>
@@ -151,7 +151,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>70</y>
+     <y>80</y>
      <width>256</width>
      <height>192</height>
     </rect>
@@ -160,8 +160,8 @@
   <widget class="QListWidget" name="listWidget_2">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>70</y>
+     <x>470</x>
+     <y>80</y>
      <width>256</width>
      <height>192</height>
     </rect>
@@ -171,7 +171,7 @@
    <property name="geometry">
     <rect>
      <x>350</x>
-     <y>450</y>
+     <y>390</y>
      <width>67</width>
      <height>17</height>
     </rect>
@@ -184,7 +184,7 @@
    <property name="geometry">
     <rect>
      <x>450</x>
-     <y>450</y>
+     <y>390</y>
      <width>171</width>
      <height>25</height>
     </rect>
@@ -207,11 +207,6 @@
    <item>
     <property name="text">
      <string>ADlink</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>ubuntu</string>
     </property>
    </item>
   </widget>
@@ -314,6 +309,104 @@
    </property>
    <property name="text">
     <string>識別主機名稱:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_9">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>430</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>使用者名稱:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_10">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>460</y>
+     <width>67</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>密碼：</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_3">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>430</y>
+     <width>171</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_4">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>460</y>
+     <width>171</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>50</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>安裝任務清單</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_8">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>160</y>
+     <width>121</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>新增安裝選項</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_9">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>80</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>刪除安裝選項</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_10">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>120</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>執行安裝任務</string>
    </property>
   </widget>
  </widget>
