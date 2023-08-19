@@ -17,6 +17,10 @@ public:
 
 private:
     Ui::install_option *ui;
+private slots:
+    void on_save_and_close_push_button_clicked();
+    void on_close_push_button_clicked();
+    void on_reset_push_button_clicked();
 };
 
 #endif // INSTALL_OPTION_H

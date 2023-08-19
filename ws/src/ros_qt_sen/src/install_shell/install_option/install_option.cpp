@@ -50,6 +50,16 @@ install_option::install_option(QWidget *parent,QString host_name,QString device,
     ui->comboBox->setCurrentText(pack_name);
 }
 
+void install_option::on_save_and_close_push_button_clicked(){
+
+}
+void install_option::on_close_push_button_clicked(){
+
+}
+void install_option::on_reset_push_button_clicked(){
+
+}
+
 install_option::~install_option()
 {
     delete ui;

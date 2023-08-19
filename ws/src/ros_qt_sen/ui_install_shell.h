@@ -148,7 +148,7 @@ public:
         lineEdit_4->setGeometry(QRect(450, 460, 171, 25));
         label_11 = new QLabel(install_shell);
         label_11->setObjectName(QString::fromUtf8("label_11"));
-        label_11->setGeometry(QRect(480, 50, 101, 17));
+        label_11->setGeometry(QRect(480, 50, 131, 17));
         pushButton_8 = new QPushButton(install_shell);
         pushButton_8->setObjectName(QString::fromUtf8("pushButton_8"));
         pushButton_8->setGeometry(QRect(310, 160, 121, 25));
@@ -190,9 +190,9 @@ public:
         label_8->setText(QApplication::translate("install_shell", "\350\255\230\345\210\245\344\270\273\346\251\237\345\220\215\347\250\261:", nullptr));
         label_9->setText(QApplication::translate("install_shell", "\344\275\277\347\224\250\350\200\205\345\220\215\347\250\261:", nullptr));
         label_10->setText(QApplication::translate("install_shell", "\345\257\206\347\242\274\357\274\232", nullptr));
-        label_11->setText(QApplication::translate("install_shell", "\345\256\211\350\243\235\344\273\273\345\213\231\346\270\205\345\226\256", nullptr));
-        pushButton_8->setText(QApplication::translate("install_shell", "\346\226\260\345\242\236\345\256\211\350\243\235\351\201\270\351\240\205", nullptr));
-        pushButton_9->setText(QApplication::translate("install_shell", "\345\210\252\351\231\244\345\256\211\350\243\235\351\201\270\351\240\205", nullptr));
+        label_11->setText(QApplication::translate("install_shell", "\345\256\211\350\243\235\350\250\255\345\202\231\344\273\273\345\213\231\346\270\205\345\226\256", nullptr));
+        pushButton_8->setText(QApplication::translate("install_shell", "\346\226\260\345\242\236\345\256\211\350\243\235\350\250\255\345\202\231", nullptr));
+        pushButton_9->setText(QApplication::translate("install_shell", "\345\210\252\351\231\244\345\256\211\350\243\235\350\250\255\345\202\231", nullptr));
         pushButton_10->setText(QApplication::translate("install_shell", "\345\237\267\350\241\214\345\256\211\350\243\235\344\273\273\345\213\231", nullptr));
     } // retranslateUi
 

@@ -31,6 +31,8 @@ public:
     QPushButton *pushButton;
     QLabel *label_4;
     QLabel *label_5;
+    QPushButton *pushButton_2;
+    QPushButton *pushButton_3;
 
     void setupUi(QWidget *install_option)
     {
@@ -57,13 +59,19 @@ public:
         lineEdit_2->setGeometry(QRect(160, 120, 171, 25));
         pushButton = new QPushButton(install_option);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(140, 180, 89, 25));
+        pushButton->setGeometry(QRect(150, 180, 89, 25));
         label_4 = new QLabel(install_option);
         label_4->setObjectName(QString::fromUtf8("label_4"));
         label_4->setGeometry(QRect(50, 10, 91, 17));
         label_5 = new QLabel(install_option);
         label_5->setObjectName(QString::fromUtf8("label_5"));
         label_5->setGeometry(QRect(160, 10, 171, 17));
+        pushButton_2 = new QPushButton(install_option);
+        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
+        pushButton_2->setGeometry(QRect(250, 180, 111, 25));
+        pushButton_3 = new QPushButton(install_option);
+        pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
+        pushButton_3->setGeometry(QRect(40, 180, 89, 25));
 
         retranslateUi(install_option);
 
@@ -78,9 +86,11 @@ public:
         label_3->setText(QApplication::translate("install_option", "IP:", nullptr));
         lineEdit->setText(QApplication::translate("install_option", "eth0", nullptr));
         lineEdit_2->setText(QApplication::translate("install_option", "dhcp", nullptr));
-        pushButton->setText(QApplication::translate("install_option", "OK", nullptr));
+        pushButton->setText(QApplication::translate("install_option", "close", nullptr));
         label_4->setText(QApplication::translate("install_option", "Host Name:", nullptr));
         label_5->setText(QApplication::translate("install_option", "Undefined Text", nullptr));
+        pushButton_2->setText(QApplication::translate("install_option", "Save and close", nullptr));
+        pushButton_3->setText(QApplication::translate("install_option", "Reset", nullptr));
     } // retranslateUi
 
 };
