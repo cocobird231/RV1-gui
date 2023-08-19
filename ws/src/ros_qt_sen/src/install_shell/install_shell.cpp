@@ -1,22 +1,20 @@
 #include "install_shell.h"
 #include <QDebug>
 #include <stdio.h>
-
- #include <iostream>
-
+#include <iostream>
 #include <string.h> 
-#include<iostream>
+#include <iostream>
 #include <QFile>
-
-#include<QJsonDocument>
-#include<QJsonObject>
-#include<QJsonValue>
-#include<QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QJsonArray>
 #include <QHostAddress>
 #include <QtNetwork>
 #include <thread>
 #include <QMessageBox>
-#include"install_device_infor/install_device_infor.h"
+#include "install_device_infor/install_device_infor.h"
+#include "install_option/install_option.h"
 QList<QNetworkAddressEntry> entryList;
 QString selected_self_IP;
 QJsonDocument install_setting_json_document ;
@@ -53,6 +51,7 @@ std::shared_ptr<std::thread> the_thread;
     connect(ui->pushButton_6,&QPushButton::clicked,this,&install_shell::on_creat_host_information_push_button_clicked);
     connect(ui->pushButton_7,&QPushButton::clicked,this,&install_shell::on_delet_host_information_push_button_clicked);
     connect(ui->pushButton_3,&QPushButton::clicked,this,&install_shell::on_host_check_infor_push_button_clicked);
+    connect(ui->pushButton_4,&QPushButton::clicked,this,&install_shell::on_install_option_push_button_clicked);
 
     QFile install_file("install_setting.json");
     if(!install_file.open(QIODevice::ReadWrite)) {
@@ -124,7 +123,7 @@ void install_shell::on_Interface_Update_PushButtun_clicked(){
     }
 
 }
-    void install_shell::on_Interface_Choose_PushButtun_clicked(){
+void install_shell::on_Interface_Choose_PushButtun_clicked(){
         ui->pushButton_2->setEnabled(false);
         int list_count=ui->listWidget->count();
         for (int i = list_count - 1; i >= 0; --i) {
@@ -254,8 +253,10 @@ void install_shell::on_host_check_infor_push_button_clicked(){
     QJsonObject root = host_list_doc.object();
     QJsonArray host_name_json_list = root["host_name_array"].toArray();
     QJsonObject contant=root["IP_list"].toObject();
+    QString DNS_replace = "";
     if (online_Device_text.contains("/"))
     {
+        DNS_replace=online_Device_text.split("/")[0];
         hostname= online_Device_text.split("/")[1].toStdString();
         for(int i =0;i<host_name_json_list.size();i++){
             QJsonObject host_object =contant[host_name_json_list[i].toString()].toObject();
@@ -270,7 +271,30 @@ void install_shell::on_host_check_infor_push_button_clicked(){
         device_type =contant[QString::fromStdString(hostname)].toObject()["Device"].toString().toStdString();
     }
     //need load host and user config in file.
-    check_ssh_device_information(hostname,"user","password",device_type);
+    QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+      qDebug() << "File open error,the premission may denied.";
+    } else {
+      qDebug() <<"install_setting File open!";
+    }
+    QJsonObject install_root = install_setting_json_document.object();
+    QJsonObject install_config = install_root["install_config"].toObject();
+    QJsonObject host;
+    if (DNS_replace !="")
+    {
+        host = install_config[DNS_replace].toObject();
+
+    }else{
+        host = install_config[QString::fromStdString(hostname)].toObject();
+    }
+    
+    std::string user = host["user"].toString().toStdString();
+    std::string password = host["password"].toString().toStdString();
+
+    install_setting_json_document.setObject(root);
+
+    install_file.close();
+    check_ssh_device_information(hostname,user,password,device_type);
 
 }
 
@@ -396,11 +420,11 @@ void install_shell::check_icmp_has_open(QString host_name){
                 QString dns_result = QString::fromLocal8Bit(dns_process.readAllStandardOutput());
                 dns_process.kill();
                 if(dns_result.contains("name = ")){
-                QString DNS_host_name =dns_result.split("name = ")[1].split(".")[0];
-                is_opened_host_name.append(DNS_host_name);
-                is_opened_host.append(DNS_host_name+":"+host_name);
-                QString function_in_call_host_name  = host_name;
-                is_opened_host_map[DNS_host_name]=function_in_call_host_name;
+                    QString DNS_host_name =dns_result.split("name = ")[1].split(".")[0];
+                    is_opened_host_name.append(DNS_host_name);
+                    is_opened_host.append(DNS_host_name+":"+host_name);
+                    QString function_in_call_host_name  = host_name;
+                    is_opened_host_map[DNS_host_name]=function_in_call_host_name;
 
                 }else{
                     //compares host_list.json and fix display Item
@@ -420,23 +444,19 @@ void install_shell::check_icmp_has_open(QString host_name){
                     for(const QString& key : ip_list.keys()) {
                         QJsonObject host_obj = ip_list[key].toObject();
                         QString value =host_obj["ip_address"].toString();
-                        // This host_name is asign by ip;
                         if (value == host_name){
                             Dns_name=key;
-                            //"/"is mean manual mappping
                             is_opened_host.append(Dns_name+"/"+host_name);
                         }
                     }
                     if(Dns_name.isEmpty()){
-                    is_opened_host.append(host_name+"/"+host_name);
+                        is_opened_host.append(host_name+"/"+host_name);
                     }
-                    //qDebug()<<"Can not found:"+host_name;
                 }
             }
 
 }
 void install_shell::icmp_thread_patch(QList<QString> net_list){
-
     std::shared_ptr<std::thread>* threads = new std::shared_ptr<std::thread>[net_list.length()];
         for(int i =0; i <net_list.length(); i++){
             threads[i] = std::make_shared<std::thread>(std::bind(&install_shell::check_icmp_has_open,this,net_list[i]));
@@ -446,23 +466,17 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
                 }
             }
         } 
-
         for(int i =0; i !=net_list.length(); i++){
             if(threads[i]->joinable()){
             threads[i]->join();
             }
         } 
-    
         ui->pushButton_2->setEnabled(true);
-        // qDebug()<<is_opened_host_address;
-        // qDebug()<<is_opened_host_name;
-
-
         QFile host_list_file("host_list.json");
         if(!host_list_file.open(QIODevice::ReadWrite)) {
-        qDebug() << "ip_mapping open error,the premission may denied.";
+            qDebug() << "ip_mapping open error,the premission may denied.";
         } else {
-        qDebug() <<"ip_mapping File open!";
+            qDebug() <<"ip_mapping File open!";
         }
 
         QByteArray host_list_file_BA_file = host_list_file.readAll();
@@ -473,10 +487,8 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         QJsonObject host_contant ;
         //有DNS紀錄的
         for(QString host_name : is_opened_host_name){
-                     qDebug()<<host_name;
-
+            qDebug()<<host_name;
             if(!host_name_json_list.contains(host_name)){
-
                 bool array_duplication_check = false;
                 for(int i =0;i<host_name_json_list.size();i++){
                     if(host_name_json_list[i].toString()==host_name){
@@ -517,8 +529,6 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         host_list_file.resize(0);
         host_list_file.write(host_list_doc.toJson());
         host_list_file.close();
-
-
         int list_count_3=ui->listWidget_3->count();
         for (int i = list_count_3 - 1; i >= 0; --i) {
             QListWidgetItem *item3 = ui->listWidget_3->takeItem(i);
@@ -536,7 +546,6 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
             delete item1; // Remember to delete the item manually
         }        
         ui->listWidget->addItems(is_opened_host);
-
 }
 
 void install_shell::on_current_host_information_changed(QListWidgetItem * item){
@@ -553,6 +562,24 @@ void install_shell::on_current_host_information_changed(QListWidgetItem * item){
         QJsonArray host_name_json_list = root["host_name_array"].toArray();
         QJsonObject contant=root["IP_list"].toObject();
         QJsonObject currentItem_object =contant[item->text()].toObject();
+
+        QFile install_file("install_setting.json");
+        if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
+        } else {
+        qDebug() <<"install_setting File open!";
+        }
+        QByteArray install_byte = install_file.readAll();
+        install_setting_json_document = QJsonDocument::fromJson(install_byte);
+        QJsonObject install_root = install_setting_json_document.object();
+        QJsonObject install_config = install_root["install_config"].toObject();
+        QJsonObject host = install_config[item->text()].toObject();
+        QString user_name = host["user"].toString();
+        QString password = host["password"].toString();
+        install_file.close();
+
+        ui->lineEdit_3->setText(user_name);
+        ui->lineEdit_4->setText(password);
         ui->lineEdit_2->setText(item->text());
         ui->lineEdit->setText(currentItem_object["ip_address"].toString());
         ui->comboBox_2->setCurrentText(currentItem_object["Device"].toString());
@@ -561,10 +588,14 @@ void install_shell::on_current_host_information_changed(QListWidgetItem * item){
 }
 void install_shell::on_update_host_information_push_button_clicked(){
     QString host_name = ui->lineEdit_2->text();
+    QString user_name= ui->lineEdit_3->text();
+    QString password = ui->lineEdit_4->text();
     QString ip = ui->lineEdit->text();
     QString device = ui->comboBox_2->currentText();
     bool manual = !ui->checkBox->isChecked();
-
+    if(host_name_item ==nullptr){
+        return;
+    }
     if(host_name ==host_name_item->text()&& !manual ){
         QProcess ping_process;
         QString command_string = "ping "+ip+" -c 1 -w 1 -W 1 ";
@@ -668,6 +699,24 @@ void install_shell::on_update_host_information_push_button_clicked(){
         exception.setText("主機名稱不應該被修改");
         exception.exec();
     }
+    QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+      qDebug() << "File open error,the premission may denied.";
+    } else {
+      qDebug() <<"install_setting File open!";
+    }
+    QJsonObject root = install_setting_json_document.object();
+    QJsonObject install_config = root["install_config"].toObject();
+    QJsonObject host = install_config[host_name].toObject();
+    host["user"]=user_name;
+    host["password"]=password;
+    host["device"]=device;
+    install_config[host_name]=host;
+    root["install_config"]=install_config;
+    install_setting_json_document.setObject(root);
+    install_file.resize(0);
+    install_file.write(install_setting_json_document.toJson());
+    install_file.close();
     if(ui->pushButton_2->isEnabled()){
     on_Interface_Choose_PushButtun_clicked();
     }
@@ -675,6 +724,8 @@ void install_shell::on_update_host_information_push_button_clicked(){
 }
 void install_shell::on_creat_host_information_push_button_clicked(){
     QString host_name = ui->lineEdit_2->text();
+    QString user_name= ui->lineEdit_3->text();
+    QString password = ui->lineEdit_4->text();
     QString ip = ui->lineEdit->text();
     QString device = ui->comboBox_2->currentText();
     bool manual = !ui->checkBox->isChecked();
@@ -710,6 +761,28 @@ void install_shell::on_creat_host_information_push_button_clicked(){
     host_list_file.resize(0);
     host_list_file.write(host_list_doc.toJson());
     host_list_file.close();
+
+
+    QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+      qDebug() << "File open error,the premission may denied.";
+    } else {
+      qDebug() <<"install_setting File open!";
+    }
+    QJsonObject install_root = install_setting_json_document.object();
+    QJsonObject install_config = install_root["install_config"].toObject();
+    QJsonObject host = install_config[host_name].toObject();
+    host["user"]=user_name;
+    host["password"]=password;
+    host["device"]=device;
+
+    install_config[host_name]=host;
+    install_root["install_config"]=install_config;
+    install_setting_json_document.setObject(install_root);
+    install_file.resize(0);
+    install_file.write(install_setting_json_document.toJson());
+    install_file.close();
+
     ui->listWidget_3->addItem(host_name);
 
     if(ui->pushButton_2->isEnabled()){
@@ -743,6 +816,21 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     host_list_file.resize(0);
     host_list_file.write(host_list_doc.toJson());
     host_list_file.close();
+
+    QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+      qDebug() << "File open error,the premission may denied.";
+    } else {
+      qDebug() <<"install_setting File open!";
+    }
+    QJsonObject install_root = install_setting_json_document.object();
+    QJsonObject install_config = install_root["install_config"].toObject();
+    install_config.remove(host_name);
+    install_root["install_config"]=install_config;
+    install_setting_json_document.setObject(install_root);
+    install_file.resize(0);
+    install_file.write(install_setting_json_document.toJson());
+    install_file.close();
     delete host_name_item;
     ui->listWidget_3->setCurrentRow(0);
 
@@ -758,4 +846,45 @@ void install_shell::on_identity_hos_name_manual_state_changed(int state){
         ui->lineEdit_2->setEnabled(true);
         ui->lineEdit->setEnabled(true);
     }
+}
+
+void install_shell::on_install_option_push_button_clicked(){
+    if(online_device_item == nullptr){
+        return;
+    }
+    QString DNS_replace = "";
+    QString host_name = "";
+    QString item_text=online_device_item->text();
+    QJsonObject host;
+    QFile install_file("install_setting.json");
+
+    if(!install_file.open(QIODevice::ReadWrite)) {
+    qDebug() << "File open error,the premission may denied.";
+    } else {
+    qDebug() <<"install_setting File open!";
+    }
+    QByteArray install_byte = install_file.readAll();
+    install_setting_json_document = QJsonDocument::fromJson(install_byte);
+    QJsonObject install_root = install_setting_json_document.object();
+    QJsonObject install_config = install_root["install_config"].toObject();
+    QString SetHost = "";
+    if(item_text.contains("/")){
+        host_name=item_text.split("/")[1];
+        DNS_replace=item_text.split("/")[0];
+        SetHost =DNS_replace;
+    }else{
+        host_name=item_text.split(":")[0];
+        SetHost =host_name;
+    }
+        host = install_config[SetHost].toObject();
+        QString user_name = host["user"].toString();
+        QString password = host["password"].toString();
+        QString ip_config = host["ip"].toString()!=""?host["ip"].toString():"dhcp";
+        QString interface = host["interface"].toString()!=""?host["interface"].toString():"eth0";
+        QString device = host["device"].toString();
+        QString pack_names = host["pack_names"].toString();
+        install_setting_json_document.setObject(install_root);
+        install_file.close();
+        install_option* the_install_option =new install_option(nullptr,host_name,device,pack_names,interface,ip_config);
+        the_install_option->show();
 }

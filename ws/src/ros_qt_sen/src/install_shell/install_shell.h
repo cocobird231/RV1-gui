@@ -41,6 +41,7 @@ private slots:
     void on_current_host_information_changed(QListWidgetItem * item);
     void on_identity_hos_name_manual_state_changed(int state);
     void on_host_check_infor_push_button_clicked();
+    void on_install_option_push_button_clicked();
 };
 
 #endif // INSTALL_SHELL_H

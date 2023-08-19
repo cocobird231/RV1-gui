@@ -3,5 +3,10 @@
     "default_ip": "192.168.1.157",
     "default_net_mask": "255.255.255.0",
     "install_config": {
+        "raspberrypi1": {
+            "device": "raspberry pi",
+            "password": "password",
+            "user": "user"
+        }
     }
 }

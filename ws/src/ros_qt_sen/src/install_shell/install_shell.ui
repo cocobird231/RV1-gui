@@ -362,12 +362,12 @@
     <rect>
      <x>480</x>
      <y>50</y>
-     <width>101</width>
+     <width>131</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>安裝任務清單</string>
+    <string>安裝設備任務清單</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_8">
@@ -380,7 +380,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>新增安裝選項</string>
+    <string>新增安裝設備</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_9">
@@ -393,7 +393,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>刪除安裝選項</string>
+    <string>刪除安裝設備</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_10">
