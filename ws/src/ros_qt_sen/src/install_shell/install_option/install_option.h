@@ -17,6 +17,11 @@ public:
 
 private:
     Ui::install_option *ui;
+    QString Host_ename="";
+    QString Device="";
+    QString Pack_name="";
+    QString Interface="";
+    QString Ip="";
 private slots:
     void on_save_and_close_push_button_clicked();
     void on_close_push_button_clicked();

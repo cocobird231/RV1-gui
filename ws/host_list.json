@@ -7,7 +7,7 @@
         },
         "raspberrypi1": {
             "Device": "raspberry pi",
-            "ip_address": "192.168.1.100",
+            "ip_address": "192.168.1.249",
             "manual": false
         },
         "raspberrypi2": {

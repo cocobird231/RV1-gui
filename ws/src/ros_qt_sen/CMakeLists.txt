@@ -42,6 +42,7 @@ qt5_wrap_cpp(header_SRC
     src/install_shell/install_shell.h
     src/install_shell/install_option/install_option.h
     src/install_shell/install_device_infor/install_device_infor.h
+    src/install_shell/install_process/install_process.h
 
 
     include/${PROJECT_NAME}/gui_node.h
@@ -53,6 +54,7 @@ qt5_wrap_ui(UIS_HDRS
   src/install_shell/install_shell.ui
   src/install_shell/install_option/install_option.ui
   src/install_shell/install_device_infor/install_device_infor.ui
+  src/install_shell/install_process/install_process.ui
 
 )
 
@@ -63,7 +65,7 @@ add_executable(ros_qt_sen
     src/install_shell/install_shell.cpp
     src/install_shell/install_option/install_option.cpp
     src/install_shell/install_device_infor/install_device_infor.cpp
-
+    src/install_shell/install_process/install_process.cpp
 
     src/mainwindow.cpp
     src/node/gui_node.cpp
@@ -75,7 +77,7 @@ add_executable(ros_qt_sen
 
 ament_target_dependencies(ros_qt_sen rclcpp vehicle_interfaces )
 
-target_link_libraries(ros_qt_sen  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network ssh)
+target_link_libraries(ros_qt_sen  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network ssh )
 
 ## Install
 install(TARGETS

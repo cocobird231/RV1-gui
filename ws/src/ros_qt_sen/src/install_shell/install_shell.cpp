@@ -52,6 +52,7 @@ std::shared_ptr<std::thread> the_thread;
     connect(ui->pushButton_7,&QPushButton::clicked,this,&install_shell::on_delet_host_information_push_button_clicked);
     connect(ui->pushButton_3,&QPushButton::clicked,this,&install_shell::on_host_check_infor_push_button_clicked);
     connect(ui->pushButton_4,&QPushButton::clicked,this,&install_shell::on_install_option_push_button_clicked);
+    connect(ui->pushButton_10,&QPushButton::clicked,this,&install_shell::on_install_mission_dispatch_push_button_clicked);
 
     QFile install_file("install_setting.json");
     if(!install_file.open(QIODevice::ReadWrite)) {
@@ -190,17 +191,7 @@ QList<QString> install_shell::getSubnetList(const QString& ipAddress, const QStr
 }
 install_shell::~install_shell()
 {   
-    QFile install_file("install_setting.json");
-    if(!install_file.open(QIODevice::ReadWrite)) {
-      qDebug() << "File open error,the premission may denied.";
-    } else {
-      qDebug() <<"install_setting File open!";
-    }
-    qDebug()<<"destory_Install.";
-    qDebug()<<install_setting_json_document;
-    install_file.resize(0);
-    install_file.write(install_setting_json_document.toJson());
-    install_file.close();
+ 
     delete ui;
 }
 
@@ -324,10 +315,7 @@ void install_shell::check_ssh_device_information(std::string host_name ,std::str
         ssh_free(my_ssh_session);
         return ;
     }
-    qDebug()<<"Auth";
     rc = ssh_userauth_password(my_ssh_session, user_name.c_str(), Password.c_str());
-
-    qDebug()<<"rc";
     if (rc != SSH_AUTH_SUCCESS)  
     {
         ssh_free(my_ssh_session);
@@ -546,6 +534,142 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
             delete item1; // Remember to delete the item manually
         }        
         ui->listWidget->addItems(is_opened_host);
+}
+void install_shell::on_install_mission_dispatch_push_button_clicked(){
+
+    int task_count = ui->listWidget_2->count();
+    qDebug()<<QString(task_count);
+    std::string* host_name_array =new std::string[task_count];
+    std::string* user_name_array =new std::string[task_count];
+    std::string* Password_array =new std::string[task_count];
+    std::string* pack_name_array =new std::string[task_count];
+    std::string* interface_array =new std::string[task_count];
+    std::string* ip_array =new std::string[task_count];
+    if(task_count ==0){
+        return;
+    }
+    QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
+    } else {
+        qDebug() <<"install_setting File open!";
+    }
+    QByteArray install_setting_file = install_file.readAll();
+    install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonObject root = install_setting_json_document.object();
+    QJsonObject install_config = root["install_config"].toObject();
+    for(int i=0;i<task_count;i++){
+        QListWidgetItem* listwidget_current = ui->listWidget_2->item(i);
+        host_name_array[i] = listwidget_current->text().toStdString();
+        QJsonObject host_object=install_config[ QString::fromStdString(host_name_array[i])].toObject();
+        if (!install_config.contains(QString::fromStdString(host_name_array[i])))
+        {
+            return;
+        }
+        user_name_array[i]=host_object["user"].toString().toStdString();
+        Password_array[i]=host_object["password"].toString().toStdString();
+        pack_name_array[i]=host_object["Package_Name"].toString().toStdString();
+        interface_array[i]=host_object["interface"].toString().toStdString();
+        ip_array[i]=host_object["IP"].toString().toStdString();
+    }
+    install_file.close();
+    qDebug() <<"install_mission_threads";
+
+    std::shared_ptr<std::thread>* install_mission_threads = new std::shared_ptr<std::thread>[task_count];
+    for(int i=0;i<task_count;i++){
+        std::string host_name_ =host_name_array[i];
+        std::string user_name_ =user_name_array[i];
+        std::string Password_ =Password_array[i];
+        std::string pack_name_ =pack_name_array[i];
+        std::string interface_ =interface_array[i];
+        std::string ip_ =ip_array[i];
+        
+        install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
+
+    }
+    for(int i =0;i<task_count;i++){
+        install_mission_threads[i]->join();
+    }
+
+}
+void install_shell::install_misson(std::string user_name,std::string Password,std::string host_name,std::string pack_name,std::string interface,std::string ip){
+
+    qDebug()<<QString::fromStdString(user_name);
+
+    int rc;
+    int port = 22;
+    char buffer[256];
+    int nbytes = 0;
+    int verbosity = SSH_LOG_PROTOCOL;
+
+    // Open session and set options
+    ssh_session my_ssh_session = ssh_new();
+    
+    if (my_ssh_session == NULL)
+        return;
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST,host_name.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
+    ssh_options_set(my_ssh_session,SSH_OPTIONS_PASSWORD_AUTH,Password.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_USER,user_name.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_CIPHERS_C_S,"aes128-ctr");
+    ssh_options_set(my_ssh_session,SSH_OPTIONS_TIMEOUT_USEC,"10");
+    rc = ssh_connect(my_ssh_session);
+    if (rc != SSH_OK)  
+    {
+        ssh_free(my_ssh_session);
+        return ;
+    }
+    qDebug()<<"Auth";
+    rc = ssh_userauth_password(my_ssh_session, user_name.c_str(), Password.c_str());
+
+    qDebug()<<"rc";
+    if (rc != SSH_AUTH_SUCCESS)  
+    {
+        ssh_free(my_ssh_session);
+        qDebug()<<"Auth error";
+        return;
+    }
+    qDebug()<<"channel";
+
+    ssh_channel channel = ssh_channel_new(my_ssh_session);
+    if (channel == NULL)
+        return;
+    rc = ssh_channel_open_session(channel);
+    if (rc != SSH_OK)
+    {
+        ssh_free(my_ssh_session);
+        ssh_channel_free(channel);
+        return ;
+    }
+    std::string ssh_command= ". ./ros2_docker/install.sh -i "+pack_name+" --interface "+interface +" --ip "+ip ;
+    rc = ssh_channel_request_exec(channel, ssh_command.c_str());
+
+    if (rc != SSH_OK)
+    {
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+    }
+    QByteArray ssh_Qbyte;
+    QByteArray ssh_merge_qbyte;
+    QString ssh_infor_string;
+    qDebug()<<QString("ssh_channel_read"); 
+
+  while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+    {
+        ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+        ssh_merge_qbyte.append(ssh_Qbyte);
+        nbytes =  ssh_channel_read_nonblocking(channel, buffer, sizeof(buffer), 0);
+        ssh_infor_string=ssh_merge_qbyte;
+        qDebug().noquote()<<ssh_infor_string;
+        if(ssh_infor_string.contains("/etc/dhcpcd.conf recovered")){
+            ssh_channel_close(channel);
+            ssh_channel_free(channel);
+        }
+    }
+    ssh_infor_string=ssh_merge_qbyte;
+    qDebug().noquote()<<ssh_infor_string;
+    qDebug()<<QString("Done"); 
 }
 
 void install_shell::on_current_host_information_changed(QListWidgetItem * item){

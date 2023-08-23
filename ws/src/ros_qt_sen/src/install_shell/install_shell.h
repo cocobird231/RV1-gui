@@ -4,11 +4,15 @@
 #include <QWidget>
 #include "./../../ui_install_shell.h"
 #include<QHostInfo>
-
 #include <netinet/in.h> 
 #include <arpa/inet.h>
 #include <libssh/libssh.h>
+ 
 #include <sys/types.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <stdio.h>
+#include <ctype.h>
 namespace Ui {
 class install_shell;
 }
@@ -26,12 +30,13 @@ private:
     QList<QString> getSubnetList(const QString& ipAddress, const QString& subnetMask);
     void check_ssh_has_open(QString host_name,QString user_name);
     void check_icmp_has_open(QString host_name);
-    unsigned short cal_chksum(unsigned short *addr, int len);
     int ping( char *ips, int timeout);
     void icmp_thread_patch(QList<QString> net_list);
     QList<QString> subnet_list;
     void check_ssh_device_information(std::string host_name ,std::string user_name,std::string Password,std::string device_type);
+    void install_misson(std::string user_name,std::string Password,std::string host_name,std::string pack_name,std::string interface,std::string ip);
 private slots:
+    void on_install_mission_dispatch_push_button_clicked();
     void on_current_online_device_changed(QListWidgetItem * item);
     void on_Interface_Update_PushButtun_clicked();
     void on_Interface_Choose_PushButtun_clicked();

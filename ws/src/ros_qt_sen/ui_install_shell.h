@@ -98,6 +98,8 @@ public:
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
         listWidget->setGeometry(QRect(40, 80, 256, 192));
         listWidget_2 = new QListWidget(install_shell);
+        new QListWidgetItem(listWidget_2);
+        new QListWidgetItem(listWidget_2);
         listWidget_2->setObjectName(QString::fromUtf8("listWidget_2"));
         listWidget_2->setGeometry(QRect(470, 80, 256, 192));
         label_4 = new QLabel(install_shell);
@@ -175,6 +177,15 @@ public:
         label_2->setText(QApplication::translate("install_shell", "IP\344\275\215\347\275\256:", nullptr));
         label_3->setText(QApplication::translate("install_shell", "\344\270\273\346\251\237\345\220\215\347\250\261:", nullptr));
         pushButton_5->setText(QApplication::translate("install_shell", "\344\277\256\346\224\271", nullptr));
+
+        const bool __sortingEnabled = listWidget_2->isSortingEnabled();
+        listWidget_2->setSortingEnabled(false);
+        QListWidgetItem *___qlistwidgetitem = listWidget_2->item(0);
+        ___qlistwidgetitem->setText(QApplication::translate("install_shell", "raspberrypi1", nullptr));
+        QListWidgetItem *___qlistwidgetitem1 = listWidget_2->item(1);
+        ___qlistwidgetitem1->setText(QApplication::translate("install_shell", "192.168.1.249", nullptr));
+        listWidget_2->setSortingEnabled(__sortingEnabled);
+
         label_4->setText(QApplication::translate("install_shell", "\350\250\255\345\202\231\351\241\236\345\236\213\357\274\232", nullptr));
         comboBox_2->setItemText(0, QApplication::translate("install_shell", "\346\234\252\345\256\232\347\276\251\344\270\273\346\251\237\351\241\236\345\236\213", nullptr));
         comboBox_2->setItemText(1, QApplication::translate("install_shell", "raspberry pi", nullptr));
