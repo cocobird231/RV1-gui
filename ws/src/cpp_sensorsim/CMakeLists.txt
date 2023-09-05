@@ -30,6 +30,7 @@ find_package(vehicle_interfaces REQUIRED)
 
 ## Build
 add_executable(pub src/main.cpp)
+target_link_libraries(pub -lstdc++fs)
 ament_target_dependencies(pub rclcpp vehicle_interfaces)
 
 ## Install

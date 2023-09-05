@@ -77,7 +77,7 @@ add_executable(ros_qt_sen
 
 ament_target_dependencies(ros_qt_sen rclcpp vehicle_interfaces )
 
-target_link_libraries(ros_qt_sen  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network ssh )
+target_link_libraries(ros_qt_sen  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network ssh -lstdc++fs)
 
 ## Install
 install(TARGETS
