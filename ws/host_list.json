@@ -10,11 +10,6 @@
             "ip_address": "192.168.1.249",
             "manual": false
         },
-        "raspberrypi2": {
-            "Device": "raspberry pi",
-            "ip_address": "192.168.1.185",
-            "manual": false
-        },
         "tony-desktop": {
             "Device": "未定義主機類型",
             "ip_address": "192.168.1.157",
@@ -24,7 +19,6 @@
     "host_name_array": [
         "OpenWrt",
         "tony-desktop",
-        "raspberrypi2",
         "raspberrypi1"
     ]
 }

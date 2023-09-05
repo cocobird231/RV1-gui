@@ -41,6 +41,9 @@ public:
     QLineEdit *lineEdit_2;
     QLineEdit *lineEdit_3;
     QLineEdit *lineEdit_4;
+    QPushButton *pushButton_2;
+    QPushButton *pushButton_3;
+    QPushButton *pushButton_4;
 
     void setupUi(QDialog *QosDeviceDialog)
     {
@@ -79,7 +82,7 @@ public:
         label_9->setGeometry(QRect(30, 350, 211, 17));
         pushButton = new QPushButton(QosDeviceDialog);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(240, 400, 89, 25));
+        pushButton->setGeometry(QRect(430, 390, 89, 25));
         comboBox_2 = new QComboBox(QosDeviceDialog);
         comboBox_2->setObjectName(QString::fromUtf8("comboBox_2"));
         comboBox_2->setGeometry(QRect(180, 70, 381, 25));
@@ -104,6 +107,15 @@ public:
         lineEdit_4 = new QLineEdit(QosDeviceDialog);
         lineEdit_4->setObjectName(QString::fromUtf8("lineEdit_4"));
         lineEdit_4->setGeometry(QRect(240, 350, 321, 25));
+        pushButton_2 = new QPushButton(QosDeviceDialog);
+        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
+        pushButton_2->setGeometry(QRect(100, 390, 89, 25));
+        pushButton_3 = new QPushButton(QosDeviceDialog);
+        pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
+        pushButton_3->setGeometry(QRect(210, 390, 89, 25));
+        pushButton_4 = new QPushButton(QosDeviceDialog);
+        pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
+        pushButton_4->setGeometry(QRect(320, 390, 89, 25));
 
         retranslateUi(QosDeviceDialog);
 
@@ -123,6 +135,9 @@ public:
         label_8->setText(QApplication::translate("QosDeviceDialog", "liveliness", nullptr));
         label_9->setText(QApplication::translate("QosDeviceDialog", "liveliness_lease_duration_ms", nullptr));
         pushButton->setText(QApplication::translate("QosDeviceDialog", "Save", nullptr));
+        pushButton_2->setText(QApplication::translate("QosDeviceDialog", "Add", nullptr));
+        pushButton_3->setText(QApplication::translate("QosDeviceDialog", "Remove", nullptr));
+        pushButton_4->setText(QApplication::translate("QosDeviceDialog", "Clear", nullptr));
     } // retranslateUi
 
 };

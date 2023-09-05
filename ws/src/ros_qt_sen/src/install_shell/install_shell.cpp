@@ -26,10 +26,10 @@ QStringList host_list;
 QList<QString> subnet_list;
 
 QListWidgetItem* host_name_item =new QListWidgetItem;
-// std::shared_ptr<QListWidgetItem> online_device_item = std::make_shared<QListWidgetItem>();
+QListWidgetItem* mission_install_item ;
+
 std::shared_ptr<QListWidgetItem> online_device_item ;
 
-// QListWidgetItem* online_device_item =new QListWidgetItem;
 
 std::shared_ptr<std::thread> the_thread;
 
@@ -46,13 +46,19 @@ std::shared_ptr<std::thread> the_thread;
     connect(ui->pushButton_2, &QPushButton::clicked, this, &install_shell::on_Interface_Choose_PushButtun_clicked);
     connect(ui->pushButton_5, &QPushButton::clicked, this, &install_shell::on_update_host_information_push_button_clicked);
     connect(ui->listWidget,&QListWidget::currentItemChanged,this,&install_shell::on_current_online_device_changed);
+    // connect(ui->listWidget_2,&QListWidget::currentItemChanged,this,&install_shell::on_current_mission_install_changed);
+
     connect(ui->listWidget_3,&QListWidget::currentItemChanged,this,&install_shell::on_current_host_information_changed);
+
     connect(ui->checkBox,&QCheckBox::stateChanged,this,&install_shell::on_identity_hos_name_manual_state_changed);
     connect(ui->pushButton_6,&QPushButton::clicked,this,&install_shell::on_creat_host_information_push_button_clicked);
     connect(ui->pushButton_7,&QPushButton::clicked,this,&install_shell::on_delet_host_information_push_button_clicked);
     connect(ui->pushButton_3,&QPushButton::clicked,this,&install_shell::on_host_check_infor_push_button_clicked);
     connect(ui->pushButton_4,&QPushButton::clicked,this,&install_shell::on_install_option_push_button_clicked);
     connect(ui->pushButton_10,&QPushButton::clicked,this,&install_shell::on_install_mission_dispatch_push_button_clicked);
+    connect(ui->pushButton_8,&QPushButton::clicked,this,&install_shell::on_add_mission_pushButton_clicked);
+    connect(ui->pushButton_9,&QPushButton::clicked,this,&install_shell::on_delet_mission_pushButton_clicked);
+
 
     QFile install_file("install_setting.json");
     if(!install_file.open(QIODevice::ReadWrite)) {
@@ -225,6 +231,69 @@ void install_shell::check_ssh_has_open(QString host_name,QString user_name){
 }
 void install_shell::on_current_online_device_changed(QListWidgetItem * item){
     online_device_item =std::make_shared<QListWidgetItem>(*item);
+    
+}
+void install_shell::on_add_mission_pushButton_clicked(){
+    if(online_device_item==nullptr){
+        QMessageBox Device_no_select_message;
+        Device_no_select_message.setText("Choose the device in device list.");
+        Device_no_select_message.exec();
+        return;
+    }
+    QString add_row_string = online_device_item->text();
+    QString add_string = "";
+    if (add_row_string.contains(":"))
+    {
+        add_string = add_row_string.split(":")[0];
+    }else if (add_row_string.contains("/"))
+    {
+        add_string = add_row_string.split("/")[1];
+    }
+
+    QList<QListWidgetItem *> find_string_items=ui->listWidget_2->findItems(add_string,Qt::MatchCaseSensitive);
+    qDebug()<<QString(find_string_items.length());
+    if(find_string_items.length()>=1){
+        QMessageBox mission_is_in_list;
+        mission_is_in_list.setText("the mission list has contains the Item.");
+        mission_is_in_list.exec();
+        return;
+    }
+        ui->listWidget_2->addItem(add_string);
+
+    
+}
+
+void install_shell::on_delet_mission_pushButton_clicked(){
+
+
+QList<QListWidgetItem*> items = ui->listWidget_2->selectedItems();
+if (items.count()==0)
+{
+QMessageBox mission_install_is_empty;
+mission_install_is_empty.setText("the device install mission list has not been selected any item.");
+mission_install_is_empty.exec();
+return;
+}
+foreach(QListWidgetItem * item, items)
+{
+    delete ui->listWidget_2->takeItem(ui->listWidget_2->row(item));
+}
+
+
+// if (ui->listWidget_2->count()>1)
+// {
+
+//     delete mission_install_item;
+// }else{
+//     ui->listWidget_2 = new QListWidget;
+// }
+
+
+}
+void install_shell::on_current_mission_install_changed(QListWidgetItem * item){
+mission_install_item =item;
+qDebug()<<item->text();
+
 }
 void install_shell::on_host_check_infor_push_button_clicked(){
     if(online_device_item == nullptr){
@@ -662,7 +731,18 @@ void install_shell::install_misson(std::string user_name,std::string Password,st
         nbytes =  ssh_channel_read_nonblocking(channel, buffer, sizeof(buffer), 0);
         ssh_infor_string=ssh_merge_qbyte;
         qDebug().noquote()<<ssh_infor_string;
+        // chassis
+        if(ssh_infor_string.contains("Terminal=true")){
+            ssh_channel_close(channel);
+            ssh_channel_free(channel);
+        }
+        // respi sensor
         if(ssh_infor_string.contains("/etc/dhcpcd.conf recovered")){
+            ssh_channel_close(channel);
+            ssh_channel_free(channel);
+        }
+        //jetson
+        if(ssh_infor_string.contains("Comment=Start ROS2 Application")){
             ssh_channel_close(channel);
             ssh_channel_free(channel);
         }

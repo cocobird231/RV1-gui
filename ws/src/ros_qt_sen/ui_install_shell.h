@@ -55,6 +55,12 @@ public:
     QPushButton *pushButton_8;
     QPushButton *pushButton_9;
     QPushButton *pushButton_10;
+    QLabel *label_12;
+    QLabel *label_13;
+    QLabel *label_14;
+    QLineEdit *lineEdit_5;
+    QLineEdit *lineEdit_6;
+    QPushButton *pushButton_11;
 
     void setupUi(QWidget *install_shell)
     {
@@ -98,8 +104,6 @@ public:
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
         listWidget->setGeometry(QRect(40, 80, 256, 192));
         listWidget_2 = new QListWidget(install_shell);
-        new QListWidgetItem(listWidget_2);
-        new QListWidgetItem(listWidget_2);
         listWidget_2->setObjectName(QString::fromUtf8("listWidget_2"));
         listWidget_2->setGeometry(QRect(470, 80, 256, 192));
         label_4 = new QLabel(install_shell);
@@ -160,6 +164,24 @@ public:
         pushButton_10 = new QPushButton(install_shell);
         pushButton_10->setObjectName(QString::fromUtf8("pushButton_10"));
         pushButton_10->setGeometry(QRect(740, 120, 111, 25));
+        label_12 = new QLabel(install_shell);
+        label_12->setObjectName(QString::fromUtf8("label_12"));
+        label_12->setGeometry(QRect(660, 310, 111, 17));
+        label_13 = new QLabel(install_shell);
+        label_13->setObjectName(QString::fromUtf8("label_13"));
+        label_13->setGeometry(QRect(670, 350, 91, 17));
+        label_14 = new QLabel(install_shell);
+        label_14->setObjectName(QString::fromUtf8("label_14"));
+        label_14->setGeometry(QRect(690, 390, 51, 17));
+        lineEdit_5 = new QLineEdit(install_shell);
+        lineEdit_5->setObjectName(QString::fromUtf8("lineEdit_5"));
+        lineEdit_5->setGeometry(QRect(770, 350, 141, 25));
+        lineEdit_6 = new QLineEdit(install_shell);
+        lineEdit_6->setObjectName(QString::fromUtf8("lineEdit_6"));
+        lineEdit_6->setGeometry(QRect(770, 390, 141, 25));
+        pushButton_11 = new QPushButton(install_shell);
+        pushButton_11->setObjectName(QString::fromUtf8("pushButton_11"));
+        pushButton_11->setGeometry(QRect(670, 440, 241, 25));
 
         retranslateUi(install_shell);
 
@@ -177,15 +199,6 @@ public:
         label_2->setText(QApplication::translate("install_shell", "IP\344\275\215\347\275\256:", nullptr));
         label_3->setText(QApplication::translate("install_shell", "\344\270\273\346\251\237\345\220\215\347\250\261:", nullptr));
         pushButton_5->setText(QApplication::translate("install_shell", "\344\277\256\346\224\271", nullptr));
-
-        const bool __sortingEnabled = listWidget_2->isSortingEnabled();
-        listWidget_2->setSortingEnabled(false);
-        QListWidgetItem *___qlistwidgetitem = listWidget_2->item(0);
-        ___qlistwidgetitem->setText(QApplication::translate("install_shell", "raspberrypi1", nullptr));
-        QListWidgetItem *___qlistwidgetitem1 = listWidget_2->item(1);
-        ___qlistwidgetitem1->setText(QApplication::translate("install_shell", "192.168.1.249", nullptr));
-        listWidget_2->setSortingEnabled(__sortingEnabled);
-
         label_4->setText(QApplication::translate("install_shell", "\350\250\255\345\202\231\351\241\236\345\236\213\357\274\232", nullptr));
         comboBox_2->setItemText(0, QApplication::translate("install_shell", "\346\234\252\345\256\232\347\276\251\344\270\273\346\251\237\351\241\236\345\236\213", nullptr));
         comboBox_2->setItemText(1, QApplication::translate("install_shell", "raspberry pi", nullptr));
@@ -202,9 +215,13 @@ public:
         label_9->setText(QApplication::translate("install_shell", "\344\275\277\347\224\250\350\200\205\345\220\215\347\250\261:", nullptr));
         label_10->setText(QApplication::translate("install_shell", "\345\257\206\347\242\274\357\274\232", nullptr));
         label_11->setText(QApplication::translate("install_shell", "\345\256\211\350\243\235\350\250\255\345\202\231\344\273\273\345\213\231\346\270\205\345\226\256", nullptr));
-        pushButton_8->setText(QApplication::translate("install_shell", "\346\226\260\345\242\236\345\256\211\350\243\235\350\250\255\345\202\231", nullptr));
+        pushButton_8->setText(QApplication::translate("install_shell", "\345\212\240\345\205\245\345\256\211\350\243\235\350\250\255\345\202\231", nullptr));
         pushButton_9->setText(QApplication::translate("install_shell", "\345\210\252\351\231\244\345\256\211\350\243\235\350\250\255\345\202\231", nullptr));
         pushButton_10->setText(QApplication::translate("install_shell", "\345\237\267\350\241\214\345\256\211\350\243\235\344\273\273\345\213\231", nullptr));
+        label_12->setText(QApplication::translate("install_shell", "\351\240\220\350\250\255\344\275\277\347\224\250\350\200\205\345\270\263\346\210\266", nullptr));
+        label_13->setText(QApplication::translate("install_shell", "\344\275\277\347\224\250\350\200\205\345\220\215\347\250\261\357\274\232", nullptr));
+        label_14->setText(QApplication::translate("install_shell", "\345\257\206\347\242\274\357\274\232", nullptr));
+        pushButton_11->setText(QApplication::translate("install_shell", "\345\204\262\345\255\230", nullptr));
     } // retranslateUi
 
 };
