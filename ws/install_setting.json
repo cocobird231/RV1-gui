@@ -4,7 +4,10 @@
     "default_net_mask": "255.255.255.0",
     "install_config": {
         "raspberrypi1": {
+            "IP": "dhcp",
+            "Package_Name": "py_gps",
             "device": "raspberry pi",
+            "interface": "eth0",
             "password": "password",
             "user": "user"
         }

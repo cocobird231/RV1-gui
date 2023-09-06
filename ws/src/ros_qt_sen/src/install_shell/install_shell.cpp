@@ -657,7 +657,7 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
 
     }
     for(int i =0;i<task_count;i++){
-        install_mission_threads[i]->join();
+        install_mission_threads[i]->detach();
     }
 
 }
