@@ -12,12 +12,12 @@ class install_option : public QWidget
     Q_OBJECT
 
 public:
-    explicit install_option(QWidget *parent = nullptr,QString host_name="",QString device="",QString pack_name="",QString interface="",QString ip="");
+    explicit install_option(QWidget *parent = nullptr,QString mac_address="",QString device="",QString pack_name="",QString interface="",QString ip="");
     ~install_option();
 
 private:
     Ui::install_option *ui;
-    QString Host_ename="";
+    QString Mac_address="";
     QString Device="";
     QString Pack_name="";
     QString Interface="";

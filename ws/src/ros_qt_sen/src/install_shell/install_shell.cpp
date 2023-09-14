@@ -134,13 +134,14 @@ void install_shell::on_Interface_Update_PushButtun_clicked(){
 
 }
 void install_shell::on_Interface_Choose_PushButtun_clicked(){
+
         ui->pushButton_2->setEnabled(false);
         int list_count=ui->listWidget->count();
-        for (int i = list_count - 1; i >= 0; --i) {
-            QListWidgetItem *item = ui->listWidget->takeItem(i);
-            delete item; // Remember to delete the item manually
-        }
 
+        for (int i = list_count - 1; i >0; --i) {
+          ui->listWidget->takeItem(i);
+        }
+        qDebug()<<"testset";
         is_opened_host_address.clear();
         is_opened_host_name.clear();
         is_opened_host.clear();
@@ -261,14 +262,8 @@ void install_shell::on_add_mission_pushButton_clicked(){
     foreach(QListWidgetItem* item, items)
     {
         QString add_row_string = item->text();
-        QString add_string = "";
-        if (add_row_string.contains(":"))
-        {
-            add_string = add_row_string.split(":")[0];
-        }else if (add_row_string.contains("/"))
-        {
-            add_string = add_row_string.split("/")[1];
-        }
+        QString add_string = item->text();
+
         QList<QListWidgetItem *> find_string_items=ui->listWidget_2->findItems(add_string,Qt::MatchCaseSensitive);
         qDebug()<<QString(find_string_items.length());
         if(find_string_items.length()>=1){
@@ -339,7 +334,10 @@ void install_shell::on_host_check_infor_push_button_clicked(){
     foreach(QListWidgetItem* item, items)
     {
         QString online_Device_text = item->text();
-        std::string hostname="";
+        QString mac_address=item->text().split("/")[1];
+        QString host_name=item->text().split("/")[0];
+        std::string ip_address = item->text().split("/")[2].toStdString();
+
         std::string device_type = "";
         QFile host_list_file("host_list.json");
         if(!host_list_file.open(QIODevice::ReadWrite)) {
@@ -351,24 +349,23 @@ void install_shell::on_host_check_infor_push_button_clicked(){
         QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
         QJsonObject root = host_list_doc.object();
         QJsonArray host_name_json_list = root["host_name_array"].toArray();
-        QJsonObject contant=root["IP_list"].toObject();
+        QJsonObject contant=root["mac_list"].toObject();
         QString DNS_replace = "";
-        if (online_Device_text.contains("/"))
-        {
-            DNS_replace=online_Device_text.split("/")[0];
-            hostname= online_Device_text.split("/")[1].toStdString();
-            for(int i =0;i<host_name_json_list.size();i++){
-                QJsonObject host_object =contant[host_name_json_list[i].toString()].toObject();
-                std::string host_ip = host_object["ip_address"].toString().toStdString();
-                if (host_ip==hostname)
-                {
-                    device_type=host_object["Device"].toString().toStdString();
-                }
-            }
-        }else{
-            hostname= online_Device_text.split(":")[0].toStdString();
-            device_type =contant[QString::fromStdString(hostname)].toObject()["Device"].toString().toStdString();
-        }
+        // if (online_Device_text.contains("/"))
+        // {
+        //     DNS_replace=online_Device_text.split("/")[0];
+        //     hostname= online_Device_text.split("/")[1].toStdString();
+        //     for(int i =0;i<host_name_json_list.size();i++){
+        //         QJsonObject host_object =contant[host_name_json_list[i].toString()].toObject();
+        //         std::string host_ip = host_object["ip_address"].toString().toStdString();
+        //         if (host_ip==hostname)
+        //         {
+        //             device_type=host_object["Device"].toString().toStdString();
+        //         }
+        //     }
+        // }else{
+            // hostname= online_Device_text.split(":")[0].toStdString();
+        // }
         //need load host and user config in file.
         QFile install_file("install_setting.json");
         if(!install_file.open(QIODevice::ReadWrite)) {
@@ -379,21 +376,30 @@ void install_shell::on_host_check_infor_push_button_clicked(){
         QJsonObject install_root = install_setting_json_document.object();
         QJsonObject install_config = install_root["install_config"].toObject();
         QJsonObject host;
-        if (DNS_replace !="")
-        {
-            host = install_config[DNS_replace].toObject();
+        // if (DNS_replace !="")
+        // {
+        //     host = install_config[DNS_replace].toObject();
 
-        }else{
-            host = install_config[QString::fromStdString(hostname)].toObject();
-        }
+        // }else{
+            host = install_config[mac_address].toObject();
+            qDebug()<<mac_address;
+
+        // }
         
         std::string user = host["user"].toString().toStdString();
         std::string password = host["password"].toString().toStdString();
+        device_type = host["device"].toString().toStdString();
 
         install_setting_json_document.setObject(root);
 
         install_file.close();
-        check_ssh_device_information(hostname,user,password,device_type);
+        qDebug()<<QString("test for ssh");
+        qDebug()<<QString::fromStdString(ip_address);
+        qDebug()<<QString::fromStdString(user);
+        qDebug()<<QString::fromStdString(password);
+        qDebug()<<QString::fromStdString(device_type);
+
+        check_ssh_device_information(ip_address,user,password,device_type);
     }
 
 
@@ -508,6 +514,7 @@ void install_shell::check_ssh_device_information(std::string host_name ,std::str
 }
 void install_shell::check_icmp_has_open(QString host_name){
             QProcess ping_process;
+
             QString command_string = "ping "+host_name+" -c 1 -w 1 -W 1 ";
             ping_process.start(command_string,QIODevice::ReadOnly);
             ping_process.waitForFinished(-1);
@@ -515,16 +522,37 @@ void install_shell::check_icmp_has_open(QString host_name){
             ping_process.kill();
             if(result.contains("ttl")){
                 is_opened_host_address.append(host_name);
+
+                QProcess mac_address_process;
+                std::string search_mac_address_command_string = "arp -a "+host_name.toStdString();
+                QString QS_search_mac_address_command_string = QString::fromStdString(search_mac_address_command_string);
+                qDebug()<<QS_search_mac_address_command_string;
+
+                mac_address_process.start(QS_search_mac_address_command_string,QIODevice::ReadOnly);
+                mac_address_process.waitForFinished(-1);
+                QString mac_result = QString::fromLocal8Bit(mac_address_process.readAllStandardOutput());
+                qDebug()<<mac_result;
+                if(mac_result.contains("no match found")){
+                    return;
+                }
+                mac_result = mac_result.split("at ")[1].split(" [")[0];
+                mac_address_process.kill();
+                qDebug()<<mac_result;
+
+                is_opened_host_address.append(host_name);
+                // Host Name
                 QProcess dns_process;
                 QString dns_command_string = "nslookup "+host_name;
                 dns_process.start(dns_command_string,QIODevice::ReadOnly);
                 dns_process.waitForFinished(-1);
                 QString dns_result = QString::fromLocal8Bit(dns_process.readAllStandardOutput());
                 dns_process.kill();
+
+
                 if(dns_result.contains("name = ")){
                     QString DNS_host_name =dns_result.split("name = ")[1].split(".")[0];
-                    is_opened_host_name.append(DNS_host_name);
-                    is_opened_host.append(DNS_host_name+":"+host_name);
+                    is_opened_host_name.append(DNS_host_name+"/"+mac_result+"/"+host_name);
+                    is_opened_host.append(DNS_host_name+"/"+mac_result+"/"+host_name);
                     QString function_in_call_host_name  = host_name;
                     is_opened_host_map[DNS_host_name]=function_in_call_host_name;
 
@@ -541,19 +569,26 @@ void install_shell::check_icmp_has_open(QString host_name){
                     QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
                     QJsonObject root = host_list_doc.object();
                     QJsonArray host_name_json_list = root["host_name_array"].toArray();
-                    QJsonObject ip_list = root["IP_list"].toObject();
+                    QJsonObject mac_list = root["mac_list"].toObject();
                     QString Dns_name;
-                    for(const QString& key : ip_list.keys()) {
-                        QJsonObject host_obj = ip_list[key].toObject();
-                        QString value =host_obj["ip_address"].toString();
-                        if (value == host_name){
-                            Dns_name=key;
-                            is_opened_host.append(Dns_name+"/"+host_name);
-                        }
-                    }
+                    
+                    // for(const QString& key : mac_list.keys()) {
+                    //     QJsonObject host_obj = mac_list[key].toObject();
+                    //     QString ip_value =host_obj["ip_address"].toString();
+                    //     // host_name is ip
+                    //     QString mac_address_in_list = key.split("/")[1];
+                    //     QString host_name_in_list = key.split("/")[0];
+                    //     QString ip_address_in_list = key.split("/")[2];
+
+                    //     if (ip_value == host_name){
+                    //         Dns_name=ip_value;
+                    //     }
+                    // }
                     if(Dns_name.isEmpty()){
-                        is_opened_host.append(host_name+"/"+host_name);
+                        Dns_name ="Unkown";
                     }
+                    is_opened_host.append(Dns_name+"/"+mac_result+"/"+host_name);
+                    is_opened_host_name.append(Dns_name+"/"+mac_result+"/"+host_name);
                 }
             }
 
@@ -585,48 +620,55 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
         QJsonObject root = host_list_doc.object();
         QJsonArray host_name_json_list = root["host_name_array"].toArray();
-        QJsonObject contant=root["IP_list"].toObject();
+        QJsonObject contant=root["mac_list"].toObject();
         QJsonObject host_contant ;
         //有DNS紀錄的
         qDebug()<<is_opened_host_name;
-        for(QString host_name : is_opened_host_name){
-            qDebug()<<host_name;
-            if(!host_name_json_list.contains(host_name)){
+        for(QString host_information : is_opened_host_name){
+            qDebug()<<host_information;
+            
+            QString mac_address = host_information.split("/")[1];
+            QString current_host_name = host_information.split("/")[0];
+            QString ip_address = host_information.split("/")[2];
+
+            if(!host_name_json_list.contains(current_host_name)){
                 bool array_duplication_check = false;
                 for(int i =0;i<host_name_json_list.size();i++){
-                    if(host_name_json_list[i].toString()==host_name){
+                    if(host_name_json_list[i].toString()==host_information){
                         array_duplication_check = true;
                     };
                 }
                 if(!array_duplication_check){
-                    host_name_json_list.append(host_name);
+                    host_name_json_list.append(host_information);
                 }
-                host_contant = contant[host_name].toObject();
-                host_contant["ip_address"]=is_opened_host_map[host_name];
+                host_contant = contant[host_information].toObject();
+                host_contant["ip_address"]=ip_address;
                 host_contant["manual"] = false;
                 host_contant["Device"] = ui->comboBox_2->itemText(0);
 
-                contant[host_name] = host_contant;
-            }else{
-                if(contant[host_name].toObject()["ip_address"]!=is_opened_host_map[host_name]){
-                    bool array_duplication_check = false;
-                    for(int i =0;i<host_name_json_list.size();i++){
-                        if(host_name_json_list[i].toString()==host_name){
-                            array_duplication_check = true;
-                        };
-                    }
-                    if(!array_duplication_check){
-                        host_name_json_list.append(host_name);
-                    }
-                    host_contant = contant[host_name].toObject();
-                    host_contant["ip_address"]=is_opened_host_map[host_name];
-                    contant[host_name] = host_contant;
-                }
-            }
+                contant[host_information] = host_contant;
+            } //refresh current host name and ip address
+
+            // else{
+            //     if(contant[host_name].toObject()["ip_address"]!=is_opened_host_map[host_name]){
+            //         bool array_duplication_check = false;
+            //         for(int i =0;i<host_name_json_list.size();i++){
+            //             if(host_name_json_list[i].toString()==host_name){
+            //                 array_duplication_check = true;
+            //             };
+            //         }
+            //         if(!array_duplication_check){
+            //             host_name_json_list.append(host_name);
+            //         }
+            //         host_contant = contant[host_name].toObject();
+            //         host_contant["ip_address"]=is_opened_host_map[host_name];
+            //         contant[host_name] = host_contant;
+            //     }
+            // }
         }
 
         qDebug()<<"update file close file.";
-        root["IP_list"]=contant;
+        root["mac_list"]=contant;
         root["host_name_array"]=host_name_json_list;
         host_list_doc.setObject(root);
         host_list_file.resize(0);
@@ -654,6 +696,7 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
 
     int task_count = ui->listWidget_2->count();
     qDebug()<<QString(task_count);
+    std::string* mac_array =new std::string[task_count];
     std::string* host_name_array =new std::string[task_count];
     std::string* user_name_array =new std::string[task_count];
     std::string* Password_array =new std::string[task_count];
@@ -673,14 +716,17 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
     install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject root = install_setting_json_document.object();
     QJsonObject install_config = root["install_config"].toObject();
+    
     for(int i=0;i<task_count;i++){
         QListWidgetItem* listwidget_current = ui->listWidget_2->item(i);
-        host_name_array[i] = listwidget_current->text().toStdString();
-        QJsonObject host_object=install_config[ QString::fromStdString(host_name_array[i])].toObject();
-        if (!install_config.contains(QString::fromStdString(host_name_array[i])))
+        mac_array[i] =  listwidget_current->text().split("/")[1].toStdString();
+        QJsonObject host_object=install_config[ QString::fromStdString(mac_array[i])].toObject();
+        if (!install_config.contains(QString::fromStdString(mac_array[i])))
         {
+            qDebug()<<QString("install_config no mac in list.");
             return;
         }
+        host_name_array[i] = host_object["host_name"].toString().toStdString();
         user_name_array[i]=host_object["user"].toString().toStdString();
         Password_array[i]=host_object["password"].toString().toStdString();
         pack_name_array[i]=host_object["Package_Name"].toString().toStdString();
@@ -689,7 +735,6 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
     }
     install_file.close();
     qDebug() <<"install_mission_threads";
-
     std::shared_ptr<std::thread>* install_mission_threads = new std::shared_ptr<std::thread>[task_count];
     for(int i=0;i<task_count;i++){
         std::string host_name_ =host_name_array[i];
@@ -698,7 +743,8 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         std::string pack_name_ =pack_name_array[i];
         std::string interface_ =interface_array[i];
         std::string ip_ =ip_array[i];
-        
+        qDebug()<<"test for install";
+        qDebug()<<QString::fromStdString(host_name_);
         install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
 
     }
@@ -797,35 +843,9 @@ void install_shell::install_misson(std::string user_name,std::string Password,st
     qDebug().noquote()<<ssh_infor_string;
     qDebug()<<QString("Done"); 
 }
-void install_shell::test_event_for_listwidgit_changed(){
-    if (ui->listWidget_3==nullptr)
-    {
-        return;
-    }
-    
-    QList<QListWidgetItem*> items = ui->listWidget_3->selectedItems();
-    if (items.count()==0)
-    {
-    QMessageBox mission_install_is_empty;
-    mission_install_is_empty.setText("the device install list has not been selected any item.");
-    mission_install_is_empty.exec();
-    return;
-    }else if(items.count()>=2){
-        QMessageBox mission_install_is_empty;
-        mission_install_is_empty.setText("mutiple select item.");
-        mission_install_is_empty.exec();
-    return; 
-    }
-    qDebug()<<QString("test");
 
-    foreach(QListWidgetItem* item, items)
-    {
-        QString test_string = ui->listWidget_3->takeItem(ui->listWidget_2->row(item))->text();
-        qDebug()<<test_string;
-    }
 
-    
-}
+
 void install_shell::on_current_host_information_changed(QListWidgetItem * item){
     
         host_name_item=item;
@@ -839,7 +859,7 @@ void install_shell::on_current_host_information_changed(QListWidgetItem * item){
         QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
         QJsonObject root = host_list_doc.object();
         QJsonArray host_name_json_list = root["host_name_array"].toArray();
-        QJsonObject contant=root["IP_list"].toObject();
+        QJsonObject contant=root["mac_list"].toObject();
         QJsonObject currentItem_object =contant[item->text()].toObject();
 
         QFile install_file("install_setting.json");
@@ -894,13 +914,14 @@ void install_shell::on_update_host_information_push_button_clicked(){
             QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
             QJsonObject root = host_list_doc.object();
             QJsonArray host_name_json_list = root["host_name_array"].toArray();
-            QJsonObject contant=root["IP_list"].toObject();
+            QJsonObject contant=root["mac_list"].toObject();
             QJsonObject host_contant = contant[host_name].toObject();
             if(!(!host_contant["manual"].toBool()&& host_contant["ip_address"] !=ip)){
                 host_contant["ip_address"] = ip;
                 host_contant["Device"] = device;
                 contant[host_name] =host_contant;
-                root["IP_list"]=contant;
+
+                root["mac_list"]=contant;
                 host_list_doc.setObject(root);
                 host_list_file.resize(0);
                 host_list_file.write(host_list_doc.toJson());
@@ -936,7 +957,7 @@ void install_shell::on_update_host_information_push_button_clicked(){
                 QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
                 QJsonObject root = host_list_doc.object();
                 QJsonArray host_name_json_list = root["host_name_array"].toArray();
-                QJsonObject contant=root["IP_list"].toObject();
+                QJsonObject contant=root["mac_list"].toObject();
                 contant.remove(host_name_item->text());
                 for(int i =0;i<host_name_json_list.size();i++){
                     if(host_name_json_list[i].toString()==host_name){
@@ -954,12 +975,13 @@ void install_shell::on_update_host_information_push_button_clicked(){
                 }
                 host_name_item->setText(host_name);
                 root["host_name_array"] =host_name_json_list;
+                // contant may be bug
                 QJsonObject host_contant = contant[host_name].toObject();
                 host_contant["ip_address"] = ip;
                 host_contant["Device"] = device;
                 host_contant["manual"]=manual;
                 contant[host_name] =host_contant;
-                root["IP_list"]=contant;
+                root["mac_list"]=contant;
                 host_list_doc.setObject(root);
                 host_list_file.resize(0);
                 host_list_file.write(host_list_doc.toJson());
@@ -982,18 +1004,24 @@ void install_shell::on_update_host_information_push_button_clicked(){
     if(!install_file.open(QIODevice::ReadWrite)) {
       qDebug() << "File open error,the premission may denied.";
     } else {
-      qDebug() <<"install_setting File open!";
+      qDebug() <<"install_setting File open!teset__";
     }
     QJsonObject root = install_setting_json_document.object();
     QJsonObject install_config = root["install_config"].toObject();
-    QJsonObject host = install_config[host_name].toObject();
+    QString install_config_mac = host_name.split("/")[1];
+    QJsonObject host = install_config[install_config_mac].toObject();
+
+    host["host_name"]=host_name.split("/")[0];
+    host["ip_address"]=host_name.split("/")[2];
     host["user"]=user_name;
     host["password"]=password;
     host["device"]=device;
-    install_config[host_name]=host;
+
+    install_config[install_config_mac]=host;
     root["install_config"]=install_config;
     install_setting_json_document.setObject(root);
     install_file.resize(0);
+
     install_file.write(install_setting_json_document.toJson());
     install_file.close();
     if(ui->pushButton_2->isEnabled()){
@@ -1018,7 +1046,7 @@ void install_shell::on_creat_host_information_push_button_clicked(){
     QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
     QJsonObject root = host_list_doc.object();
     QJsonArray host_name_json_list = root["host_name_array"].toArray();
-    QJsonObject contant=root["IP_list"].toObject();
+    QJsonObject contant=root["mac_list"].toObject();
     QJsonObject host_contant = contant[host_name].toObject();
     bool array_duplication_check = false;
     for(int i =0;i<host_name_json_list.size();i++){
@@ -1033,7 +1061,7 @@ void install_shell::on_creat_host_information_push_button_clicked(){
     host_contant["Device"] = device;
     host_contant["manual"] = manual;
     contant[host_name] = host_contant;
-    root["IP_list"]=contant;
+    root["mac_list"]=contant;
     root["host_name_array"]=host_name_json_list;
     host_list_doc.setObject(root);
     host_list_file.resize(0);
@@ -1106,7 +1134,7 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
     QJsonObject root = host_list_doc.object();
     QJsonArray host_name_json_list = root["host_name_array"].toArray();
-    QJsonObject contant=root["IP_list"].toObject();
+    QJsonObject contant=root["mac_list"].toObject();
     QJsonObject host_contant = contant[host_name].toObject();
     contant.remove(host_name);
     for(int i =0;i<host_name_json_list.size();i++){
@@ -1114,7 +1142,7 @@ void install_shell::on_delet_host_information_push_button_clicked(){
             host_name_json_list.removeAt(i);
         };
     }
-    root["IP_list"] = contant;
+    root["mac_list"] = contant;
     root["host_name_array"] = host_name_json_list;
     host_list_doc.setObject(root);
     host_list_file.resize(0);
@@ -1184,7 +1212,7 @@ void install_shell::on_install_option_push_button_clicked(){
     foreach(QListWidgetItem* item, items)
     {
     QString DNS_replace = "";
-    QString host_name = "";
+    QString mac_address = "";
     QString item_text=item->text();
     QJsonObject host;
     QFile install_file("install_setting.json");
@@ -1198,15 +1226,11 @@ void install_shell::on_install_option_push_button_clicked(){
     install_setting_json_document = QJsonDocument::fromJson(install_byte);
     QJsonObject install_root = install_setting_json_document.object();
     QJsonObject install_config = install_root["install_config"].toObject();
-    QString SetHost = "";
-    if(item_text.contains("/")){
-        host_name=item_text.split("/")[1];
-        DNS_replace=item_text.split("/")[0];
-        SetHost =DNS_replace;
-    }else{
-        host_name=item_text.split(":")[0];
-        SetHost =host_name;
-    }
+    QString SetHost = item->text().split("/")[1];
+    mac_address=item_text.split("/")[1];
+
+
+
         host = install_config[SetHost].toObject();
         QString user_name = host["user"].toString();
         QString password = host["password"].toString();
@@ -1216,7 +1240,7 @@ void install_shell::on_install_option_push_button_clicked(){
         QString pack_names = host["pack_names"].toString();
         install_setting_json_document.setObject(install_root);
         install_file.close();
-        install_option* the_install_option =new install_option(nullptr,host_name,device,pack_names,interface,ip_config);
+        install_option* the_install_option =new install_option(nullptr,mac_address,device,pack_names,interface,ip_config);
         the_install_option->show();
     }
 

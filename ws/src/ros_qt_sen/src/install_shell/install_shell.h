@@ -50,7 +50,6 @@ private slots:
     void on_add_mission_pushButton_clicked();
     void on_delet_mission_pushButton_clicked();
     void on_current_mission_install_changed(QListWidgetItem * item);
-    void test_event_for_listwidgit_changed();
 };
 
 #endif // INSTALL_SHELL_H

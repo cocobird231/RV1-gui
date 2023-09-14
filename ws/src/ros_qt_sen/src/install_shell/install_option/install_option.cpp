@@ -9,19 +9,34 @@
 QJsonDocument install_option_file_json_document;
 
 
-install_option::install_option(QWidget *parent,QString host_name,QString device,QString pack_name,QString interface,QString ip) :
+install_option::install_option(QWidget *parent,QString mac_address,QString device,QString pack_name,QString interface,QString ip) :
     QWidget(parent),
     ui(new Ui::install_option)
 {
     ui->setupUi(this);
 
-    this->Host_ename =host_name;
+    this->Mac_address =mac_address;
     this->Device=device;
     this->Pack_name=pack_name;
     this->Interface = interface;
     this->Ip=ip;
 
-    ui->label_5->setText(host_name);
+
+ QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
+    } else {
+        qDebug() <<"install_setting File open!";
+    }
+    QByteArray install_setting_file = install_file.readAll();
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonObject install_setting_root = install_setting_json_document.object();
+    QJsonObject install_config = install_setting_root["install_config"].toObject();
+    QJsonObject install_host  =install_config[mac_address].toObject();
+
+
+
+    ui->label_5->setText(install_host["host_name"].toString());
     ui->lineEdit->setText(interface!="" ? interface:"eth0");
     ui->lineEdit_2->setText(ip!="" ? ip:"dhcp");
     connect(ui->pushButton,&QPushButton::clicked,this,&install_option::on_close_push_button_clicked);
@@ -69,7 +84,7 @@ install_option::install_option(QWidget *parent,QString host_name,QString device,
 }
 
 void install_option::on_save_and_close_push_button_clicked(){
-    QString host_name =ui->label_5->text();
+    QString mac_address =this->Mac_address;
     QString Package_Name = ui->comboBox->currentText();
     QString interface = ui->lineEdit->text();
     QString IP = ui->lineEdit_2->text();
@@ -84,11 +99,11 @@ void install_option::on_save_and_close_push_button_clicked(){
     QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject install_setting_root = install_setting_json_document.object();
     QJsonObject install_config = install_setting_root["install_config"].toObject();
-    QJsonObject install_host  =install_config[host_name].toObject();
+    QJsonObject install_host  =install_config[mac_address].toObject();
     install_host["Package_Name"]=Package_Name;
     install_host["interface"]=interface;
     install_host["IP"]=IP;
-    install_config[host_name] = install_host;
+    install_config[mac_address] = install_host;
     install_setting_root["install_config"]=install_config;
     install_setting_json_document.setObject(install_setting_root);
     install_file.resize(0);
