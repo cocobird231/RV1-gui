@@ -45,10 +45,13 @@ std::shared_ptr<std::thread> the_thread;
     connect(ui->pushButton, &QPushButton::clicked, this, &install_shell::on_Interface_Update_PushButtun_clicked);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &install_shell::on_Interface_Choose_PushButtun_clicked);
     connect(ui->pushButton_5, &QPushButton::clicked, this, &install_shell::on_update_host_information_push_button_clicked);
-    connect(ui->listWidget,&QListWidget::currentItemChanged,this,&install_shell::on_current_online_device_changed);
+    
+    //connect(ui->listWidget,&QListWidget::currentItemChanged,this,&install_shell::on_current_online_device_changed);
+    // connect(ui->listWidget,&QListWidget::itemClicked,this,&install_shell::on_current_online_device_changed);
+
     // connect(ui->listWidget_2,&QListWidget::currentItemChanged,this,&install_shell::on_current_mission_install_changed);
 
-    connect(ui->listWidget_3,&QListWidget::currentItemChanged,this,&install_shell::on_current_host_information_changed);
+    connect(ui->listWidget_3,&QListWidget::itemClicked,this,&install_shell::on_current_host_information_changed);
 
     connect(ui->checkBox,&QCheckBox::stateChanged,this,&install_shell::on_identity_hos_name_manual_state_changed);
     connect(ui->pushButton_6,&QPushButton::clicked,this,&install_shell::on_creat_host_information_push_button_clicked);
@@ -229,36 +232,54 @@ void install_shell::check_ssh_has_open(QString host_name,QString user_name){
 
     }
 }
-void install_shell::on_current_online_device_changed(QListWidgetItem * item){
-    online_device_item =std::make_shared<QListWidgetItem>(*item);
+// void install_shell::on_current_online_device_changed(QListWidgetItem * item){
+//     online_device_item =std::make_shared<QListWidgetItem>(*item);
     
-}
+// }
 void install_shell::on_add_mission_pushButton_clicked(){
-    if(online_device_item==nullptr){
-        QMessageBox Device_no_select_message;
-        Device_no_select_message.setText("Choose the device in device list.");
-        Device_no_select_message.exec();
+
+
+    if (ui->listWidget==nullptr)
+    {
         return;
     }
-    QString add_row_string = online_device_item->text();
-    QString add_string = "";
-    if (add_row_string.contains(":"))
+    
+    QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
+    if (items.count()==0)
     {
-        add_string = add_row_string.split(":")[0];
-    }else if (add_row_string.contains("/"))
-    {
-        add_string = add_row_string.split("/")[1];
+    QMessageBox mission_install_is_empty;
+    mission_install_is_empty.setText("the device install list has not been selected any item.");
+    mission_install_is_empty.exec();
+    return;
+    }else if(items.count()>=2){
+        QMessageBox mission_install_is_empty;
+        mission_install_is_empty.setText("mutiple select item.");
+        mission_install_is_empty.exec();
+    return; 
     }
 
-    QList<QListWidgetItem *> find_string_items=ui->listWidget_2->findItems(add_string,Qt::MatchCaseSensitive);
-    qDebug()<<QString(find_string_items.length());
-    if(find_string_items.length()>=1){
-        QMessageBox mission_is_in_list;
-        mission_is_in_list.setText("the mission list has contains the Item.");
-        mission_is_in_list.exec();
-        return;
-    }
+    foreach(QListWidgetItem* item, items)
+    {
+        QString add_row_string = item->text();
+        QString add_string = "";
+        if (add_row_string.contains(":"))
+        {
+            add_string = add_row_string.split(":")[0];
+        }else if (add_row_string.contains("/"))
+        {
+            add_string = add_row_string.split("/")[1];
+        }
+        QList<QListWidgetItem *> find_string_items=ui->listWidget_2->findItems(add_string,Qt::MatchCaseSensitive);
+        qDebug()<<QString(find_string_items.length());
+        if(find_string_items.length()>=1){
+            QMessageBox mission_is_in_list;
+            mission_is_in_list.setText("the mission list has contains the Item.");
+            mission_is_in_list.exec();
+            return;
+        }
         ui->listWidget_2->addItem(add_string);
+    }
+
 
     
 }
@@ -296,65 +317,89 @@ qDebug()<<item->text();
 
 }
 void install_shell::on_host_check_infor_push_button_clicked(){
-    if(online_device_item == nullptr){
+    if (ui->listWidget==nullptr)
+    {
         return;
     }
-    QString online_Device_text = online_device_item->text();
-    std::string hostname="";
-    std::string device_type = "";
-    QFile host_list_file("host_list.json");
-    if(!host_list_file.open(QIODevice::ReadWrite)) {
-    qDebug() << "ip_mapping open error,the premission may denied.";
-    } else {
-    qDebug() <<"ip_mapping File open!";
-    }
-    QByteArray host_list_file_BA_file = host_list_file.readAll();
-    QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
-    QJsonObject root = host_list_doc.object();
-    QJsonArray host_name_json_list = root["host_name_array"].toArray();
-    QJsonObject contant=root["IP_list"].toObject();
-    QString DNS_replace = "";
-    if (online_Device_text.contains("/"))
-    {
-        DNS_replace=online_Device_text.split("/")[0];
-        hostname= online_Device_text.split("/")[1].toStdString();
-        for(int i =0;i<host_name_json_list.size();i++){
-            QJsonObject host_object =contant[host_name_json_list[i].toString()].toObject();
-            std::string host_ip = host_object["ip_address"].toString().toStdString();
-            if (host_ip==hostname)
-            {
-                device_type=host_object["Device"].toString().toStdString();
-            }
-        }
-    }else{
-        hostname= online_Device_text.split(":")[0].toStdString();
-        device_type =contant[QString::fromStdString(hostname)].toObject()["Device"].toString().toStdString();
-    }
-    //need load host and user config in file.
-    QFile install_file("install_setting.json");
-    if(!install_file.open(QIODevice::ReadWrite)) {
-      qDebug() << "File open error,the premission may denied.";
-    } else {
-      qDebug() <<"install_setting File open!";
-    }
-    QJsonObject install_root = install_setting_json_document.object();
-    QJsonObject install_config = install_root["install_config"].toObject();
-    QJsonObject host;
-    if (DNS_replace !="")
-    {
-        host = install_config[DNS_replace].toObject();
-
-    }else{
-        host = install_config[QString::fromStdString(hostname)].toObject();
-    }
     
-    std::string user = host["user"].toString().toStdString();
-    std::string password = host["password"].toString().toStdString();
+    QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
+    if (items.count()==0)
+    {
+    QMessageBox mission_install_is_empty;
+    mission_install_is_empty.setText("the device install list has not been selected any item.");
+    mission_install_is_empty.exec();
+    return;
+    }else if(items.count()>=2){
+        QMessageBox mission_install_is_empty;
+        mission_install_is_empty.setText("mutiple select item.");
+        mission_install_is_empty.exec();
+    return; 
+    }
 
-    install_setting_json_document.setObject(root);
+    foreach(QListWidgetItem* item, items)
+    {
+        QString online_Device_text = item->text();
+        std::string hostname="";
+        std::string device_type = "";
+        QFile host_list_file("host_list.json");
+        if(!host_list_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "ip_mapping open error,the premission may denied.";
+        } else {
+        qDebug() <<"ip_mapping File open!";
+        }
+        QByteArray host_list_file_BA_file = host_list_file.readAll();
+        QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
+        QJsonObject root = host_list_doc.object();
+        QJsonArray host_name_json_list = root["host_name_array"].toArray();
+        QJsonObject contant=root["IP_list"].toObject();
+        QString DNS_replace = "";
+        if (online_Device_text.contains("/"))
+        {
+            DNS_replace=online_Device_text.split("/")[0];
+            hostname= online_Device_text.split("/")[1].toStdString();
+            for(int i =0;i<host_name_json_list.size();i++){
+                QJsonObject host_object =contant[host_name_json_list[i].toString()].toObject();
+                std::string host_ip = host_object["ip_address"].toString().toStdString();
+                if (host_ip==hostname)
+                {
+                    device_type=host_object["Device"].toString().toStdString();
+                }
+            }
+        }else{
+            hostname= online_Device_text.split(":")[0].toStdString();
+            device_type =contant[QString::fromStdString(hostname)].toObject()["Device"].toString().toStdString();
+        }
+        //need load host and user config in file.
+        QFile install_file("install_setting.json");
+        if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
+        } else {
+        qDebug() <<"install_setting File open!";
+        }
+        QJsonObject install_root = install_setting_json_document.object();
+        QJsonObject install_config = install_root["install_config"].toObject();
+        QJsonObject host;
+        if (DNS_replace !="")
+        {
+            host = install_config[DNS_replace].toObject();
 
-    install_file.close();
-    check_ssh_device_information(hostname,user,password,device_type);
+        }else{
+            host = install_config[QString::fromStdString(hostname)].toObject();
+        }
+        
+        std::string user = host["user"].toString().toStdString();
+        std::string password = host["password"].toString().toStdString();
+
+        install_setting_json_document.setObject(root);
+
+        install_file.close();
+        check_ssh_device_information(hostname,user,password,device_type);
+    }
+
+
+
+
+   
 
 }
 
@@ -543,6 +588,7 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         QJsonObject contant=root["IP_list"].toObject();
         QJsonObject host_contant ;
         //有DNS紀錄的
+        qDebug()<<is_opened_host_name;
         for(QString host_name : is_opened_host_name){
             qDebug()<<host_name;
             if(!host_name_json_list.contains(host_name)){
@@ -751,8 +797,37 @@ void install_shell::install_misson(std::string user_name,std::string Password,st
     qDebug().noquote()<<ssh_infor_string;
     qDebug()<<QString("Done"); 
 }
+void install_shell::test_event_for_listwidgit_changed(){
+    if (ui->listWidget_3==nullptr)
+    {
+        return;
+    }
+    
+    QList<QListWidgetItem*> items = ui->listWidget_3->selectedItems();
+    if (items.count()==0)
+    {
+    QMessageBox mission_install_is_empty;
+    mission_install_is_empty.setText("the device install list has not been selected any item.");
+    mission_install_is_empty.exec();
+    return;
+    }else if(items.count()>=2){
+        QMessageBox mission_install_is_empty;
+        mission_install_is_empty.setText("mutiple select item.");
+        mission_install_is_empty.exec();
+    return; 
+    }
+    qDebug()<<QString("test");
 
+    foreach(QListWidgetItem* item, items)
+    {
+        QString test_string = ui->listWidget_3->takeItem(ui->listWidget_2->row(item))->text();
+        qDebug()<<test_string;
+    }
+
+    
+}
 void install_shell::on_current_host_information_changed(QListWidgetItem * item){
+    
         host_name_item=item;
         QFile host_list_file("host_list.json");
         if(!host_list_file.open(QIODevice::ReadWrite)) {
@@ -954,7 +1029,6 @@ void install_shell::on_creat_host_information_push_button_clicked(){
     if(!array_duplication_check){
         host_name_json_list.append(host_name);
     }
-    host_name_json_list.append(host_name);
     host_contant["ip_address"] = ip;
     host_contant["Device"] = device;
     host_contant["manual"] = manual;
@@ -995,7 +1069,33 @@ void install_shell::on_creat_host_information_push_button_clicked(){
 }
 
 void install_shell::on_delet_host_information_push_button_clicked(){
-    QString host_name = host_name_item->text();
+
+    if (ui->listWidget_3==nullptr)
+    {
+        qDebug()<<QString("null");
+        return;
+        /* code */
+    }
+    
+    QList<QListWidgetItem*> items = ui->listWidget_3->selectedItems();
+    if (items.count()==0)
+    {
+    QMessageBox mission_install_is_empty;
+    mission_install_is_empty.setText("the device install list has not been selected any item.");
+    mission_install_is_empty.exec();
+    return;
+    }else if(items.count()>=2){
+        QMessageBox mission_install_is_empty;
+        mission_install_is_empty.setText("mutiple select item.");
+        mission_install_is_empty.exec();
+    return; 
+    }
+    qDebug()<<QString("test");
+
+    foreach(QListWidgetItem* item, items)
+    {
+
+    QString host_name = ui->listWidget_3->takeItem(ui->listWidget_3->row(item))->text();;
     QFile host_list_file("host_list.json");
     if(!host_list_file.open(QIODevice::ReadWrite)) {
     qDebug() << "ip_mapping open error,the premission may denied.";
@@ -1008,9 +1108,9 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     QJsonArray host_name_json_list = root["host_name_array"].toArray();
     QJsonObject contant=root["IP_list"].toObject();
     QJsonObject host_contant = contant[host_name].toObject();
-    contant.remove(host_name_item->text());
+    contant.remove(host_name);
     for(int i =0;i<host_name_json_list.size();i++){
-        if(host_name_json_list[i].toString()==host_name_item->text()){
+        if(host_name_json_list[i].toString()==host_name){
             host_name_json_list.removeAt(i);
         };
     }
@@ -1035,8 +1135,13 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     install_file.resize(0);
     install_file.write(install_setting_json_document.toJson());
     install_file.close();
-    delete host_name_item;
-    ui->listWidget_3->setCurrentRow(0);
+
+
+    //need fix with listWidget_3
+    delete item;
+    }
+
+
 
 }
 void install_shell::on_identity_hos_name_manual_state_changed(int state){
@@ -1053,12 +1158,34 @@ void install_shell::on_identity_hos_name_manual_state_changed(int state){
 }
 
 void install_shell::on_install_option_push_button_clicked(){
-    if(online_device_item == nullptr){
+
+   if (ui->listWidget==nullptr)
+    {
+        qDebug()<<QString("null");
         return;
+        /* code */
     }
+    
+    QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
+    if (items.count()==0)
+    {
+    QMessageBox mission_install_is_empty;
+    mission_install_is_empty.setText("the device install list has not been selected any item.");
+    mission_install_is_empty.exec();
+    return;
+    }else if(items.count()>=2){
+        QMessageBox mission_install_is_empty;
+        mission_install_is_empty.setText("mutiple select item.");
+        mission_install_is_empty.exec();
+    return; 
+    }
+    qDebug()<<QString("test");
+
+    foreach(QListWidgetItem* item, items)
+    {
     QString DNS_replace = "";
     QString host_name = "";
-    QString item_text=online_device_item->text();
+    QString item_text=item->text();
     QJsonObject host;
     QFile install_file("install_setting.json");
 
@@ -1091,4 +1218,6 @@ void install_shell::on_install_option_push_button_clicked(){
         install_file.close();
         install_option* the_install_option =new install_option(nullptr,host_name,device,pack_names,interface,ip_config);
         the_install_option->show();
+    }
+
 }

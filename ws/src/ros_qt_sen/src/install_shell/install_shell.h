@@ -37,7 +37,7 @@ private:
     void install_misson(std::string user_name,std::string Password,std::string host_name,std::string pack_name,std::string interface,std::string ip);
 private slots:
     void on_install_mission_dispatch_push_button_clicked();
-    void on_current_online_device_changed(QListWidgetItem * item);
+    //void on_current_online_device_changed(QListWidgetItem * item);
     void on_Interface_Update_PushButtun_clicked();
     void on_Interface_Choose_PushButtun_clicked();
     void on_update_host_information_push_button_clicked();
@@ -50,6 +50,7 @@ private slots:
     void on_add_mission_pushButton_clicked();
     void on_delet_mission_pushButton_clicked();
     void on_current_mission_install_changed(QListWidgetItem * item);
+    void test_event_for_listwidgit_changed();
 };
 
 #endif // INSTALL_SHELL_H
