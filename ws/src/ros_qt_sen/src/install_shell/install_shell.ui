@@ -92,7 +92,7 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>370</y>
+     <y>400</y>
      <width>67</width>
      <height>17</height>
     </rect>
@@ -105,7 +105,7 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>330</y>
+     <y>320</y>
      <width>81</width>
      <height>17</height>
     </rect>
@@ -118,7 +118,7 @@
    <property name="geometry">
     <rect>
      <x>600</x>
-     <y>370</y>
+     <y>400</y>
      <width>311</width>
      <height>25</height>
     </rect>
@@ -128,7 +128,7 @@
    <property name="geometry">
     <rect>
      <x>600</x>
-     <y>330</y>
+     <y>320</y>
      <width>311</width>
      <height>25</height>
     </rect>
@@ -137,9 +137,9 @@
   <widget class="QPushButton" name="pushButton_5">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>540</y>
-     <width>91</width>
+     <x>510</x>
+     <y>570</y>
+     <width>161</width>
      <height>31</height>
     </rect>
    </property>
@@ -171,7 +171,7 @@
    <property name="geometry">
     <rect>
      <x>500</x>
-     <y>410</y>
+     <y>440</y>
      <width>67</width>
      <height>17</height>
     </rect>
@@ -184,7 +184,7 @@
    <property name="geometry">
     <rect>
      <x>600</x>
-     <y>410</y>
+     <y>440</y>
      <width>311</width>
      <height>25</height>
     </rect>
@@ -210,25 +210,12 @@
     </property>
    </item>
   </widget>
-  <widget class="QPushButton" name="pushButton_6">
-   <property name="geometry">
-    <rect>
-     <x>490</x>
-     <y>540</y>
-     <width>101</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>新增</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pushButton_7">
    <property name="geometry">
     <rect>
      <x>700</x>
-     <y>540</y>
-     <width>91</width>
+     <y>570</y>
+     <width>141</width>
      <height>31</height>
     </rect>
    </property>
@@ -285,37 +272,11 @@
     <string>網路設備清單</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox">
-   <property name="geometry">
-    <rect>
-     <x>690</x>
-     <y>510</y>
-     <width>71</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>自動</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_8">
-   <property name="geometry">
-    <rect>
-     <x>490</x>
-     <y>510</y>
-     <width>131</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>識別主機名稱:</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_9">
    <property name="geometry">
     <rect>
      <x>490</x>
-     <y>450</y>
+     <y>480</y>
      <width>101</width>
      <height>17</height>
     </rect>
@@ -328,7 +289,7 @@
    <property name="geometry">
     <rect>
      <x>510</x>
-     <y>480</y>
+     <y>510</y>
      <width>67</width>
      <height>17</height>
     </rect>
@@ -341,7 +302,7 @@
    <property name="geometry">
     <rect>
      <x>600</x>
-     <y>450</y>
+     <y>480</y>
      <width>311</width>
      <height>25</height>
     </rect>
@@ -351,7 +312,7 @@
    <property name="geometry">
     <rect>
      <x>600</x>
-     <y>480</y>
+     <y>510</y>
      <width>311</width>
      <height>25</height>
     </rect>
@@ -479,6 +440,32 @@
    </property>
    <property name="text">
     <string>儲存</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_15">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>360</y>
+     <width>101</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Mac address:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_7">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>360</y>
+     <width>311</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="readOnly">
+    <bool>false</bool>
    </property>
   </widget>
  </widget>

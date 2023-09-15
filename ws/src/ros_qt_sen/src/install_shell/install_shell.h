@@ -41,15 +41,14 @@ private slots:
     void on_Interface_Update_PushButtun_clicked();
     void on_Interface_Choose_PushButtun_clicked();
     void on_update_host_information_push_button_clicked();
-    void on_creat_host_information_push_button_clicked();
     void on_delet_host_information_push_button_clicked();
     void on_current_host_information_changed(QListWidgetItem * item);
-    void on_identity_hos_name_manual_state_changed(int state);
     void on_host_check_infor_push_button_clicked();
     void on_install_option_push_button_clicked();
     void on_add_mission_pushButton_clicked();
     void on_delet_mission_pushButton_clicked();
     void on_current_mission_install_changed(QListWidgetItem * item);
+    void on_save_default_user_push_button();
 };
 
 #endif // INSTALL_SHELL_H
