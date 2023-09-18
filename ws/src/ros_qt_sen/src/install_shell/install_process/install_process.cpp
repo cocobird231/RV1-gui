@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <QScrollBar>
-install_process::install_process(QWidget *parent,std::string user_name,std::string Password,std::string host_name,std::string mac_address,std::string ip_address,std::string pack_name,std::string interface,std::string ip) :
+install_process::install_process(QWidget *parent,std::string user_name,std::string Password,std::string host_name,std::string mac_address,std::string ip_address,std::string pack_name,std::string interface,std::string ip,std::string device,bool remove, bool update,bool install ,bool preserve) :
     QWidget(parent),
     ui(new Ui::install_process)
 {
@@ -18,13 +18,16 @@ install_process::install_process(QWidget *parent,std::string user_name,std::stri
     ui->label_10->setText(QString::fromStdString(pack_name));
     ui->label_11->setText(QString::fromStdString(interface));
     ui->label_12->setText(QString::fromStdString(ip));
-
-
+    this->device = device;
+    this->remove = remove;
+    this->update =update;
+    this->install = install;
+    this->preserve = preserve;
     // timmer.setSingleShot(true);
     QObject::connect(&timmer, &QTimer::timeout,this, &install_process::set_text_broswer);
     connect(ui->pushButton,&QPushButton::clicked,this,&install_process::on_close_push_button_clicked);
-    timmer.start(100);
-    std::shared_ptr<std::thread> install_mission_threads = std::make_shared<std::thread>(std::bind(&install_process::install_misson,this,user_name,Password,ip_address,pack_name,interface,ip));
+    timmer.start(2000);
+    std::shared_ptr<std::thread> install_mission_threads = std::make_shared<std::thread>(std::bind(&install_process::install_misson,this,user_name,Password,ip_address,pack_name,interface,ip,device));
     install_mission_threads->detach();
 
 
@@ -39,7 +42,7 @@ void install_process::set_text_broswer( ){
 }
 
 
-void install_process::install_misson(std::string user_name,std::string Password,std::string ip_address,std::string pack_name,std::string interface,std::string ip){
+void install_process::install_misson(std::string user_name,std::string Password,std::string ip_address,std::string pack_name,std::string interface,std::string ip,std::string device){
 
     qDebug()<<QString::fromStdString(user_name);
 
@@ -92,21 +95,182 @@ void install_process::install_misson(std::string user_name,std::string Password,
         ssh_channel_free(channel);
         return ;
     }
-    std::string ssh_command= ". ./ros2_docker/install.sh -i "+pack_name+" --interface "+interface +" --ip "+ip ;
-    rc = ssh_channel_request_exec(channel, ssh_command.c_str());
 
-    if (rc != SSH_OK)
-    {
-    qDebug()<<"channel request error.";
-    qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
-
-    ssh_channel_close(channel);
-    ssh_channel_free(channel);
-    }
+   std::string ssh_command ="";
     QByteArray ssh_Qbyte;
     QByteArray ssh_merge_qbyte;
     QString ssh_infor_string;
-    qDebug()<<QString("ssh_channel_read"); 
+        if(device=="jetson"){
+
+            ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-jetson-sensors-install.sh | bash";
+
+        
+        rc = ssh_channel_request_exec(channel, ssh_command.c_str());
+
+        if (rc != SSH_OK)
+        {
+            qDebug()<<"channel request error.";
+            qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
+
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+        }
+        qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
+
+            while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+            {
+                ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+                ssh_merge_qbyte.append(ssh_Qbyte);
+                nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+                ssh_infor_string=ssh_merge_qbyte;
+                if (nbytes <= 0)
+                {
+                    break;
+                }
+                //qDebug().noquote()<<ssh_infor_string;
+                this->ssh_infor =ssh_infor_string;
+            }
+                channel = ssh_channel_new(my_ssh_session);
+                if (channel == NULL){
+                    qDebug()<<"channel is missing pointer";
+                    return;
+                }
+                rc = ssh_channel_open_session(channel);
+                if (rc != SSH_OK)
+                {
+                    qDebug()<<"channel get error";
+                    ssh_free(my_ssh_session);
+                    ssh_channel_free(channel);
+                    return ;
+                }
+                qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
+
+        ssh_command= ". ~/jetson_sensors/install.sh";
+        std::string shell_temp_command = "";
+        if (this->remove)
+        {
+            shell_temp_command = shell_temp_command+" -rm ";
+        }
+        if (this->update)
+        {
+            shell_temp_command = shell_temp_command+" -u ";
+        }
+        if (this->install)
+        {
+            if(pack_name != "auto"){
+                shell_temp_command = shell_temp_command+" -i "+pack_name+" --interface "+interface +" --ip "+ip;
+
+            }else{
+                shell_temp_command = shell_temp_command+" -i "+pack_name;
+
+            }
+        }
+        if (this->preserve)
+        {
+            shell_temp_command = shell_temp_command+" -p ";
+        }
+        ssh_command = ssh_command +shell_temp_command;
+        rc = ssh_channel_request_exec(channel, ssh_command.c_str());
+
+        if (rc != SSH_OK)
+        {
+            qDebug()<<"channel request error.";
+            qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
+
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+        }
+        qDebug()<<QString("ssh_channel_read install"); 
+    }
+    if(device=="raspberry pi"){
+
+        if (pack_name =="py_chassis")
+        {
+            ssh_command= "curl -fsSL ftp://61.220.23.239/rv-10/get-chassis-install.sh | bash ";
+        }else{
+            ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-rpi-sensors-install.sh | bash ";
+        }
+        
+        rc = ssh_channel_request_exec(channel, ssh_command.c_str());
+
+        if (rc != SSH_OK)
+        {
+            qDebug()<<"channel request error.";
+            qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
+
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+        }
+        qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
+
+
+
+        while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+        {
+            ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+            ssh_merge_qbyte.append(ssh_Qbyte);
+            nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+            ssh_infor_string=ssh_merge_qbyte;
+            if (nbytes <= 0)
+            {
+                break;
+            }
+            //qDebug().noquote()<<ssh_infor_string;
+            this->ssh_infor =ssh_infor_string;
+        }
+        channel = ssh_channel_new(my_ssh_session);
+        if (channel == NULL){
+            qDebug()<<"channel is missing pointer";
+            return;
+        }
+        rc = ssh_channel_open_session(channel);
+        if (rc != SSH_OK)
+        {
+            qDebug()<<"channel get error";
+            ssh_free(my_ssh_session);
+            ssh_channel_free(channel);
+            return ;
+        }
+        qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
+
+        ssh_command= ". ~/ros2_docker/install.sh";
+        std::string shell_temp_command = "";
+        if (this->remove)
+        {
+            shell_temp_command = shell_temp_command+" -rm ";
+        }
+        if (this->update)
+        {
+            shell_temp_command = shell_temp_command+" -u ";
+        }
+        if (this->install)
+        {
+            if(pack_name != "auto"){
+                shell_temp_command = shell_temp_command+" -i "+pack_name+" --interface "+interface +" --ip "+ip;
+
+            }else{
+                shell_temp_command = shell_temp_command+" -i "+pack_name;
+
+            }
+        }
+        if (this->preserve)
+        {
+            shell_temp_command = shell_temp_command+" -p ";
+        }
+        ssh_command = ssh_command +shell_temp_command;
+        qDebug()<<QString::fromStdString(ssh_command);
+        rc = ssh_channel_request_exec(channel, ssh_command.c_str());
+
+        if (rc != SSH_OK)
+        {
+            qDebug()<<"channel request error.";
+            qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
+
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+        }
+        qDebug()<<QString("ssh_channel_read install"); 
+    }
 
   while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
     {
@@ -139,7 +303,7 @@ void install_process::install_misson(std::string user_name,std::string Password,
     }
     ssh_infor_string=ssh_merge_qbyte;
     qDebug().noquote()<<ssh_infor_string;
-    ssh_infor_string=ssh_infor_string+"\n Done.";
+    this->ssh_infor=this->ssh_infor+"\n Done.\n";
     qDebug()<<QString("Done"); 
 }
 

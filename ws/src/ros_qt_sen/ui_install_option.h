@@ -11,6 +11,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
@@ -33,12 +34,16 @@ public:
     QLabel *label_5;
     QPushButton *pushButton_2;
     QPushButton *pushButton_3;
+    QCheckBox *checkBox;
+    QCheckBox *checkBox_2;
+    QCheckBox *checkBox_3;
+    QCheckBox *checkBox_4;
 
     void setupUi(QWidget *install_option)
     {
         if (install_option->objectName().isEmpty())
             install_option->setObjectName(QString::fromUtf8("install_option"));
-        install_option->resize(400, 229);
+        install_option->resize(550, 355);
         label = new QLabel(install_option);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(50, 40, 121, 17));
@@ -50,16 +55,16 @@ public:
         label_3->setGeometry(QRect(50, 120, 41, 17));
         comboBox = new QComboBox(install_option);
         comboBox->setObjectName(QString::fromUtf8("comboBox"));
-        comboBox->setGeometry(QRect(160, 40, 171, 25));
+        comboBox->setGeometry(QRect(160, 40, 271, 25));
         lineEdit = new QLineEdit(install_option);
         lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
-        lineEdit->setGeometry(QRect(160, 80, 171, 25));
+        lineEdit->setGeometry(QRect(160, 80, 271, 25));
         lineEdit_2 = new QLineEdit(install_option);
         lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
-        lineEdit_2->setGeometry(QRect(160, 120, 171, 25));
+        lineEdit_2->setGeometry(QRect(160, 120, 271, 25));
         pushButton = new QPushButton(install_option);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(150, 180, 89, 25));
+        pushButton->setGeometry(QRect(170, 220, 89, 25));
         label_4 = new QLabel(install_option);
         label_4->setObjectName(QString::fromUtf8("label_4"));
         label_4->setGeometry(QRect(50, 10, 91, 17));
@@ -68,10 +73,22 @@ public:
         label_5->setGeometry(QRect(160, 10, 171, 17));
         pushButton_2 = new QPushButton(install_option);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(250, 180, 111, 25));
+        pushButton_2->setGeometry(QRect(310, 220, 111, 25));
         pushButton_3 = new QPushButton(install_option);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
-        pushButton_3->setGeometry(QRect(40, 180, 89, 25));
+        pushButton_3->setGeometry(QRect(40, 220, 89, 25));
+        checkBox = new QCheckBox(install_option);
+        checkBox->setObjectName(QString::fromUtf8("checkBox"));
+        checkBox->setGeometry(QRect(230, 170, 92, 23));
+        checkBox_2 = new QCheckBox(install_option);
+        checkBox_2->setObjectName(QString::fromUtf8("checkBox_2"));
+        checkBox_2->setGeometry(QRect(130, 170, 92, 23));
+        checkBox_3 = new QCheckBox(install_option);
+        checkBox_3->setObjectName(QString::fromUtf8("checkBox_3"));
+        checkBox_3->setGeometry(QRect(40, 170, 92, 23));
+        checkBox_4 = new QCheckBox(install_option);
+        checkBox_4->setObjectName(QString::fromUtf8("checkBox_4"));
+        checkBox_4->setGeometry(QRect(340, 170, 92, 23));
 
         retranslateUi(install_option);
 
@@ -91,6 +108,10 @@ public:
         label_5->setText(QApplication::translate("install_option", "Undefined Text", nullptr));
         pushButton_2->setText(QApplication::translate("install_option", "Save and close", nullptr));
         pushButton_3->setText(QApplication::translate("install_option", "Reset", nullptr));
+        checkBox->setText(QApplication::translate("install_option", "install", nullptr));
+        checkBox_2->setText(QApplication::translate("install_option", "update", nullptr));
+        checkBox_3->setText(QApplication::translate("install_option", "remove", nullptr));
+        checkBox_4->setText(QApplication::translate("install_option", "preserve", nullptr));
     } // retranslateUi
 
 };

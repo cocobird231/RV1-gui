@@ -1,0 +1,21 @@
+{
+    "default_interface": "enp3s0",
+    "default_ip": "192.168.3.101",
+    "default_net_mask": "255.255.255.0",
+    "install_config": {
+        "dc:a6:32:47:56:62": {
+            "IP": "dhcp",
+            "Package_Name": "cpp_webcam",
+            "device": "raspberry pi",
+            "host_name": "Unkown",
+            "install": true,
+            "interface": "eth0",
+            "ip_address": "192.168.3.100",
+            "password": "tony1234",
+            "preserve": false,
+            "remove": true,
+            "update": true,
+            "user": "tony"
+        }
+    }
+}

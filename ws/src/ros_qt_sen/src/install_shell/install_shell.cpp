@@ -744,13 +744,18 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
     qDebug()<<QString(task_count);
     std::string* mac_array =new std::string[task_count];
     std::string* ip_address_array =new std::string[task_count];
-
+    std::string* Device_array =new std::string[task_count];
     std::string* host_name_array =new std::string[task_count];
     std::string* user_name_array =new std::string[task_count];
     std::string* Password_array =new std::string[task_count];
     std::string* pack_name_array =new std::string[task_count];
     std::string* interface_array =new std::string[task_count];
     std::string* ip_array =new std::string[task_count];
+    bool* remove = new bool[task_count];
+    bool* update = new bool[task_count];
+    bool* install = new bool[task_count];
+    bool* preserve = new bool[task_count];
+
     if(task_count ==0){
         return;
     }
@@ -776,8 +781,11 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         }
         host_name_array[i] = host_object["host_name"].toString().toStdString();
         ip_address_array[i] = host_object["ip_address"].toString().toStdString();
-        
-
+        Device_array[i] = host_object["device"].toString().toStdString();
+        remove[i] = host_object["remove"].toBool();
+        update[i] = host_object["update"].toBool();
+        install[i] = host_object["install"].toBool();
+        preserve[i] = host_object["preserve"].toBool();
 
 
         user_name_array[i]=host_object["user"].toString().toStdString();
@@ -808,15 +816,22 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         std::string host_name_ =host_name_array[i];
         std::string mac_address =mac_array[i];
         std::string ip_address =ip_address_array[i];
+        std::string device =Device_array[i];
 
         std::string user_name_ =user_name_array[i];
         std::string Password_ =Password_array[i];
         std::string pack_name_ =pack_name_array[i];
         std::string interface_ =interface_array[i];
         std::string ip_ =ip_array[i];
+        bool remove_ = remove[i];
+        bool update_ = update[i];
+        bool install_ = install[i];
+        bool preserve_ = preserve[i];
+
+
         qDebug()<<"test for install";
         qDebug()<<QString::fromStdString(host_name_);
-        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_);
+        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_);
         Install_process->show();
         // install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
 
@@ -1250,6 +1265,12 @@ void install_shell::on_install_option_push_button_clicked(){
         QString pack_names = host["pack_names"].toString();
         install_setting_json_document.setObject(install_root);
         install_file.close();
+        if(device == ""){
+            QMessageBox device_not_found;
+            device_not_found.setText("you havent set device.");
+            device_not_found.exec();
+            return;
+        }
         install_option* the_install_option =new install_option(nullptr,mac_address,device,pack_names,interface,ip_config);
         the_install_option->show();
     }

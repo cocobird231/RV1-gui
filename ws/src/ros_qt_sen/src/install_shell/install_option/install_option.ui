@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>229</height>
+    <width>550</width>
+    <height>355</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
     <rect>
      <x>160</x>
      <y>40</y>
-     <width>171</width>
+     <width>271</width>
      <height>25</height>
     </rect>
    </property>
@@ -67,7 +67,7 @@
     <rect>
      <x>160</x>
      <y>80</y>
-     <width>171</width>
+     <width>271</width>
      <height>25</height>
     </rect>
    </property>
@@ -80,7 +80,7 @@
     <rect>
      <x>160</x>
      <y>120</y>
-     <width>171</width>
+     <width>271</width>
      <height>25</height>
     </rect>
    </property>
@@ -91,8 +91,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>180</y>
+     <x>170</x>
+     <y>220</y>
      <width>89</width>
      <height>25</height>
     </rect>
@@ -130,8 +130,8 @@
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>180</y>
+     <x>310</x>
+     <y>220</y>
      <width>111</width>
      <height>25</height>
     </rect>
@@ -144,13 +144,65 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>180</y>
+     <y>220</y>
      <width>89</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
     <string>Reset</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>170</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>install</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_2">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>170</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>update</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_3">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>170</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>remove</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_4">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>170</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>preserve</string>
    </property>
   </widget>
  </widget>

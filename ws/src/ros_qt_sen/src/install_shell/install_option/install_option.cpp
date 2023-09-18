@@ -21,7 +21,6 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
     this->Interface = interface;
     this->Ip=ip;
 
-
  QFile install_file("install_setting.json");
     if(!install_file.open(QIODevice::ReadWrite)) {
         qDebug() << "File open error,the premission may denied.";
@@ -34,6 +33,15 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
     QJsonObject install_config = install_setting_root["install_config"].toObject();
     QJsonObject install_host  =install_config[mac_address].toObject();
 
+    this->remove =install_host["remove"].toBool();
+    this->update =install_host["update"].toBool();
+    this->install =install_host["install"].toBool();
+    this->preserve ==install_host["preserve"].toBool();
+
+    ui->checkBox_3->setChecked(this->remove);
+    ui->checkBox_2->setChecked(this->update);
+    ui->checkBox->setChecked(this->install);
+    ui->checkBox_4->setChecked(this->preserve);
 
 
     ui->label_5->setText(install_host["host_name"].toString());
@@ -89,6 +97,13 @@ void install_option::on_save_and_close_push_button_clicked(){
     QString interface = ui->lineEdit->text();
     QString IP = ui->lineEdit_2->text();
 
+    this->remove = ui->checkBox_3->isChecked();
+    this->update = ui->checkBox_2->isChecked();
+    this->install = ui->checkBox->isChecked();
+    this->preserve = ui->checkBox_4->isChecked();
+
+
+
     QFile install_file("install_setting.json");
     if(!install_file.open(QIODevice::ReadWrite)) {
         qDebug() << "File open error,the premission may denied.";
@@ -103,6 +118,11 @@ void install_option::on_save_and_close_push_button_clicked(){
     install_host["Package_Name"]=Package_Name;
     install_host["interface"]=interface;
     install_host["IP"]=IP;
+    install_host["remove"]=this->remove ;
+    install_host["update"]=this->update ;
+    install_host["install"]=this->install ;
+    install_host["preserve"]=this->preserve ;
+
     install_config[mac_address] = install_host;
     install_setting_root["install_config"]=install_config;
     install_setting_json_document.setObject(install_setting_root);
@@ -117,43 +137,33 @@ void install_option::on_close_push_button_clicked(){
 }
 void install_option::on_reset_push_button_clicked(){
 
-    QFile install_option_file("install_option.json");
-    if(!install_option_file.open(QIODevice::ReadWrite)) {
-    qDebug() << "File open error,the premission may denied.";
+ QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
     } else {
-    qDebug() <<"install_setting File open!";
+        qDebug() <<"install_setting File open!";
     }
-    QByteArray install_byte = install_option_file.readAll();
-    install_option_file_json_document = QJsonDocument::fromJson(install_byte);
-    QJsonObject install_option_root = install_option_file_json_document.object();
-    if(Device =="raspberry pi"){
-        QJsonArray rpi_sensor_pack = install_option_root["rpi_sensoers"].toObject()["pack_names"].toArray();
-        QJsonArray chassis_pack = install_option_root["chassis"].toObject()["pack_names"].toArray();
-        QList<QString> pack_list ;
-        for(auto packe_value : rpi_sensor_pack){
-            qDebug()<<packe_value.toString();
-            pack_list.append(packe_value.toString());
-        }
-        for(auto packe_value : chassis_pack){
-            pack_list.append(packe_value.toString());
-        }
-        ui->comboBox->addItems(pack_list);
-    }
-    if(Device =="jetson"){
-        QJsonArray jetson_sensors_pack = install_option_root["jetson_sensors"].toObject()["pack_names"].toArray();
-        QList<QString>  pack_list ;
-        for(auto packe_value : jetson_sensors_pack){
-            pack_list<<packe_value.toString();
-        }
-        ui->comboBox->addItems(pack_list);
-    }
+    QByteArray install_setting_file = install_file.readAll();
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonObject install_setting_root = install_setting_json_document.object();
+    QJsonObject install_config = install_setting_root["install_config"].toObject();
+    QJsonObject install_host  =install_config[this->Mac_address].toObject();
 
-    if (Pack_name != "")
-    {
-        ui->comboBox->setCurrentText(Pack_name);
-    }else{
-        ui->comboBox->setCurrentIndex(0);
-    }
+    this->remove =install_host["remove"].toBool();
+    this->update =install_host["update"].toBool();
+    this->install =install_host["install"].toBool();
+    this->preserve ==install_host["preserve"].toBool();
+
+    ui->checkBox_3->setChecked(this->remove);
+    ui->checkBox_2->setChecked(this->update);
+    ui->checkBox->setChecked(this->install);
+    ui->checkBox_4->setChecked(this->preserve);
+
+
+    ui->label_5->setText(install_host["host_name"].toString());
+    ui->lineEdit->setText(this->Interface!="" ? this->Interface:"eth0");
+    ui->lineEdit_2->setText(this->Ip!="" ? this->Ip:"dhcp");
+    install_file.close();
 }
 
 install_option::~install_option()
