@@ -75,7 +75,9 @@
         "filesystem": "cpp",
         "valarray": "cpp",
         "any": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "qelapsedtimer": "cpp",
+        "qtimer": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

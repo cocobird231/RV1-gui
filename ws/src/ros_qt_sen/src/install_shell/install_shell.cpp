@@ -14,6 +14,7 @@
 #include <thread>
 #include <QMessageBox>
 #include "install_device_infor/install_device_infor.h"
+#include "install_process/install_process.h"
 #include "install_option/install_option.h"
 QList<QNetworkAddressEntry> entryList;
 QString selected_self_IP;
@@ -409,6 +410,8 @@ void install_shell::on_host_check_infor_push_button_clicked(){
         } else {
         qDebug() <<"install_setting File open!";
         }
+        QByteArray install_setting_file = install_file.readAll();
+        install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
         QJsonObject install_root = install_setting_json_document.object();
         QJsonObject install_config = install_root["install_config"].toObject();
         QJsonObject host;
@@ -740,6 +743,8 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
     int task_count = ui->listWidget_2->count();
     qDebug()<<QString(task_count);
     std::string* mac_array =new std::string[task_count];
+    std::string* ip_address_array =new std::string[task_count];
+
     std::string* host_name_array =new std::string[task_count];
     std::string* user_name_array =new std::string[task_count];
     std::string* Password_array =new std::string[task_count];
@@ -770,24 +775,40 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
             return;
         }
         host_name_array[i] = host_object["host_name"].toString().toStdString();
-
+        ip_address_array[i] = host_object["ip_address"].toString().toStdString();
         
+
+
+
         user_name_array[i]=host_object["user"].toString().toStdString();
         Password_array[i]=host_object["password"].toString().toStdString();
-        if (host_object["user"].toString().toStdString()=="" ||host_object["password"].toString().toStdString()=="")
+                qDebug()<<QString("Def");
+
+        qDebug()<<QString::fromStdString(user_name_array[i]) ;
+        qDebug()<<QString::fromStdString(Password_array[i]);
+
+        if (user_name_array[i]==""||Password_array[i]=="")
         {
-            user_name_array[i]=install_config["default_user_name"].toString().toStdString();
-            Password_array[i] =install_config["default_password"].toString().toStdString();
+            user_name_array[i]=root["default_user_name"].toString().toStdString();
+            Password_array[i] =root["default_password"].toString().toStdString();
+        qDebug()<<QString("De2f");
+        qDebug()<<QString::fromStdString(user_name_array[i]) ;
+        qDebug()<<QString::fromStdString(Password_array[i]);
+
         }
         pack_name_array[i]=host_object["Package_Name"].toString().toStdString();
         interface_array[i]=host_object["interface"].toString().toStdString();
         ip_array[i]=host_object["IP"].toString().toStdString();
+
     }
     install_file.close();
     qDebug() <<"install_mission_threads";
-    std::shared_ptr<std::thread>* install_mission_threads = new std::shared_ptr<std::thread>[task_count];
+    // std::shared_ptr<std::thread>* install_mission_threads = new std::shared_ptr<std::thread>[task_count];
     for(int i=0;i<task_count;i++){
         std::string host_name_ =host_name_array[i];
+        std::string mac_address =mac_array[i];
+        std::string ip_address =ip_address_array[i];
+
         std::string user_name_ =user_name_array[i];
         std::string Password_ =Password_array[i];
         std::string pack_name_ =pack_name_array[i];
@@ -795,12 +816,14 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         std::string ip_ =ip_array[i];
         qDebug()<<"test for install";
         qDebug()<<QString::fromStdString(host_name_);
-        install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
+        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_);
+        Install_process->show();
+        // install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
 
     }
-    for(int i =0;i<task_count;i++){
-        install_mission_threads[i]->detach();
-    }
+    // for(int i =0;i<task_count;i++){
+    //     install_mission_threads[i]->detach();
+    // }
 
 }
 void install_shell::install_misson(std::string user_name,std::string Password,std::string host_name,std::string pack_name,std::string interface,std::string ip){
@@ -931,7 +954,7 @@ void install_shell::on_current_host_information_changed(QListWidgetItem * item){
         install_setting_json_document = QJsonDocument::fromJson(install_byte);
         QJsonObject install_root = install_setting_json_document.object();
         QJsonObject install_config = install_root["install_config"].toObject();
-        QJsonObject host = install_config[item->text()].toObject();
+        QJsonObject host = install_config[mac_address].toObject();
         QString user_name = host["user"].toString();
         QString password = host["password"].toString();
         install_file.close();
@@ -978,7 +1001,7 @@ void install_shell::on_update_host_information_push_button_clicked(){
             QJsonArray host_name_json_list = root["host_name_array"].toArray();
             QJsonObject contant=root["mac_list"].toObject();
             QJsonObject host_contant = contant[mac_address].toObject();
-            if(host_contant["ip_address"] !=ip){
+            if(host_contant["ip_address"].toString() !=ip ||host_contant["Device"].toString() !=device){
                 host_contant["ip_address"] = ip;
                 host_contant["Device"] = device;
                 contant[mac_address] =host_contant;
