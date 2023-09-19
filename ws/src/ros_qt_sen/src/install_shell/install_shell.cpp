@@ -55,7 +55,7 @@ std::shared_ptr<std::thread> the_thread;
 
     connect(ui->listWidget_3,&QListWidget::itemClicked,this,&install_shell::on_current_host_information_changed);
 
-    // connect(ui->pushButton_6,&QPushButton::clicked,this,&install_shell::on_creat_host_information_push_button_clicked);
+    connect(ui->pushButton_6,&QPushButton::clicked,this,&install_shell::on_reboot_push_button_clicked);
     connect(ui->pushButton_7,&QPushButton::clicked,this,&install_shell::on_delet_host_information_push_button_clicked);
     connect(ui->pushButton_3,&QPushButton::clicked,this,&install_shell::on_host_check_infor_push_button_clicked);
     connect(ui->pushButton_4,&QPushButton::clicked,this,&install_shell::on_install_option_push_button_clicked);
@@ -117,6 +117,100 @@ std::shared_ptr<std::thread> the_thread;
     ui->lineEdit_6->setText(root["default_password"].toString());
 
 }
+
+void install_shell::on_reboot_push_button_clicked(){
+
+    int task_count = ui->listWidget_2->count();
+    qDebug()<<QString(task_count);
+    std::string* mac_array =new std::string[task_count];
+    std::string* ip_address_array =new std::string[task_count];
+    std::string* Device_array =new std::string[task_count];
+    std::string* host_name_array =new std::string[task_count];
+    std::string* user_name_array =new std::string[task_count];
+    std::string* Password_array =new std::string[task_count];
+    std::string* pack_name_array =new std::string[task_count];
+    std::string* interface_array =new std::string[task_count];
+    std::string* ip_array =new std::string[task_count];
+
+
+    if(task_count ==0){
+        return;
+    }
+    QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
+    } else {
+        qDebug() <<"install_setting File open!";
+    }
+    QByteArray install_setting_file = install_file.readAll();
+    install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonObject root = install_setting_json_document.object();
+    QJsonObject install_config = root["install_config"].toObject();
+    
+    for(int i=0;i<task_count;i++){
+        QListWidgetItem* listwidget_current = ui->listWidget_2->item(i);
+        mac_array[i] =  listwidget_current->text().split("/")[1].toStdString();
+        QJsonObject host_object=install_config[ QString::fromStdString(mac_array[i])].toObject();
+        if (!install_config.contains(QString::fromStdString(mac_array[i])))
+        {
+            qDebug()<<QString("install_config no mac in list.");
+            return;
+        }
+        host_name_array[i] = host_object["host_name"].toString().toStdString();
+        ip_address_array[i] = host_object["ip_address"].toString().toStdString();
+        Device_array[i] = host_object["device"].toString().toStdString();
+
+
+
+        user_name_array[i]=host_object["user"].toString().toStdString();
+        Password_array[i]=host_object["password"].toString().toStdString();
+                qDebug()<<QString("Def");
+
+        qDebug()<<QString::fromStdString(user_name_array[i]) ;
+        qDebug()<<QString::fromStdString(Password_array[i]);
+
+        if (user_name_array[i]==""||Password_array[i]=="")
+        {
+            user_name_array[i]=root["default_user_name"].toString().toStdString();
+            Password_array[i] =root["default_password"].toString().toStdString();
+        qDebug()<<QString("De2f");
+        qDebug()<<QString::fromStdString(user_name_array[i]) ;
+        qDebug()<<QString::fromStdString(Password_array[i]);
+
+        }
+        pack_name_array[i]=host_object["Package_Name"].toString().toStdString();
+        interface_array[i]=host_object["interface"].toString().toStdString();
+        ip_array[i]=host_object["IP"].toString().toStdString();
+
+    }
+    install_file.close();
+    qDebug() <<"install_mission_threads";
+    std::shared_ptr<std::thread>* reboot_threads = new std::shared_ptr<std::thread>[task_count];
+    for(int i=0;i<task_count;i++){
+        std::string host_name_ =host_name_array[i];
+        std::string mac_address =mac_array[i];
+        std::string ip_address =ip_address_array[i];
+        std::string device =Device_array[i];
+
+        std::string user_name_ =user_name_array[i];
+        std::string Password_ =Password_array[i];
+        std::string pack_name_ =pack_name_array[i];
+        std::string interface_ =interface_array[i];
+        std::string ip_ =ip_array[i];
+
+
+        qDebug()<<"test for install";
+        qDebug()<<QString::fromStdString(host_name_);
+        // install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_);
+        // Install_process->show();
+        reboot_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::reboot_device,this,ip_address,user_name_,Password_));
+
+    }
+    for(int i =0;i<task_count;i++){
+        reboot_threads[i]->detach();
+    }
+}
+
 void install_shell::on_save_default_user_push_button(){
 
     QFile install_file("install_setting.json");
@@ -446,15 +540,83 @@ void install_shell::on_host_check_infor_push_button_clicked(){
 
         check_ssh_device_information(ip_address,user,password,device_type);
     }
+}
+void install_shell::reboot_device(std::string ip_address ,std::string user_name,std::string Password){
 
+    int rc;
+    int port = 22;
+    char buffer[256];
+    int nbytes;
+    int verbosity = SSH_LOG_PROTOCOL;
 
+    // Open session and set options
+    ssh_session my_ssh_session = ssh_new();
+    if (my_ssh_session == NULL)
+        return;
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST,ip_address.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
+    ssh_options_set(my_ssh_session,SSH_OPTIONS_PASSWORD_AUTH,Password.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_USER,user_name.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_CIPHERS_C_S,"aes128-ctr");
+    ssh_options_set(my_ssh_session,SSH_OPTIONS_TIMEOUT_USEC,"10");
+    rc = ssh_connect(my_ssh_session);
+    if (rc != SSH_OK)  
+    {
+        ssh_free(my_ssh_session);
+        return ;
+    }
+    rc = ssh_userauth_password(my_ssh_session, user_name.c_str(), Password.c_str());
+    if (rc != SSH_AUTH_SUCCESS)  
+    {
+        ssh_free(my_ssh_session);
+        QMessageBox exception_ssh;
+        exception_ssh.setText("Auth Error");
+        exception_ssh.exec();
+        return;
+    }
 
+    ssh_channel channel = ssh_channel_new(my_ssh_session);
+    if (channel == NULL)
+        return;
+    rc = ssh_channel_open_session(channel);
+    if (rc != SSH_OK)
+    {
+        ssh_free(my_ssh_session);
+        ssh_channel_free(channel);
+        return ;
+    }
+    rc = ssh_channel_request_exec(channel, "sudo reboot");
 
-   
+    if (rc != SSH_OK)
+    {
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+    }
+    nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+    QByteArray ssh_Qbyte;
+    QByteArray ssh_merge_qbyte;
+    while (nbytes > 0)
+    {
+        ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+        ssh_merge_qbyte.append(ssh_Qbyte);
+        nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+    }
+    QString ssh_infor_string=ssh_merge_qbyte;
+    qDebug().noquote()<<ssh_infor_string;
+    if (nbytes < 0)
+    {
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+        qDebug()<< "Error: "+ QString(ssh_get_error(my_ssh_session)); //HERE IS WHERE I GET THE ERROR 
+    }
+
+    ssh_disconnect(my_ssh_session);
+    ssh_free(my_ssh_session);
 
 }
 
-void install_shell::check_ssh_device_information(std::string host_name ,std::string user_name,std::string Password,std::string device_type){
+void install_shell::check_ssh_device_information(std::string ip_address ,std::string user_name,std::string Password,std::string device_type){
 
 
     int rc;
@@ -467,7 +629,7 @@ void install_shell::check_ssh_device_information(std::string host_name ,std::str
     ssh_session my_ssh_session = ssh_new();
     if (my_ssh_session == NULL)
         return;
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST,host_name.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST,ip_address.c_str());
     ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
     ssh_options_set(my_ssh_session,SSH_OPTIONS_PASSWORD_AUTH,Password.c_str());
     ssh_options_set(my_ssh_session, SSH_OPTIONS_USER,user_name.c_str());
@@ -506,7 +668,6 @@ void install_shell::check_ssh_device_information(std::string host_name ,std::str
     }else if (device_type =="jetson")
     {
         rc = ssh_channel_request_exec(channel, "cat jetson_sensors/common.yaml");
-        /* code */
     }else if (device_type =="ADLink")
     {
         rc = ssh_channel_request_exec(channel, "cat ros2_ws/.modulesettings");
@@ -536,7 +697,7 @@ void install_shell::check_ssh_device_information(std::string host_name ,std::str
     qDebug().noquote()<<ssh_infor_string;
     //check install information
     if(ssh_infor_string !=""){
-    install_device_infor* dialog_device_info = new install_device_infor(nullptr,QString::fromStdString(host_name),ssh_infor_string);
+    install_device_infor* dialog_device_info = new install_device_infor(nullptr,QString::fromStdString(ip_address),ssh_infor_string);
     dialog_device_info->show();
     }else{
         QMessageBox exception_ssh;
@@ -841,7 +1002,7 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
     // }
 
 }
-void install_shell::install_misson(std::string user_name,std::string Password,std::string host_name,std::string pack_name,std::string interface,std::string ip){
+void install_shell::install_misson(std::string user_name,std::string Password,std::string ip_address,std::string pack_name,std::string interface,std::string ip){
 
     qDebug()<<QString::fromStdString(user_name);
 
@@ -856,7 +1017,7 @@ void install_shell::install_misson(std::string user_name,std::string Password,st
     
     if (my_ssh_session == NULL)
         return;
-    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST,host_name.c_str());
+    ssh_options_set(my_ssh_session, SSH_OPTIONS_HOST,ip_address.c_str());
     ssh_options_set(my_ssh_session, SSH_OPTIONS_PORT, &port);
     ssh_options_set(my_ssh_session,SSH_OPTIONS_PASSWORD_AUTH,Password.c_str());
     ssh_options_set(my_ssh_session, SSH_OPTIONS_USER,user_name.c_str());

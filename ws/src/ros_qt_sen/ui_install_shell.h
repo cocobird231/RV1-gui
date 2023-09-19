@@ -59,6 +59,7 @@ public:
     QPushButton *pushButton_11;
     QLabel *label_15;
     QLineEdit *lineEdit_7;
+    QPushButton *pushButton_6;
 
     void setupUi(QWidget *install_shell)
     {
@@ -178,6 +179,9 @@ public:
         lineEdit_7->setObjectName(QString::fromUtf8("lineEdit_7"));
         lineEdit_7->setGeometry(QRect(600, 360, 311, 25));
         lineEdit_7->setReadOnly(false);
+        pushButton_6 = new QPushButton(install_shell);
+        pushButton_6->setObjectName(QString::fromUtf8("pushButton_6"));
+        pushButton_6->setGeometry(QRect(1090, 180, 111, 25));
 
         retranslateUi(install_shell);
 
@@ -216,6 +220,7 @@ public:
         label_14->setText(QApplication::translate("install_shell", "\345\257\206\347\242\274\357\274\232", nullptr));
         pushButton_11->setText(QApplication::translate("install_shell", "\345\204\262\345\255\230", nullptr));
         label_15->setText(QApplication::translate("install_shell", "Mac address:", nullptr));
+        pushButton_6->setText(QApplication::translate("install_shell", "\351\207\215\346\226\260\345\225\237\345\213\225", nullptr));
     } // retranslateUi
 
 };

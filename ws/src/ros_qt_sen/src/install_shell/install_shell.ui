@@ -468,6 +468,19 @@
     <bool>false</bool>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushButton_6">
+   <property name="geometry">
+    <rect>
+     <x>1090</x>
+     <y>180</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>重新啟動</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -33,8 +33,10 @@ private:
     int ping( char *ips, int timeout);
     void icmp_thread_patch(QList<QString> net_list);
     QList<QString> subnet_list;
-    void check_ssh_device_information(std::string host_name ,std::string user_name,std::string Password,std::string device_type);
-    void install_misson(std::string user_name,std::string Password,std::string host_name,std::string pack_name,std::string interface,std::string ip);
+    void check_ssh_device_information(std::string ip_address ,std::string user_name,std::string Password,std::string device_type);
+    void install_misson(std::string user_name,std::string Password,std::string ip_address,std::string pack_name,std::string interface,std::string ip);
+    void reboot_device(std::string ip_address ,std::string user_name,std::string Password);
+
 private slots:
     void on_install_mission_dispatch_push_button_clicked();
     //void on_current_online_device_changed(QListWidgetItem * item);
@@ -49,6 +51,9 @@ private slots:
     void on_delet_mission_pushButton_clicked();
     void on_current_mission_install_changed(QListWidgetItem * item);
     void on_save_default_user_push_button();
+    void on_reboot_push_button_clicked();
+
+
 };
 
 #endif // INSTALL_SHELL_H

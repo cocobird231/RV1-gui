@@ -36,7 +36,7 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
     this->remove =install_host["remove"].toBool();
     this->update =install_host["update"].toBool();
     this->install =install_host["install"].toBool();
-    this->preserve ==install_host["preserve"].toBool();
+    this->preserve =install_host["preserve"].toBool();
 
     ui->checkBox_3->setChecked(this->remove);
     ui->checkBox_2->setChecked(this->update);
@@ -152,7 +152,7 @@ void install_option::on_reset_push_button_clicked(){
     this->remove =install_host["remove"].toBool();
     this->update =install_host["update"].toBool();
     this->install =install_host["install"].toBool();
-    this->preserve ==install_host["preserve"].toBool();
+    this->preserve =install_host["preserve"].toBool();
 
     ui->checkBox_3->setChecked(this->remove);
     ui->checkBox_2->setChecked(this->update);
