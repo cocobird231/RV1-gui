@@ -77,7 +77,13 @@
         "any": "cpp",
         "regex": "cpp",
         "qelapsedtimer": "cpp",
-        "qtimer": "cpp"
+        "qtimer": "cpp",
+        "qjsondocument": "cpp",
+        "qmessagebox": "cpp",
+        "qtnetwork": "cpp",
+        "qjsonvalue": "cpp",
+        "qjsonobject": "cpp",
+        "qfile": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

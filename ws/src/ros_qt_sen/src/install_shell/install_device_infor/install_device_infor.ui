@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>888</width>
-    <height>565</height>
+    <height>618</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,17 +17,17 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>50</y>
+     <y>60</y>
      <width>861</width>
-     <height>471</height>
+     <height>481</height>
     </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>530</y>
+     <x>390</x>
+     <y>570</y>
      <width>89</width>
      <height>25</height>
     </rect>
@@ -36,30 +36,43 @@
     <string>close</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>101</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Host Name:</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>10</y>
+     <x>120</x>
+     <y>20</y>
      <width>121</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
     <string>Undefinded Text</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>718</x>
+     <y>10</y>
+     <width>121</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>SFTP打開路徑</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>81</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ip address:</string>
    </property>
   </widget>
  </widget>

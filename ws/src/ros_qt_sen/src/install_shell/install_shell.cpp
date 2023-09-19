@@ -662,14 +662,19 @@ void install_shell::check_ssh_device_information(std::string ip_address ,std::st
         ssh_channel_free(channel);
         return ;
     }
+    QString Device_access_url ="";
     //raspberry pi check ros2_docker
     if(device_type =="raspberry pi"){
+        Device_access_url ="ros2_docker/common.yaml";
         rc = ssh_channel_request_exec(channel, "cat ros2_docker/common.yaml");
     }else if (device_type =="jetson")
     {
+        Device_access_url ="jetson_sensors/common.yaml";
         rc = ssh_channel_request_exec(channel, "cat jetson_sensors/common.yaml");
     }else if (device_type =="ADLink")
     {
+        Device_access_url ="ros2_ws/.modulesettings";
+
         rc = ssh_channel_request_exec(channel, "cat ros2_ws/.modulesettings");
     }else{
         QMessageBox exception_ssh;
@@ -697,7 +702,7 @@ void install_shell::check_ssh_device_information(std::string ip_address ,std::st
     qDebug().noquote()<<ssh_infor_string;
     //check install information
     if(ssh_infor_string !=""){
-    install_device_infor* dialog_device_info = new install_device_infor(nullptr,QString::fromStdString(ip_address),ssh_infor_string);
+    install_device_infor* dialog_device_info = new install_device_infor(nullptr,QString::fromStdString(ip_address),QString::fromStdString(user_name),Device_access_url,ssh_infor_string);
     dialog_device_info->show();
     }else{
         QMessageBox exception_ssh;
