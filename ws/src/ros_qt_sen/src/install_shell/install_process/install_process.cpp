@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <QScrollBar>
-install_process::install_process(QWidget *parent,std::string user_name,std::string Password,std::string host_name,std::string mac_address,std::string ip_address,std::string pack_name,std::string interface,std::string ip,std::string device,bool remove, bool update,bool install ,bool preserve) :
+install_process::install_process(QWidget *parent,std::string user_name,std::string Password,std::string host_name,std::string mac_address,std::string ip_address,std::string pack_name,std::string interface,std::string ip,std::string device,bool remove, bool update,bool install ,bool preserve,bool update_deployment) :
     QWidget(parent),
     ui(new Ui::install_process)
 {
@@ -23,6 +23,8 @@ install_process::install_process(QWidget *parent,std::string user_name,std::stri
     this->update =update;
     this->install = install;
     this->preserve = preserve;
+    this->update_deployment = update_deployment;
+
     // timmer.setSingleShot(true);
     QObject::connect(&timmer, &QTimer::timeout,this, &install_process::set_text_broswer);
     connect(ui->pushButton,&QPushButton::clicked,this,&install_process::on_close_push_button_clicked);
@@ -96,40 +98,82 @@ void install_process::install_misson(std::string user_name,std::string Password,
         return ;
     }
 
-   std::string ssh_command ="";
+    std::string backup_setting1="";
+    std::string backup_setting2="";
+    std::string backup_setting3="";
+    std::string backup_setting4="";
+
+    std::string recovered_setting1="";
+    std::string recovered_setting2="";
+
+    std::string ssh_command ="";
+
+
     QByteArray ssh_Qbyte;
     QByteArray ssh_merge_qbyte;
     QString ssh_infor_string;
         if(device=="jetson"){
-
-            ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-jetson-sensors-install.sh | bash";
-
-        
-        rc = ssh_channel_request_exec(channel, ssh_command.c_str());
-
-        if (rc != SSH_OK)
-        {
-            qDebug()<<"channel request error.";
-            qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
-
-        ssh_channel_close(channel);
-        ssh_channel_free(channel);
-        }
-        qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
-
-            while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+            if (this->update_deployment)
             {
-                ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
-                ssh_merge_qbyte.append(ssh_Qbyte);
-                nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
-                ssh_infor_string=ssh_merge_qbyte;
-                if (nbytes <= 0)
+                QList<std::string>  backup_setting_list<<"mkdir -p ~/tmp/.gui_bk"<<"mv ./jetson_sensors/.module* ~/.gui_bk"<<"mv ./jetson_sensors/common.yaml ~/.gui_bk""mv ./jetson_sensors/run.sh ~/.gui_bk";
+
+                foreach(std::string backup_setting ,backup_setting_list){
+                rc = ssh_channel_request_exec(channel, backup_setting.c_str());
+
+                if (rc != SSH_OK)
                 {
-                    break;
+                    qDebug()<<"channel request error.";
+                    qDebug()<<"ssh request command is _"+QString::fromStdString(backup_setting)+" _";
+
+                ssh_channel_close(channel);
+                ssh_channel_free(channel);
                 }
-                //qDebug().noquote()<<ssh_infor_string;
-                this->ssh_infor =ssh_infor_string;
+                qDebug()<<QString("ssh_channel_read get-jetson-install"); 
+                while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+                {
+                    ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+                    ssh_merge_qbyte.append(ssh_Qbyte);
+                    nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+                    ssh_infor_string=ssh_merge_qbyte;
+                    if (nbytes <= 0)
+                    {
+                        break;
+                    }
+                    qDebug().noquote()<<ssh_infor_string;
+                    this->ssh_infor =ssh_infor_string;
+                }
+                }
+
+                ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-jetson-sensors-install.sh | bash";
+                rc = ssh_channel_request_exec(channel, ssh_command.c_str());
+
+                if (rc != SSH_OK)
+                {
+                    qDebug()<<"channel request error.";
+                    qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
+
+                ssh_channel_close(channel);
+                ssh_channel_free(channel);
+                }
+                qDebug()<<QString("ssh_channel_read get-jetson-install"); 
+                while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+                {
+                    ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+                    ssh_merge_qbyte.append(ssh_Qbyte);
+                    nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+                    ssh_infor_string=ssh_merge_qbyte;
+                    if (nbytes <= 0)
+                    {
+                        break;
+                    }
+                    qDebug().noquote()<<ssh_infor_string;
+                    this->ssh_infor =ssh_infor_string;
+                }
+                recovered_setting1="mv ~/.gui_bk/* ~/jetson_sensors/";
+                recovered_setting2="rm -rf ~/.gui_bk";
             }
+            
+
                 channel = ssh_channel_new(my_ssh_session);
                 if (channel == NULL){
                     qDebug()<<"channel is missing pointer";
@@ -186,7 +230,7 @@ void install_process::install_misson(std::string user_name,std::string Password,
 
         if (pack_name =="py_chassis")
         {
-            ssh_command= "curl -fsSL ftp://61.220.23.239/rv-10/get-chassis-install.sh | bash ";
+            ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-chassis-install.sh | bash ";
         }else{
             ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-rpi-sensors-install.sh | bash ";
         }

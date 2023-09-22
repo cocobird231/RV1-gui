@@ -38,6 +38,7 @@ public:
     QCheckBox *checkBox_2;
     QCheckBox *checkBox_3;
     QCheckBox *checkBox_4;
+    QCheckBox *checkBox_5;
 
     void setupUi(QWidget *install_option)
     {
@@ -64,7 +65,7 @@ public:
         lineEdit_2->setGeometry(QRect(160, 120, 271, 25));
         pushButton = new QPushButton(install_option);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(170, 220, 89, 25));
+        pushButton->setGeometry(QRect(160, 260, 89, 25));
         label_4 = new QLabel(install_option);
         label_4->setObjectName(QString::fromUtf8("label_4"));
         label_4->setGeometry(QRect(50, 10, 91, 17));
@@ -73,10 +74,10 @@ public:
         label_5->setGeometry(QRect(160, 10, 171, 17));
         pushButton_2 = new QPushButton(install_option);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(310, 220, 111, 25));
+        pushButton_2->setGeometry(QRect(300, 260, 111, 25));
         pushButton_3 = new QPushButton(install_option);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
-        pushButton_3->setGeometry(QRect(40, 220, 89, 25));
+        pushButton_3->setGeometry(QRect(30, 260, 89, 25));
         checkBox = new QCheckBox(install_option);
         checkBox->setObjectName(QString::fromUtf8("checkBox"));
         checkBox->setGeometry(QRect(230, 170, 92, 23));
@@ -89,6 +90,9 @@ public:
         checkBox_4 = new QCheckBox(install_option);
         checkBox_4->setObjectName(QString::fromUtf8("checkBox_4"));
         checkBox_4->setGeometry(QRect(340, 170, 92, 23));
+        checkBox_5 = new QCheckBox(install_option);
+        checkBox_5->setObjectName(QString::fromUtf8("checkBox_5"));
+        checkBox_5->setGeometry(QRect(40, 220, 181, 23));
 
         retranslateUi(install_option);
 
@@ -112,6 +116,7 @@ public:
         checkBox_2->setText(QApplication::translate("install_option", "update", nullptr));
         checkBox_3->setText(QApplication::translate("install_option", "remove", nullptr));
         checkBox_4->setText(QApplication::translate("install_option", "preserve", nullptr));
+        checkBox_5->setText(QApplication::translate("install_option", "update deployment", nullptr));
     } // retranslateUi
 
 };

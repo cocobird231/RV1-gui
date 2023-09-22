@@ -91,8 +91,8 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>220</y>
+     <x>160</x>
+     <y>260</y>
      <width>89</width>
      <height>25</height>
     </rect>
@@ -130,8 +130,8 @@
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>310</x>
-     <y>220</y>
+     <x>300</x>
+     <y>260</y>
      <width>111</width>
      <height>25</height>
     </rect>
@@ -143,8 +143,8 @@
   <widget class="QPushButton" name="pushButton_3">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>220</y>
+     <x>30</x>
+     <y>260</y>
      <width>89</width>
      <height>25</height>
     </rect>
@@ -203,6 +203,19 @@
    </property>
    <property name="text">
     <string>preserve</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_5">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>220</y>
+     <width>181</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>update deployment</string>
    </property>
   </widget>
  </widget>

@@ -37,11 +37,13 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
     this->update =install_host["update"].toBool();
     this->install =install_host["install"].toBool();
     this->preserve =install_host["preserve"].toBool();
+    this->update_deployment = install_host["update_deployment"].toBool();
 
     ui->checkBox_3->setChecked(this->remove);
     ui->checkBox_2->setChecked(this->update);
     ui->checkBox->setChecked(this->install);
     ui->checkBox_4->setChecked(this->preserve);
+    ui->checkBox_5->setChecked(this->update_deployment);
 
 
     ui->label_5->setText(install_host["host_name"].toString());
@@ -101,6 +103,7 @@ void install_option::on_save_and_close_push_button_clicked(){
     this->update = ui->checkBox_2->isChecked();
     this->install = ui->checkBox->isChecked();
     this->preserve = ui->checkBox_4->isChecked();
+    this->update_deployment = ui->checkBox_4->isChecked();
 
 
 
@@ -122,6 +125,8 @@ void install_option::on_save_and_close_push_button_clicked(){
     install_host["update"]=this->update ;
     install_host["install"]=this->install ;
     install_host["preserve"]=this->preserve ;
+    install_host["update_deployment"]=this->update_deployment ;
+
 
     install_config[mac_address] = install_host;
     install_setting_root["install_config"]=install_config;
@@ -153,11 +158,14 @@ void install_option::on_reset_push_button_clicked(){
     this->update =install_host["update"].toBool();
     this->install =install_host["install"].toBool();
     this->preserve =install_host["preserve"].toBool();
+    this->update_deployment =install_host["update_deployment"].toBool();
 
     ui->checkBox_3->setChecked(this->remove);
     ui->checkBox_2->setChecked(this->update);
     ui->checkBox->setChecked(this->install);
     ui->checkBox_4->setChecked(this->preserve);
+    ui->checkBox_5->setChecked(this->update_deployment);
+
 
 
     ui->label_5->setText(install_host["host_name"].toString());

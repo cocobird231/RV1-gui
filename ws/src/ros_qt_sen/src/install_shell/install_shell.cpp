@@ -921,6 +921,7 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
     bool* update = new bool[task_count];
     bool* install = new bool[task_count];
     bool* preserve = new bool[task_count];
+    bool* update_deployment = new bool[task_count];
 
     if(task_count ==0){
         return;
@@ -952,6 +953,7 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         update[i] = host_object["update"].toBool();
         install[i] = host_object["install"].toBool();
         preserve[i] = host_object["preserve"].toBool();
+        update_deployment[i] = host_object["update_deployment"].toBool();
 
 
         user_name_array[i]=host_object["user"].toString().toStdString();
@@ -988,16 +990,17 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         std::string Password_ =Password_array[i];
         std::string pack_name_ =pack_name_array[i];
         std::string interface_ =interface_array[i];
+
         std::string ip_ =ip_array[i];
         bool remove_ = remove[i];
         bool update_ = update[i];
         bool install_ = install[i];
         bool preserve_ = preserve[i];
-
+        bool update_deployment_ = update_deployment[i];
 
         qDebug()<<"test for install";
         qDebug()<<QString::fromStdString(host_name_);
-        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_);
+        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_,update_deployment_);
         Install_process->show();
         // install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
 
@@ -1428,7 +1431,7 @@ void install_shell::on_install_option_push_button_clicked(){
         QString ip_config = host["ip"].toString()!=""?host["ip"].toString():"dhcp";
         QString interface = host["interface"].toString()!=""?host["interface"].toString():"eth0";
         QString device = host["device"].toString();
-        QString pack_names = host["pack_names"].toString();
+        QString pack_names = host["Package_Name"].toString();
         install_setting_json_document.setObject(install_root);
         install_file.close();
         if(device == ""){
