@@ -44,15 +44,16 @@ public:
     QPushButton *pushButton_2;
     QPushButton *pushButton_3;
     QPushButton *pushButton_4;
+    QPushButton *pushButton_5;
 
     void setupUi(QDialog *QosDeviceDialog)
     {
         if (QosDeviceDialog->objectName().isEmpty())
             QosDeviceDialog->setObjectName(QString::fromUtf8("QosDeviceDialog"));
-        QosDeviceDialog->resize(580, 441);
+        QosDeviceDialog->resize(604, 441);
         comboBox = new QComboBox(QosDeviceDialog);
         comboBox->setObjectName(QString::fromUtf8("comboBox"));
-        comboBox->setGeometry(QRect(180, 20, 381, 31));
+        comboBox->setGeometry(QRect(180, 20, 281, 31));
         label = new QLabel(QosDeviceDialog);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(20, 20, 101, 17));
@@ -84,15 +85,32 @@ public:
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
         pushButton->setGeometry(QRect(430, 390, 89, 25));
         comboBox_2 = new QComboBox(QosDeviceDialog);
+        comboBox_2->addItem(QString());
+        comboBox_2->addItem(QString());
+        comboBox_2->addItem(QString());
+        comboBox_2->addItem(QString());
         comboBox_2->setObjectName(QString::fromUtf8("comboBox_2"));
         comboBox_2->setGeometry(QRect(180, 70, 381, 25));
         comboBox_3 = new QComboBox(QosDeviceDialog);
+        comboBox_3->addItem(QString());
+        comboBox_3->addItem(QString());
+        comboBox_3->addItem(QString());
+        comboBox_3->addItem(QString());
         comboBox_3->setObjectName(QString::fromUtf8("comboBox_3"));
         comboBox_3->setGeometry(QRect(180, 150, 381, 25));
         comboBox_4 = new QComboBox(QosDeviceDialog);
+        comboBox_4->addItem(QString());
+        comboBox_4->addItem(QString());
+        comboBox_4->addItem(QString());
+        comboBox_4->addItem(QString());
         comboBox_4->setObjectName(QString::fromUtf8("comboBox_4"));
         comboBox_4->setGeometry(QRect(180, 190, 381, 25));
         comboBox_5 = new QComboBox(QosDeviceDialog);
+        comboBox_5->addItem(QString());
+        comboBox_5->addItem(QString());
+        comboBox_5->addItem(QString());
+        comboBox_5->addItem(QString());
+        comboBox_5->addItem(QString());
         comboBox_5->setObjectName(QString::fromUtf8("comboBox_5"));
         comboBox_5->setGeometry(QRect(180, 310, 381, 25));
         lineEdit = new QLineEdit(QosDeviceDialog);
@@ -116,6 +134,9 @@ public:
         pushButton_4 = new QPushButton(QosDeviceDialog);
         pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
         pushButton_4->setGeometry(QRect(320, 390, 89, 25));
+        pushButton_5 = new QPushButton(QosDeviceDialog);
+        pushButton_5->setObjectName(QString::fromUtf8("pushButton_5"));
+        pushButton_5->setGeometry(QRect(480, 20, 71, 25));
 
         retranslateUi(QosDeviceDialog);
 
@@ -135,9 +156,31 @@ public:
         label_8->setText(QApplication::translate("QosDeviceDialog", "liveliness", nullptr));
         label_9->setText(QApplication::translate("QosDeviceDialog", "liveliness_lease_duration_ms", nullptr));
         pushButton->setText(QApplication::translate("QosDeviceDialog", "Save", nullptr));
+        comboBox_2->setItemText(0, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_HISTORY_SYSTEM_DEFAULT", nullptr));
+        comboBox_2->setItemText(1, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_HISTORY_KEEP_LAST", nullptr));
+        comboBox_2->setItemText(2, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_HISTORY_KEEP_ALL", nullptr));
+        comboBox_2->setItemText(3, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_HISTORY_UNKNOWN", nullptr));
+
+        comboBox_3->setItemText(0, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_RELIABILITY_SYSTEM_DEFAULT", nullptr));
+        comboBox_3->setItemText(1, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_RELIABILITY_RELIABLE", nullptr));
+        comboBox_3->setItemText(2, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT", nullptr));
+        comboBox_3->setItemText(3, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_RELIABILITY_UNKNOWN", nullptr));
+
+        comboBox_4->setItemText(0, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT", nullptr));
+        comboBox_4->setItemText(1, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL", nullptr));
+        comboBox_4->setItemText(2, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_DURABILITY_VOLATILE", nullptr));
+        comboBox_4->setItemText(3, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_DURABILITY_UNKNOWN", nullptr));
+
+        comboBox_5->setItemText(0, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_LIVELINESS_SYSTEM_DEFAULT", nullptr));
+        comboBox_5->setItemText(1, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_LIVELINESS_AUTOMATIC", nullptr));
+        comboBox_5->setItemText(2, QApplication::translate("QosDeviceDialog", "RMW_DECLARE_DEPRECATED(RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_NODE,RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_NODE_DEPRECATED_MSG)", nullptr));
+        comboBox_5->setItemText(3, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_TOPIC", nullptr));
+        comboBox_5->setItemText(4, QApplication::translate("QosDeviceDialog", "RMW_QOS_POLICY_LIVELINESS_UNKNOWN", nullptr));
+
         pushButton_2->setText(QApplication::translate("QosDeviceDialog", "Add", nullptr));
         pushButton_3->setText(QApplication::translate("QosDeviceDialog", "Remove", nullptr));
         pushButton_4->setText(QApplication::translate("QosDeviceDialog", "Clear", nullptr));
+        pushButton_5->setText(QApplication::translate("QosDeviceDialog", "update", nullptr));
     } // retranslateUi
 
 };

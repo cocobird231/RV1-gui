@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
+    <width>604</width>
     <height>441</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
     <rect>
      <x>180</x>
      <y>20</y>
-     <width>381</width>
+     <width>281</width>
      <height>31</height>
     </rect>
    </property>
@@ -162,6 +162,26 @@
      <height>25</height>
     </rect>
    </property>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_HISTORY_SYSTEM_DEFAULT</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_HISTORY_KEEP_LAST</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_HISTORY_KEEP_ALL</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_HISTORY_UNKNOWN</string>
+    </property>
+   </item>
   </widget>
   <widget class="QComboBox" name="comboBox_3">
    <property name="geometry">
@@ -172,6 +192,26 @@
      <height>25</height>
     </rect>
    </property>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_RELIABILITY_SYSTEM_DEFAULT</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_RELIABILITY_RELIABLE</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_RELIABILITY_UNKNOWN</string>
+    </property>
+   </item>
   </widget>
   <widget class="QComboBox" name="comboBox_4">
    <property name="geometry">
@@ -182,6 +222,26 @@
      <height>25</height>
     </rect>
    </property>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_DURABILITY_SYSTEM_DEFAULT</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_DURABILITY_VOLATILE</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_DURABILITY_UNKNOWN</string>
+    </property>
+   </item>
   </widget>
   <widget class="QComboBox" name="comboBox_5">
    <property name="geometry">
@@ -192,6 +252,31 @@
      <height>25</height>
     </rect>
    </property>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_LIVELINESS_SYSTEM_DEFAULT</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_LIVELINESS_AUTOMATIC</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_DECLARE_DEPRECATED(RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_NODE,RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_NODE_DEPRECATED_MSG)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_LIVELINESS_MANUAL_BY_TOPIC</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>RMW_QOS_POLICY_LIVELINESS_UNKNOWN</string>
+    </property>
+   </item>
   </widget>
   <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
@@ -270,6 +355,19 @@
    </property>
    <property name="text">
     <string>Clear</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_5">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>20</y>
+     <width>71</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>update</string>
    </property>
   </widget>
  </widget>

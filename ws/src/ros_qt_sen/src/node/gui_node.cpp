@@ -6,7 +6,6 @@ using std::placeholders::_1;
 gui_node::gui_node()
 
 {
-    rclcpp::init(0,NULL);
     node = rclcpp::Node::make_shared("gui_subscriber");
     topic_Ultrasound_subscription_ = node->create_subscription<vehicle_interfaces::msg::Distance>("topic_Ultrasound", 10, std::bind(&gui_node::topic_Ultrasound_callback, this, _1));
     topic_Environment_subscription_=node->create_subscription<vehicle_interfaces::msg::Environment>("topic_ENV", 10, std::bind(&gui_node::topic_env_callback, this, _1));

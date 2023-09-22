@@ -5,6 +5,7 @@
 
 int main(int argc, char * argv[])
 {
+    rclcpp::init(0,NULL);
     QApplication a(argc, argv);
     MainWindow w;
     a.setWindowIcon(QIcon("./mirdc.ico"));
