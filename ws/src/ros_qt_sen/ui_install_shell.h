@@ -60,6 +60,8 @@ public:
     QLabel *label_15;
     QLineEdit *lineEdit_7;
     QPushButton *pushButton_6;
+    QLabel *label_8;
+    QLineEdit *lineEdit_8;
 
     void setupUi(QWidget *install_shell)
     {
@@ -98,7 +100,7 @@ public:
         lineEdit_2->setGeometry(QRect(600, 320, 311, 25));
         pushButton_5 = new QPushButton(install_shell);
         pushButton_5->setObjectName(QString::fromUtf8("pushButton_5"));
-        pushButton_5->setGeometry(QRect(510, 570, 161, 31));
+        pushButton_5->setGeometry(QRect(510, 610, 161, 31));
         listWidget = new QListWidget(install_shell);
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
         listWidget->setGeometry(QRect(40, 80, 411, 192));
@@ -107,17 +109,17 @@ public:
         listWidget_2->setGeometry(QRect(640, 80, 421, 192));
         label_4 = new QLabel(install_shell);
         label_4->setObjectName(QString::fromUtf8("label_4"));
-        label_4->setGeometry(QRect(500, 440, 67, 17));
+        label_4->setGeometry(QRect(500, 480, 67, 17));
         comboBox_2 = new QComboBox(install_shell);
         comboBox_2->addItem(QString());
         comboBox_2->addItem(QString());
         comboBox_2->addItem(QString());
         comboBox_2->addItem(QString());
         comboBox_2->setObjectName(QString::fromUtf8("comboBox_2"));
-        comboBox_2->setGeometry(QRect(600, 440, 311, 25));
+        comboBox_2->setGeometry(QRect(600, 480, 311, 25));
         pushButton_7 = new QPushButton(install_shell);
         pushButton_7->setObjectName(QString::fromUtf8("pushButton_7"));
-        pushButton_7->setGeometry(QRect(700, 570, 141, 31));
+        pushButton_7->setGeometry(QRect(700, 610, 141, 31));
         label_6 = new QLabel(install_shell);
         label_6->setObjectName(QString::fromUtf8("label_6"));
         label_6->setGeometry(QRect(50, 20, 91, 17));
@@ -132,16 +134,16 @@ public:
         label_7->setGeometry(QRect(50, 50, 101, 17));
         label_9 = new QLabel(install_shell);
         label_9->setObjectName(QString::fromUtf8("label_9"));
-        label_9->setGeometry(QRect(490, 480, 101, 17));
+        label_9->setGeometry(QRect(490, 520, 101, 17));
         label_10 = new QLabel(install_shell);
         label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setGeometry(QRect(510, 510, 67, 17));
+        label_10->setGeometry(QRect(510, 550, 67, 17));
         lineEdit_3 = new QLineEdit(install_shell);
         lineEdit_3->setObjectName(QString::fromUtf8("lineEdit_3"));
-        lineEdit_3->setGeometry(QRect(600, 480, 311, 25));
+        lineEdit_3->setGeometry(QRect(600, 520, 311, 25));
         lineEdit_4 = new QLineEdit(install_shell);
         lineEdit_4->setObjectName(QString::fromUtf8("lineEdit_4"));
-        lineEdit_4->setGeometry(QRect(600, 510, 311, 25));
+        lineEdit_4->setGeometry(QRect(600, 550, 311, 25));
         label_11 = new QLabel(install_shell);
         label_11->setObjectName(QString::fromUtf8("label_11"));
         label_11->setGeometry(QRect(650, 50, 131, 17));
@@ -182,6 +184,12 @@ public:
         pushButton_6 = new QPushButton(install_shell);
         pushButton_6->setObjectName(QString::fromUtf8("pushButton_6"));
         pushButton_6->setGeometry(QRect(1090, 180, 111, 25));
+        label_8 = new QLabel(install_shell);
+        label_8->setObjectName(QString::fromUtf8("label_8"));
+        label_8->setGeometry(QRect(476, 440, 111, 20));
+        lineEdit_8 = new QLineEdit(install_shell);
+        lineEdit_8->setObjectName(QString::fromUtf8("lineEdit_8"));
+        lineEdit_8->setGeometry(QRect(600, 440, 311, 25));
 
         retranslateUi(install_shell);
 
@@ -221,6 +229,7 @@ public:
         pushButton_11->setText(QApplication::translate("install_shell", "\345\204\262\345\255\230", nullptr));
         label_15->setText(QApplication::translate("install_shell", "Mac address:", nullptr));
         pushButton_6->setText(QApplication::translate("install_shell", "\351\207\215\346\226\260\345\225\237\345\213\225", nullptr));
+        label_8->setText(QApplication::translate("install_shell", "Message Type:", nullptr));
     } // retranslateUi
 
 };

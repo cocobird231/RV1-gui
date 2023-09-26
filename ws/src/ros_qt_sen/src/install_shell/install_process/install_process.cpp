@@ -98,13 +98,7 @@ void install_process::install_misson(std::string user_name,std::string Password,
         return ;
     }
 
-    std::string backup_setting1="";
-    std::string backup_setting2="";
-    std::string backup_setting3="";
-    std::string backup_setting4="";
 
-    std::string recovered_setting1="";
-    std::string recovered_setting2="";
 
     std::string ssh_command ="";
 
@@ -115,33 +109,33 @@ void install_process::install_misson(std::string user_name,std::string Password,
         if(device=="jetson"){
             if (this->update_deployment)
             {
-                QList<std::string>  backup_setting_list<<"mkdir -p ~/tmp/.gui_bk"<<"mv ./jetson_sensors/.module* ~/.gui_bk"<<"mv ./jetson_sensors/common.yaml ~/.gui_bk""mv ./jetson_sensors/run.sh ~/.gui_bk";
+                QList<std::string>  backup_setting_list={"mkdir -p ~/tmp/.gui_bk","mv ./jetson_sensors/.module* ~/.gui_bk","mv ./jetson_sensors/common.yaml ~/.gui_bk","mv ./jetson_sensors/run.sh ~/.gui_bk"};
 
                 foreach(std::string backup_setting ,backup_setting_list){
-                rc = ssh_channel_request_exec(channel, backup_setting.c_str());
+                    rc = ssh_channel_request_exec(channel, backup_setting.c_str());
 
-                if (rc != SSH_OK)
-                {
-                    qDebug()<<"channel request error.";
-                    qDebug()<<"ssh request command is _"+QString::fromStdString(backup_setting)+" _";
-
-                ssh_channel_close(channel);
-                ssh_channel_free(channel);
-                }
-                qDebug()<<QString("ssh_channel_read get-jetson-install"); 
-                while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
-                {
-                    ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
-                    ssh_merge_qbyte.append(ssh_Qbyte);
-                    nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
-                    ssh_infor_string=ssh_merge_qbyte;
-                    if (nbytes <= 0)
+                    if (rc != SSH_OK)
                     {
-                        break;
+                        qDebug()<<"channel request error.";
+                        qDebug()<<"ssh request command is _"+QString::fromStdString(backup_setting)+" _";
+
+                    ssh_channel_close(channel);
+                    ssh_channel_free(channel);
                     }
-                    qDebug().noquote()<<ssh_infor_string;
-                    this->ssh_infor =ssh_infor_string;
-                }
+                    qDebug()<<QString("ssh_channel_read get-jetson-install"); 
+                    while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+                    {
+                        ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+                        ssh_merge_qbyte.append(ssh_Qbyte);
+                        nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+                        ssh_infor_string=ssh_merge_qbyte;
+                        if (nbytes <= 0)
+                        {
+                            break;
+                        }
+                        qDebug().noquote()<<ssh_infor_string;
+                        this->ssh_infor =ssh_infor_string;
+                    }
                 }
 
                 ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-jetson-sensors-install.sh | bash";
@@ -169,8 +163,35 @@ void install_process::install_misson(std::string user_name,std::string Password,
                     qDebug().noquote()<<ssh_infor_string;
                     this->ssh_infor =ssh_infor_string;
                 }
-                recovered_setting1="mv ~/.gui_bk/* ~/jetson_sensors/";
-                recovered_setting2="rm -rf ~/.gui_bk";
+
+                QList<std::string>  recovered_settings={"mv ~/.gui_bk/* ~/jetson_sensors/","rm -rf ~/.gui_bk"};
+                foreach(std::string recovered_setting ,recovered_settings){
+                    rc = ssh_channel_request_exec(channel, recovered_setting.c_str());
+
+                    if (rc != SSH_OK)
+                    {
+                        qDebug()<<"channel request error.";
+                        qDebug()<<"ssh request command is _"+QString::fromStdString(recovered_setting)+" _";
+
+                    ssh_channel_close(channel);
+                    ssh_channel_free(channel);
+                    }
+                    qDebug()<<QString("ssh_channel_read get-jetson-install"); 
+                    while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+                    {
+                        ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+                        ssh_merge_qbyte.append(ssh_Qbyte);
+                        nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+                        ssh_infor_string=ssh_merge_qbyte;
+                        if (nbytes <= 0)
+                        {
+                            break;
+                        }
+                        qDebug().noquote()<<ssh_infor_string;
+                        this->ssh_infor =ssh_infor_string;
+                    }
+                }
+
             }
             
 
@@ -228,40 +249,92 @@ void install_process::install_misson(std::string user_name,std::string Password,
     }
     if(device=="raspberry pi"){
 
-        if (pack_name =="py_chassis")
-        {
-            ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-chassis-install.sh | bash ";
-        }else{
-            ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-rpi-sensors-install.sh | bash ";
-        }
-        
-        rc = ssh_channel_request_exec(channel, ssh_command.c_str());
-
-        if (rc != SSH_OK)
-        {
-            qDebug()<<"channel request error.";
-            qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
-
-        ssh_channel_close(channel);
-        ssh_channel_free(channel);
-        }
-        qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
-
-
-
-        while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
-        {
-            ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
-            ssh_merge_qbyte.append(ssh_Qbyte);
-            nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
-            ssh_infor_string=ssh_merge_qbyte;
-            if (nbytes <= 0)
+            if (this->update_deployment)
             {
-                break;
+                QList<std::string>  backup_setting_list={"mkdir -p ~/tmp/.gui_bk","mv ./ros2_docker/.module* ~/.gui_bk","mv ./ros2_docker/common.yaml ~/.gui_bk","mv ./ros2_docker/run.sh ~/.gui_bk"};
+
+                foreach(std::string backup_setting ,backup_setting_list){
+                    rc = ssh_channel_request_exec(channel, backup_setting.c_str());
+                    if (rc != SSH_OK)
+                    {
+                        qDebug()<<"channel request error.";
+                        qDebug()<<"ssh request command is _"+QString::fromStdString(backup_setting)+" _";
+
+                    ssh_channel_close(channel);
+                    ssh_channel_free(channel);
+                    }
+                    qDebug()<<QString("ssh_channel_read get-jetson-install"); 
+                    while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+                    {
+                        ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+                        ssh_merge_qbyte.append(ssh_Qbyte);
+                        nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+                        ssh_infor_string=ssh_merge_qbyte;
+                        if (nbytes <= 0)
+                        {
+                            break;
+                        }
+                        qDebug().noquote()<<ssh_infor_string;
+                        this->ssh_infor =ssh_infor_string;
+                    }
+                }
+                if (pack_name =="py_chassis")
+                {
+                    ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-chassis-install.sh | bash ";
+                }else{
+                    ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-rpi-sensors-install.sh | bash ";
+                }
+                rc = ssh_channel_request_exec(channel, ssh_command.c_str());
+                if (rc != SSH_OK)
+                {
+                    qDebug()<<"channel request error.";
+                    qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
+                    ssh_channel_close(channel);
+                    ssh_channel_free(channel);
+                }
+                qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
+                while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+                {
+                    ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+                    ssh_merge_qbyte.append(ssh_Qbyte);
+                    nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+                    ssh_infor_string=ssh_merge_qbyte;
+                    if (nbytes <= 0)
+                    {
+                        break;
+                    }
+                    //qDebug().noquote()<<ssh_infor_string;
+                    this->ssh_infor =ssh_infor_string;
+                }
+                QList<std::string>  recovered_settings={"mkdir -p ~/tmp/.gui_bk","mv ./ros2_docker/.module* ~/.gui_bk","mv ./ros2_docker/common.yaml ~/.gui_bk""mv ./jetson_sensors/run.sh ~/.gui_bk"};
+
+                foreach(std::string recovered_setting ,recovered_settings){
+                    rc = ssh_channel_request_exec(channel, recovered_setting.c_str());
+                    if (rc != SSH_OK)
+                    {
+                        qDebug()<<"channel request error.";
+                        qDebug()<<"ssh request command is _"+QString::fromStdString(recovered_setting)+" _";
+
+                    ssh_channel_close(channel);
+                    ssh_channel_free(channel);
+                    }
+                    qDebug()<<QString("ssh_channel_read get-raspberry-install"); 
+                    while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
+                    {
+                        ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
+                        ssh_merge_qbyte.append(ssh_Qbyte);
+                        nbytes =  ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+                        ssh_infor_string=ssh_merge_qbyte;
+                        if (nbytes <= 0)
+                        {
+                            break;
+                        }
+                        qDebug().noquote()<<ssh_infor_string;
+                        this->ssh_infor =ssh_infor_string;
+                    }
+                }
+
             }
-            //qDebug().noquote()<<ssh_infor_string;
-            this->ssh_infor =ssh_infor_string;
-        }
         channel = ssh_channel_new(my_ssh_session);
         if (channel == NULL){
             qDebug()<<"channel is missing pointer";
@@ -309,9 +382,8 @@ void install_process::install_misson(std::string user_name,std::string Password,
         {
             qDebug()<<"channel request error.";
             qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
-
-        ssh_channel_close(channel);
-        ssh_channel_free(channel);
+            ssh_channel_close(channel);
+            ssh_channel_free(channel);
         }
         qDebug()<<QString("ssh_channel_read install"); 
     }
