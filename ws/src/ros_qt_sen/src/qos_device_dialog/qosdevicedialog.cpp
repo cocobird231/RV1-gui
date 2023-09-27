@@ -3,10 +3,13 @@
 #include "vehicle_interfaces/qos.h"
 #include "vehicle_interfaces/params.h"
 #include <thread>
-
+#include <QDebug>
 #include "./../../ui_qosdevicedialog.h"
 
 std::shared_ptr<std::thread> Qos_thread;
+
+std::shared_ptr<QosDeviceDialog::QoSControlNode> control;
+std::shared_ptr<vehicle_interfaces::GenericParams> params;
 
 QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
     QDialog(parent),
@@ -16,11 +19,10 @@ QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
     this->setWindowTitle("QoS模式設定");
     connect(ui->pushButton_5,&QPushButton::clicked,this,&QosDeviceDialog::on_update_topic_name_push_button_clicked);
     connect(ui->comboBox,&QComboBox::currentTextChanged,this,&QosDeviceDialog::on_current_topic_name_choose);
-
+    params = std::make_shared<vehicle_interfaces::GenericParams>("qoscontrol_params_node");
+    control = std::make_shared<QoSControlNode>("qoscontrol_0_node", params->qosService);
     // Qos_thread = std::make_shared<std::thread>(std::bind(&QosDeviceDialog::Qos_execut,this));
     // Qos_thread->detach();
-    auto params = std::make_shared<vehicle_interfaces::GenericParams>("qoscontrol_params_node");
-    auto control = std::make_shared<QoSControlNode>("qoscontrol_0_node", params->qosService);
 
 }
 
@@ -54,6 +56,7 @@ void QosDeviceDialog::on_update_topic_name_push_button_clicked(){
         topic_list.append(QString::fromStdString(i.first));
     }
     ui->comboBox->addItems(topic_list);
+    
 }
 void QosDeviceDialog::on_save_qos_profile_push_button_clicked(){
 
@@ -69,7 +72,16 @@ void QosDeviceDialog::on_add_qos_profile_push_button_clicked(){
 
 }
 void QosDeviceDialog::on_current_topic_name_choose(const QString &text){
-
+    qDebug()<<text;
+    std::string topic_string =text.toStdString();
+    rmw_qos_profile_t qos_profile;
+    bool response_success = control->requestQosReq(topic_string,qos_profile);
+    qDebug()<<QString(qos_profile.liveliness);
+    if(!response_success){
+        qDebug()<<"requestQosReq not success."
+    }else{
+        //set ui 
+    }
 }
 
 

@@ -18,11 +18,6 @@ class QosDeviceDialog : public QDialog
 public:
     explicit QosDeviceDialog(QWidget *parent = nullptr);
     ~QosDeviceDialog();
-
-private:
-    std::shared_ptr<rclcpp::Node> name_node;
-    void Qos_execut();
-    Ui::QosDeviceDialog *ui;
     class QoSControlNode : public rclcpp::Node{
         private:
             std::shared_ptr<rclcpp::Node> regClientNode_;
@@ -42,6 +37,12 @@ private:
             // set qos server setting enable publish and publish interval
             bool setParam(const rcl_interfaces::msg::Parameter& param);
     };
+private:
+    std::shared_ptr<rclcpp::Node> name_node;
+
+    void Qos_execut();
+    Ui::QosDeviceDialog *ui;
+
 private slots:
     void on_current_topic_name_choose(const QString &text);
     void on_update_topic_name_push_button_clicked();
