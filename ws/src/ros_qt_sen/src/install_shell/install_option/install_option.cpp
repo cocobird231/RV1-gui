@@ -103,7 +103,7 @@ void install_option::on_save_and_close_push_button_clicked(){
     this->update = ui->checkBox_2->isChecked();
     this->install = ui->checkBox->isChecked();
     this->preserve = ui->checkBox_4->isChecked();
-    this->update_deployment = ui->checkBox_4->isChecked();
+    this->update_deployment = ui->checkBox_5->isChecked();
 
 
 

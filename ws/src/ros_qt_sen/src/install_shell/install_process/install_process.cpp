@@ -107,8 +107,24 @@ void install_process::install_misson(std::string user_name,std::string Password,
     QByteArray ssh_merge_qbyte;
     QString ssh_infor_string;
         if(device=="jetson"){
+
+
             if (this->update_deployment)
             {
+
+                channel = ssh_channel_new(my_ssh_session);
+                if (channel == NULL){
+                    qDebug()<<"channel is missing pointer";
+                    return;
+                }
+                rc = ssh_channel_open_session(channel);
+                if (rc != SSH_OK)
+                {
+                    qDebug()<<"channel get error";
+                    ssh_free(my_ssh_session);
+                    ssh_channel_free(channel);
+                    return ;
+                }
                 QList<std::string>  backup_setting_list={"mkdir -p ~/tmp/.gui_bk","mv ./jetson_sensors/.module* ~/.gui_bk","mv ./jetson_sensors/common.yaml ~/.gui_bk","mv ./jetson_sensors/run.sh ~/.gui_bk"};
 
                 foreach(std::string backup_setting ,backup_setting_list){
@@ -122,7 +138,7 @@ void install_process::install_misson(std::string user_name,std::string Password,
                     ssh_channel_close(channel);
                     ssh_channel_free(channel);
                     }
-                    qDebug()<<QString("ssh_channel_read get-jetson-install"); 
+                    qDebug()<<QString("ssh_channel_read get-backup_setting_list-install"); 
                     while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
                     {
                         ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
@@ -136,7 +152,23 @@ void install_process::install_misson(std::string user_name,std::string Password,
                         qDebug().noquote()<<ssh_infor_string;
                         this->ssh_infor =ssh_infor_string;
                     }
+                    
+                    channel = ssh_channel_new(my_ssh_session);
+                    if (channel == NULL){
+                        qDebug()<<"channel is missing pointer";
+                        return;
+                    }
+                    rc = ssh_channel_open_session(channel);
+                    if (rc != SSH_OK)
+                    {
+                        qDebug()<<"channel get error";
+                        ssh_free(my_ssh_session);
+                        ssh_channel_free(channel);
+                        return ;
+                    }   
+
                 }
+                qDebug()<<QString("ssh_channel_read get-jetson_curl"); 
 
                 ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-jetson-sensors-install.sh | bash";
                 rc = ssh_channel_request_exec(channel, ssh_command.c_str());
@@ -163,7 +195,19 @@ void install_process::install_misson(std::string user_name,std::string Password,
                     qDebug().noquote()<<ssh_infor_string;
                     this->ssh_infor =ssh_infor_string;
                 }
-
+                    channel = ssh_channel_new(my_ssh_session);
+                    if (channel == NULL){
+                        qDebug()<<"channel is missing pointer";
+                        return;
+                    }
+                    rc = ssh_channel_open_session(channel);
+                    if (rc != SSH_OK)
+                    {
+                        qDebug()<<"channel get error";
+                        ssh_free(my_ssh_session);
+                        ssh_channel_free(channel);
+                        return ;
+                    }   
                 QList<std::string>  recovered_settings={"mv ~/.gui_bk/* ~/jetson_sensors/","rm -rf ~/.gui_bk"};
                 foreach(std::string recovered_setting ,recovered_settings){
                     rc = ssh_channel_request_exec(channel, recovered_setting.c_str());
@@ -190,25 +234,40 @@ void install_process::install_misson(std::string user_name,std::string Password,
                         qDebug().noquote()<<ssh_infor_string;
                         this->ssh_infor =ssh_infor_string;
                     }
+                    channel = ssh_channel_new(my_ssh_session);
+                    if (channel == NULL){
+                        qDebug()<<"channel is missing pointer";
+                        return;
+                    }
+                    rc = ssh_channel_open_session(channel);
+                    if (rc != SSH_OK)
+                    {
+                        qDebug()<<"channel get error";
+                        ssh_free(my_ssh_session);
+                        ssh_channel_free(channel);
+                        return ;
+                    }   
                 }
 
             }
             
+            //sudo 
+            std::string sudo_session = "echo "+Password+" | sudo -S ls -la";
+            // rc = ssh_channel_request_exec(channel, sudo_session.c_str());
 
-                channel = ssh_channel_new(my_ssh_session);
-                if (channel == NULL){
-                    qDebug()<<"channel is missing pointer";
-                    return;
-                }
-                rc = ssh_channel_open_session(channel);
-                if (rc != SSH_OK)
-                {
-                    qDebug()<<"channel get error";
-                    ssh_free(my_ssh_session);
-                    ssh_channel_free(channel);
-                    return ;
-                }
-                qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
+            // if (rc != SSH_OK)
+            // {
+            //     qDebug()<<"channel request error.";
+            //     qDebug()<<QString::fromStdString(sudo_session);
+
+            // ssh_channel_close(channel);
+            // ssh_channel_free(channel);
+            // }
+            // qDebug()<<QString("ssh_channel_read get-sudo_session"); 
+
+
+
+        qDebug()<<QString("ssh_channel_read get-jetson-install"); 
 
         ssh_command= ". ~/jetson_sensors/install.sh";
         std::string shell_temp_command = "";
@@ -234,7 +293,13 @@ void install_process::install_misson(std::string user_name,std::string Password,
         {
             shell_temp_command = shell_temp_command+" -p ";
         }
-        ssh_command = ssh_command +shell_temp_command;
+        ssh_command = sudo_session+"\n"+ssh_command +shell_temp_command;
+        if(ssh_channel_is_open(channel)){
+            qDebug()<<"channel ssh_channel_is_open error.";
+
+
+        }
+
         rc = ssh_channel_request_exec(channel, ssh_command.c_str());
 
         if (rc != SSH_OK)
@@ -247,6 +312,8 @@ void install_process::install_misson(std::string user_name,std::string Password,
         }
         qDebug()<<QString("ssh_channel_read install"); 
     }
+
+
     if(device=="raspberry pi"){
 
             if (this->update_deployment)
@@ -254,6 +321,8 @@ void install_process::install_misson(std::string user_name,std::string Password,
                 QList<std::string>  backup_setting_list={"mkdir -p ~/tmp/.gui_bk","mv ./ros2_docker/.module* ~/.gui_bk","mv ./ros2_docker/common.yaml ~/.gui_bk","mv ./ros2_docker/run.sh ~/.gui_bk"};
 
                 foreach(std::string backup_setting ,backup_setting_list){
+
+
                     rc = ssh_channel_request_exec(channel, backup_setting.c_str());
                     if (rc != SSH_OK)
                     {
@@ -263,7 +332,7 @@ void install_process::install_misson(std::string user_name,std::string Password,
                     ssh_channel_close(channel);
                     ssh_channel_free(channel);
                     }
-                    qDebug()<<QString("ssh_channel_read get-jetson-install"); 
+                    qDebug()<<QString("ssh_channel_read get-raspberry pi-install"); 
                     while (ssh_channel_is_open(channel) &&! ssh_channel_is_eof(channel))
                     {
                         ssh_Qbyte = QByteArray::fromRawData(buffer,nbytes);
@@ -277,6 +346,20 @@ void install_process::install_misson(std::string user_name,std::string Password,
                         qDebug().noquote()<<ssh_infor_string;
                         this->ssh_infor =ssh_infor_string;
                     }
+                    channel = ssh_channel_new(my_ssh_session);
+                    if (channel == NULL){
+                        qDebug()<<"channel is missing pointer";
+                        return;
+                    }
+                    rc = ssh_channel_open_session(channel);
+                    if (rc != SSH_OK)
+                    {
+                        qDebug()<<"channel get error";
+                        ssh_free(my_ssh_session);
+                        ssh_channel_free(channel);
+                        return ;
+                    }
+                    qDebug()<<QString::fromStdString(backup_setting); 
                 }
                 if (pack_name =="py_chassis")
                 {
@@ -306,9 +389,23 @@ void install_process::install_misson(std::string user_name,std::string Password,
                     //qDebug().noquote()<<ssh_infor_string;
                     this->ssh_infor =ssh_infor_string;
                 }
+                
                 QList<std::string>  recovered_settings={"mkdir -p ~/tmp/.gui_bk","mv ./ros2_docker/.module* ~/.gui_bk","mv ./ros2_docker/common.yaml ~/.gui_bk""mv ./jetson_sensors/run.sh ~/.gui_bk"};
 
                 foreach(std::string recovered_setting ,recovered_settings){
+                    channel = ssh_channel_new(my_ssh_session);
+                    if (channel == NULL){
+                        qDebug()<<"channel is missing pointer";
+                        return;
+                    }
+                    rc = ssh_channel_open_session(channel);
+                    if (rc != SSH_OK)
+                    {
+                        qDebug()<<"channel get error";
+                        ssh_free(my_ssh_session);
+                        ssh_channel_free(channel);
+                        return ;
+                    }
                     rc = ssh_channel_request_exec(channel, recovered_setting.c_str());
                     if (rc != SSH_OK)
                     {
