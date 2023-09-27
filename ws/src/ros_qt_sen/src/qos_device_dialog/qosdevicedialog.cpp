@@ -70,9 +70,10 @@ void QosDeviceDialog::on_enable_publish_push_button_clicked(){
     enable = !enable;
     if (enable)
     {
-        ui->pushButton_6->setText("Enable Publish");
-    }else{
         ui->pushButton_6->setText("Disable Publish");
+
+    }else{
+        ui->pushButton_6->setText("Enable Publish");
 
     }
     param.value.bool_value = enable;
@@ -174,7 +175,7 @@ QosDeviceDialog::QoSControlNode::QoSControlNode(const std::string& nodeName, con
         this->reqClient_ = this->reqClientNode_->create_client<vehicle_interfaces::srv::QosReq>(qosServiceName + "_Req");
 
         this->paramNode_ = rclcpp::Node::make_shared(nodeName + "_qosparam_client");
-        this->paramClient_ = this->paramNode_->create_client<rcl_interfaces::srv::SetParametersAtomically>("qosserver_0_node/set_parameters_atomically");
+        this->paramClient_ = this->paramNode_->create_client<rcl_interfaces::srv::SetParametersAtomically>("/V0/qosserver_0_node/set_parameters_atomically");
         RCLCPP_INFO(this->get_logger(), "[QoSControlNode] Constructed");
 
         bool stopF = false;
@@ -208,9 +209,9 @@ bool QosDeviceDialog::QoSControlNode::setParam(const rcl_interfaces::msg::Parame
 
 		auto result = this->paramClient_->async_send_request(request);
 #if ROS_DISTRO == 0
-        if (rclcpp::spin_until_future_complete(this->paramNode_, result, 10s) == rclcpp::executor::FutureReturnCode::SUCCESS)
+        if (rclcpp::spin_until_future_complete(this->paramNode_, result, 3s) == rclcpp::executor::FutureReturnCode::SUCCESS)
 #else
-        if (rclcpp::spin_until_future_complete(this->paramNode_, result, 10s) == rclcpp::FutureReturnCode::SUCCESS)
+        if (rclcpp::spin_until_future_complete(this->paramNode_, result, 3s) == rclcpp::FutureReturnCode::SUCCESS)
 #endif
         {
             auto response = result.get();
