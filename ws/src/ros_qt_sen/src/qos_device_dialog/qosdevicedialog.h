@@ -39,7 +39,7 @@ public:
     };
 private:
     std::shared_ptr<rclcpp::Node> name_node;
-
+    bool enable =false;
     void Qos_execut();
     Ui::QosDeviceDialog *ui;
 
@@ -50,7 +50,9 @@ private slots:
     void on_remove_qos_profile_push_button_clicked();
     void on_clear_qos_profile_push_button_clicked();
     void on_save_qos_profile_push_button_clicked();
-    
+    void on_enable_publish_push_button_clicked();
+    void on_set_publish_push_button_clicked();
+
 };
 
 #endif // QOSDEVICEDIALOG_H
