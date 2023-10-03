@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "./../../ui_qosdevicedialog.h"
 #include <string>
+#include <QMessageBox>
 std::shared_ptr<std::thread> Qos_thread;
 
 std::shared_ptr<QosDeviceDialog::QoSControlNode> control;
@@ -27,6 +28,15 @@ QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
     connect(ui->pushButton_5,&QPushButton::clicked,this,&QosDeviceDialog::on_update_topic_name_push_button_clicked);
     connect(ui->pushButton_6,&QPushButton::clicked,this,&QosDeviceDialog::on_enable_publish_push_button_clicked);
     connect(ui->pushButton_7,&QPushButton::clicked,this,&QosDeviceDialog::on_set_publish_push_button_clicked);
+
+    QValidator *UIntDepthValidator = new QIntValidator(0, 999, this);
+    ui->lineEdit->setValidator(UIntDepthValidator);
+    QValidator *DoubleValidator = new QDoubleValidator(0,100000,7,this);
+    ui->lineEdit_2->setValidator(DoubleValidator);
+    ui->lineEdit_3->setValidator(DoubleValidator);
+    ui->lineEdit_4->setValidator(DoubleValidator);
+    ui->lineEdit_5->setValidator(DoubleValidator);
+
 
     params = std::make_shared<vehicle_interfaces::GenericParams>("qoscontrol_params_node");
     control = std::make_shared<QoSControlNode>("gui_qos_0_node", "/V0/qos_0");
@@ -102,7 +112,10 @@ void QosDeviceDialog::on_save_qos_profile_push_button_clicked(){
     bool qos_requst_success = control->requestQosReg(std::make_shared<vehicle_interfaces::srv::QosReg::Request>(req));
     if (!qos_requst_success)
     {
-        qDebug()<<"clear requestQosReq not success.";
+        qDebug()<<"save requestQosReq not success.";
+        QMessageBox SaveMeassage;
+        SaveMeassage.setText("儲存失敗");
+        SaveMeassage.exec();
     }
 }
 void QosDeviceDialog::on_clear_qos_profile_push_button_clicked(){
@@ -112,6 +125,9 @@ void QosDeviceDialog::on_clear_qos_profile_push_button_clicked(){
     if (!qos_requst_success)
     {
         qDebug()<<"clear requestQosReq not success.";
+        QMessageBox ClearMeassage;
+        ClearMeassage.setText("清除失敗");
+        ClearMeassage.exec();
     }
 }
 void QosDeviceDialog::on_remove_qos_profile_push_button_clicked(){
@@ -122,6 +138,9 @@ void QosDeviceDialog::on_remove_qos_profile_push_button_clicked(){
         if (!qos_requst_success)
         {
             qDebug()<<"remove requestQosReq not success.";
+            QMessageBox RemoveMeassage;
+            RemoveMeassage.setText("移除失敗");
+            RemoveMeassage.exec();
         }
 }
 
@@ -143,6 +162,9 @@ void QosDeviceDialog::on_add_qos_profile_push_button_clicked(){
     if (!qos_requst_success)
     {
         qDebug()<<"Add requestQosReq not success.";
+        QMessageBox AddMeassage;
+        AddMeassage.setText("新增失敗");
+        AddMeassage.exec();
     }
 
 }
@@ -153,15 +175,23 @@ void QosDeviceDialog::on_current_topic_name_choose(const QString &text){
     bool response_success = control->requestQosReq(topic_string,qos_profile);
     if(!response_success){
         qDebug()<<"requestQosReq not success.";
+        ui->comboBox_2->setCurrentIndex(0);
+        ui->lineEdit->setText("");
+        ui->comboBox_3->setCurrentIndex(0);
+        ui->comboBox_4->setCurrentIndex(0);
+        ui->lineEdit_2->setText("");
+        ui->lineEdit_3->setText("");
+        ui->comboBox_5->setCurrentIndex(0);
+        ui->lineEdit_4->setText("");
     }else{
         ui->comboBox_2->setCurrentIndex(qos_profile.history);
         ui->lineEdit->setText(QString::fromStdString(std::to_string(qos_profile.depth)));
         ui->comboBox_3->setCurrentIndex(qos_profile.reliability);
         ui->comboBox_4->setCurrentIndex(qos_profile.durability);
-        ui->lineEdit_2->setText(QString::fromStdString(std::to_string(  vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.deadline)  )));
-        ui->lineEdit_3->setText(QString::fromStdString(std::to_string(vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.lifespan)  )));
+        ui->lineEdit_2->setText(QString::fromStdString(std::to_string(  vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.deadline))));
+        ui->lineEdit_3->setText(QString::fromStdString(std::to_string(vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.lifespan))));
         ui->comboBox_5->setCurrentIndex(qos_profile.liveliness);
-        ui->lineEdit_4->setText(QString::fromStdString(std::to_string(  vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.liveliness_lease_duration)  )));
+        ui->lineEdit_4->setText(QString::fromStdString(std::to_string(  vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.liveliness_lease_duration))));
         //set ui 
     }
 }
@@ -178,7 +208,7 @@ QosDeviceDialog::QoSControlNode::QoSControlNode(const std::string& nodeName, con
         this->paramClient_ = this->paramNode_->create_client<rcl_interfaces::srv::SetParametersAtomically>("/V0/qosserver_0_node/set_parameters_atomically");
         RCLCPP_INFO(this->get_logger(), "[QoSControlNode] Constructed");
 
-        bool stopF = false;
+        // bool stopF = false;
         // vehicle_interfaces::ConnToService(this->regClient_, stopF);
         // vehicle_interfaces::ConnToService(this->reqClient_, stopF);
         // vehicle_interfaces::ConnToService(this->paramClient_, stopF);
@@ -197,6 +227,9 @@ bool QosDeviceDialog::QoSControlNode::requestQosReg(const std::shared_ptr<vehicl
             RCLCPP_INFO(this->get_logger(), "[QoSControlNode::requestQosReg] Request: %d, qid: %ld", res->response, res->qid);
             return res->response;
         }
+        QMessageBox TimeOutMeassage;
+        TimeOutMeassage.setText("RegService逾期未回覆");
+        TimeOutMeassage.exec();
         RCLCPP_INFO(this->get_logger(), "[QoSControlNode::requestQosReg] Request failed.");
         return false;
 
@@ -219,6 +252,9 @@ bool QosDeviceDialog::QoSControlNode::setParam(const rcl_interfaces::msg::Parame
                 response->result.successful, response->result.reason.c_str());
 			return response->result.successful;
         }
+        QMessageBox TimeOutMeassage;
+        TimeOutMeassage.setText("Param Service逾期未回覆");
+        TimeOutMeassage.exec();
         RCLCPP_INFO(this->get_logger(), "[QoSControlNode::setParam] Request failed.");
 		return false;
 
@@ -229,9 +265,9 @@ bool QosDeviceDialog::QoSControlNode::requestQosReq(const std::string& topicName
         request->topic_name = topicName;
         auto result = this->reqClient_->async_send_request(request);
 #if ROS_DISTRO == 0
-        if (rclcpp::spin_until_future_complete(this->reqClientNode_, result, 500ms) == rclcpp::executor::FutureReturnCode::SUCCESS)
+        if (rclcpp::spin_until_future_complete(this->reqClientNode_, result, 1000ms) == rclcpp::executor::FutureReturnCode::SUCCESS)
 #else
-        if (rclcpp::spin_until_future_complete(this->reqClientNode_, result, 500ms) == rclcpp::FutureReturnCode::SUCCESS)
+        if (rclcpp::spin_until_future_complete(this->reqClientNode_, result, 1000ms) == rclcpp::FutureReturnCode::SUCCESS)
 #endif
         {
             auto res = result.get();
@@ -244,6 +280,9 @@ bool QosDeviceDialog::QoSControlNode::requestQosReq(const std::string& topicName
             }
             return res->response;
         }
+        QMessageBox TimeOutMeassage;
+        TimeOutMeassage.setText("ReqService逾期未回覆");
+        TimeOutMeassage.exec();
         RCLCPP_INFO(this->get_logger(), "[QoSControlNode::requestQosReq] Request failed.");
         return false;
 }
