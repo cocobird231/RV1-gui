@@ -318,11 +318,10 @@ void install_process::install_misson(std::string user_name,std::string Password,
 
             if (this->update_deployment)
             {
-                QList<std::string>  backup_setting_list={"mkdir -p ~/tmp/.gui_bk","mv ./ros2_docker/.module* ~/.gui_bk","mv ./ros2_docker/common.yaml ~/.gui_bk","mv ./ros2_docker/run.sh ~/.gui_bk"};
+                QList<std::string>  backup_setting_list={"mkdir -p ~/tmp/.gui_bk","mv ./ros2_docker/.module* ~/.gui_bk","mv ./ros2_docker/common.yaml ~/.gui_bk","mv ./ros2_docker/run.sh ~/.gui_bk","rm -rf ./ros2_docker"};
 
                 foreach(std::string backup_setting ,backup_setting_list){
-
-
+                    qDebug()<<"ssh request command is _"+QString::fromStdString(backup_setting)+" _";
                     rc = ssh_channel_request_exec(channel, backup_setting.c_str());
                     if (rc != SSH_OK)
                     {
@@ -367,6 +366,7 @@ void install_process::install_misson(std::string user_name,std::string Password,
                 }else{
                     ssh_command= "curl -fsSL ftp://61.220.23.239/rv-11/get-rpi-sensors-install.sh | bash ";
                 }
+                qDebug()<<"ssh request command is _"+QString::fromStdString(ssh_command)+" _";
                 rc = ssh_channel_request_exec(channel, ssh_command.c_str());
                 if (rc != SSH_OK)
                 {
@@ -390,10 +390,11 @@ void install_process::install_misson(std::string user_name,std::string Password,
                     this->ssh_infor =ssh_infor_string;
                 }
                 
-                QList<std::string>  recovered_settings={"mkdir -p ~/tmp/.gui_bk","mv ./ros2_docker/.module* ~/.gui_bk","mv ./ros2_docker/common.yaml ~/.gui_bk""mv ./jetson_sensors/run.sh ~/.gui_bk"};
+                QList<std::string>  recovered_settings={"mkdir -p ~/tmp/.gui_bk","mv ./ros2_docker/.module* ~/.gui_bk","mv ./ros2_docker/common.yaml ~/.gui_bk","mv ./ros2_docker/run.sh ~/.gui_bk"};
 
                 foreach(std::string recovered_setting ,recovered_settings){
-                    channel = ssh_channel_new(my_ssh_session);
+                    qDebug()<<"ssh request command is _"+QString::fromStdString(recovered_setting)+" _";
+                    qDebug()<<"channel is missing pointer";
                     if (channel == NULL){
                         qDebug()<<"channel is missing pointer";
                         return;
@@ -410,7 +411,7 @@ void install_process::install_misson(std::string user_name,std::string Password,
                     if (rc != SSH_OK)
                     {
                         qDebug()<<"channel request error.";
-                        qDebug()<<"ssh request command is _"+QString::fromStdString(recovered_setting)+" _";
+                        qDebug()<<"ssh request not ok , command is _"+QString::fromStdString(recovered_setting)+" _";
 
                     ssh_channel_close(channel);
                     ssh_channel_free(channel);

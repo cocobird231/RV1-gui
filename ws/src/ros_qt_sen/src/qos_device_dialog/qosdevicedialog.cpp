@@ -198,7 +198,7 @@ void QosDeviceDialog::on_current_topic_name_choose(const QString &text){
 
 
 QosDeviceDialog::QoSControlNode::QoSControlNode(const std::string& nodeName, const std::string& qosServiceName) : rclcpp::Node(nodeName){
-               this->regClientNode_ = rclcpp::Node::make_shared(nodeName + "_qosreg_client");
+        this->regClientNode_ = rclcpp::Node::make_shared(nodeName + "_qosreg_client");
         this->regClient_ = this->regClientNode_->create_client<vehicle_interfaces::srv::QosReg>(qosServiceName + "_Reg");
 
         this->reqClientNode_ = rclcpp::Node::make_shared(nodeName + "_qosreq_client");

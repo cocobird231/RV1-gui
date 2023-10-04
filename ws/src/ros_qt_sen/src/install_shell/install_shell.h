@@ -7,12 +7,20 @@
 #include <netinet/in.h> 
 #include <arpa/inet.h>
 #include <libssh/libssh.h>
- 
+ #include <vector>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
+
+
+
+#include "vehicle_interfaces/msg/dev_info.hpp"
+#include "vehicle_interfaces/srv/dev_info_reg.hpp"
+#include "vehicle_interfaces/srv/dev_info_req.hpp"
+#include <rclcpp/rclcpp.hpp>
+
 namespace Ui {
 class install_shell;
 }
@@ -23,6 +31,17 @@ class install_shell : public QWidget
 
 public:
     explicit install_shell(QWidget *parent = nullptr);
+    class DeviceInforControlNode : public rclcpp::Node{
+        public:
+            DeviceInforControlNode(const std::string& nodeName, const std::string& DeviceInforServiceName);
+            // bool regDeviceInfor(const std::shared_ptr<vehicle_interfaces::srv::DevInfoReg::Request> request, std::shared_ptr<vehicle_interfaces::srv::DevInfoReg::Response> response);
+            bool reqDeviceInfor(const vehicle_interfaces::msg::DevInfo& reqDevInfo, std::vector<vehicle_interfaces::msg::DevInfo>& devInfoVec);
+        private:
+            // std::shared_ptr<rclcpp::Node> regClientNode_;
+            // rclcpp::Client<vehicle_interfaces::srv::dev_info_reg>::SharedPtr regClient_;
+            std::shared_ptr<rclcpp::Node> reqClientNode_;
+            rclcpp::Client<vehicle_interfaces::srv::DevInfoReq>::SharedPtr reqClient_;
+    };
     ~install_shell();
 
 private:
@@ -52,6 +71,7 @@ private slots:
     void on_current_mission_install_changed(QListWidgetItem * item);
     void on_save_default_user_push_button();
     void on_reboot_push_button_clicked();
+    void on_scan_ros2_device_infor_push_button();
 
 
 };

@@ -13,6 +13,23 @@
 #include <QtNetwork>
 #include <thread>
 #include <QMessageBox>
+
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <regex>
+
+#include <string>
+#include <vector>
+#include <map>
+#include <set>
+
+#include <thread>
+#include <atomic>
+#include <mutex>
+
+
+
 #include "install_device_infor/install_device_infor.h"
 #include "install_process/install_process.h"
 #include "install_option/install_option.h"
@@ -31,9 +48,10 @@ QListWidgetItem* mission_install_item ;
 
 std::shared_ptr<QListWidgetItem> online_device_item ;
 
+std::shared_ptr<install_shell::DeviceInforControlNode> DeviceInforcontrol;
 
 std::shared_ptr<std::thread> the_thread;
-
+using namespace std::chrono_literals;
  install_shell::install_shell(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::install_shell)
@@ -47,7 +65,7 @@ std::shared_ptr<std::thread> the_thread;
     connect(ui->pushButton, &QPushButton::clicked, this, &install_shell::on_Interface_Update_PushButtun_clicked);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &install_shell::on_Interface_Choose_PushButtun_clicked);
     connect(ui->pushButton_5, &QPushButton::clicked, this, &install_shell::on_update_host_information_push_button_clicked);
-    
+    connect(ui->pushButton_12, &QPushButton::clicked, this, &install_shell::on_scan_ros2_device_infor_push_button);
     //connect(ui->listWidget,&QListWidget::currentItemChanged,this,&install_shell::on_current_online_device_changed);
     // connect(ui->listWidget,&QListWidget::itemClicked,this,&install_shell::on_current_online_device_changed);
 
@@ -63,6 +81,8 @@ std::shared_ptr<std::thread> the_thread;
     connect(ui->pushButton_8,&QPushButton::clicked,this,&install_shell::on_add_mission_pushButton_clicked);
     connect(ui->pushButton_9,&QPushButton::clicked,this,&install_shell::on_delet_mission_pushButton_clicked);
     connect(ui->pushButton_11,&QPushButton::clicked,this,&install_shell::on_save_default_user_push_button);
+
+    DeviceInforcontrol = std::make_shared<DeviceInforControlNode>("gui_DeviceInfor_0_node", "/V0/devinfo_0");
 
 
     QFile install_file("install_setting.json");
@@ -1494,4 +1514,65 @@ void install_shell::on_install_option_push_button_clicked(){
         the_install_option->show();
     }
 
+}
+
+void install_shell::on_scan_ros2_device_infor_push_button(){
+    vehicle_interfaces::msg::DevInfo reqDevInfo= vehicle_interfaces::msg::DevInfo();
+    std::vector<vehicle_interfaces::msg::DevInfo> devInfoVec;
+    reqDevInfo.node_name = "all";
+    bool reqSuccess = DeviceInforcontrol->reqDeviceInfor(reqDevInfo,devInfoVec);
+    if(reqSuccess){
+        for (const auto& i : devInfoVec){
+            // printf("%s[%s]\t%s/%s\n", 
+            //     i.node_name.c_str(), 
+            //     i.hostname.c_str(), 
+            //     i.ipv4_addr.c_str(), 
+            //     i.mac_addr.c_str());
+            qDebug()<<QString::fromStdString(i.node_name)+"/"+QString::fromStdString(i.mac_addr);
+        }
+    }
+
+}
+
+install_shell::DeviceInforControlNode::DeviceInforControlNode(const std::string& nodeName, const std::string& DeviceInforServiceName): rclcpp::Node(nodeName){
+    // this->regClientNode_ = rclcpp::Node::make_shared(nodeName + "_DeviceInforReg_client");
+    // this->regClient_ = this->regClientNode_->create_client<vehicle_interfaces::srv::DevInfoReg>(qosServiceName + "_Reg");
+
+    this->reqClientNode_ = rclcpp::Node::make_shared(nodeName + "_DeviceInforReq_client");
+    this->reqClient_ = this->reqClientNode_->create_client<vehicle_interfaces::srv::DevInfoReq>(DeviceInforServiceName + "_Req");
+}
+// bool install_shell::DeviceInforControlNode::regDeviceInfor(const std::shared_ptr<vehicle_interfaces::srv::DevInfoReg::Request> request, std::shared_ptr<vehicle_interfaces::srv::DevInfoReg::Response> response){
+
+// }
+bool install_shell::DeviceInforControlNode::reqDeviceInfor(const vehicle_interfaces::msg::DevInfo& reqDevInfo, std::vector<vehicle_interfaces::msg::DevInfo>& devInfoVec){
+
+        auto request = std::make_shared<vehicle_interfaces::srv::DevInfoReq::Request>();
+        request->dev_info = reqDevInfo;
+        auto result = this->reqClient_->async_send_request(request);
+#if ROS_DISTRO == 0
+        if (rclcpp::spin_until_future_complete(this->reqClientNode_, result, 500ms) == rclcpp::executor::FutureReturnCode::SUCCESS)
+#else
+        if (rclcpp::spin_until_future_complete(this->reqClientNode_, result, 500ms) == rclcpp::FutureReturnCode::SUCCESS)
+#endif
+        {
+            auto res = result.get();
+            RCLCPP_INFO(this->get_logger(), "[DevInfoControlNode::reqDevInfo] Response: %d, size: %ld", res->response, res->dev_info_vec.size());
+            if (res->response)
+            {
+                for (const auto& i : res->dev_info_vec){
+                    // printf("%s[%s]\t%s/%s\n", 
+                    //     i.node_name.c_str(), 
+                    //     i.hostname.c_str(), 
+                    //     i.ipv4_addr.c_str(), 
+                    //     i.mac_addr.c_str());
+                devInfoVec = res->dev_info_vec;
+                }
+
+            }
+
+            return res->response;
+        }
+        RCLCPP_INFO(this->get_logger(), "[DevInfoControlNode::reqDevInfo] Request failed.");
+        return false;
+    
 }

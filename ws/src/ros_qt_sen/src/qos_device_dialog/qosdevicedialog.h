@@ -1,5 +1,6 @@
 #ifndef QOSDEVICEDIALOG_H
 #define QOSDEVICEDIALOG_H
+
 #include <rclcpp/rclcpp.hpp>
 #include <QDialog>
 #include "vehicle_interfaces/msg/qos_profile.hpp"
