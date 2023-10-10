@@ -514,7 +514,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>refrash</string>
+    <string>更新</string>
    </property>
   </widget>
  </widget>

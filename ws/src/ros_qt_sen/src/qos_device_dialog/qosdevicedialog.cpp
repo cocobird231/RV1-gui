@@ -28,6 +28,8 @@ QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
     connect(ui->pushButton_5,&QPushButton::clicked,this,&QosDeviceDialog::on_update_topic_name_push_button_clicked);
     connect(ui->pushButton_6,&QPushButton::clicked,this,&QosDeviceDialog::on_enable_publish_push_button_clicked);
     connect(ui->pushButton_7,&QPushButton::clicked,this,&QosDeviceDialog::on_set_publish_push_button_clicked);
+    connect(ui->pushButton_8,&QPushButton::clicked,this,&QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_clicked);
+    connect(ui->pushButton_9,&QPushButton::clicked,this,&QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_clicked);
 
     QValidator *UIntDepthValidator = new QIntValidator(0, 999, this);
     ui->lineEdit->setValidator(UIntDepthValidator);
@@ -40,15 +42,16 @@ QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
 
     params = std::make_shared<vehicle_interfaces::GenericParams>("qoscontrol_params_node");
     control = std::make_shared<QoSControlNode>("gui_qos_0_node", "/V0/qos_0");
-    // rclcpp::executors::SingleThreadedExecutor* exec = new rclcpp::executors::SingleThreadedExecutor();
-    // exec->add_node(control);
 
-    // bool stopF = true;
-    // auto th = std::thread(&QosDeviceDialog::SpinExecutor,this,exec, std::ref(stopF));
-
-
-    // Qos_thread = std::make_shared<std::thread>(std::bind(&QosDeviceDialog::Qos_execut,this));
-    // Qos_thread->detach();
+        if(name_node== nullptr){
+        name_node =rclcpp::Node::make_shared("get_name_on_qos");
+    }
+    auto topic_name_map = name_node->get_topic_names_and_types();;
+    QList<QString> topic_list;
+    for(const auto& i :topic_name_map){
+        topic_list.append(QString::fromStdString(i.first));        
+    }
+    ui->comboBox->addItems(topic_list);
 
 }
 
@@ -97,11 +100,14 @@ void QosDeviceDialog::on_enable_publish_push_button_clicked(){
 
 void QosDeviceDialog::on_update_topic_name_push_button_clicked(){
     ui->comboBox->clear();
-    name_node =rclcpp::Node::make_shared("get_name_on_qos");
+    if(name_node== nullptr){
+        name_node =rclcpp::Node::make_shared("get_name_on_qos");
+    }
     auto topic_name_map = name_node->get_topic_names_and_types();;
     QList<QString> topic_list;
     for(const auto& i :topic_name_map){
         topic_list.append(QString::fromStdString(i.first));
+        qDebug()<<QString::fromStdString(i.first);        
     }
     ui->comboBox->addItems(topic_list);
     
@@ -166,6 +172,115 @@ void QosDeviceDialog::on_add_qos_profile_push_button_clicked(){
         AddMeassage.setText("新增失敗");
         AddMeassage.exec();
     }
+
+}
+void QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_clicked(){
+
+
+
+    QString Selected_message_type = ui->comboBox_6->currentText();
+    
+    if(name_node== nullptr){
+        name_node =rclcpp::Node::make_shared("get_name_on_qos");
+    }
+    auto topic_name_map = name_node->get_topic_names_and_types();;
+    QList<QString> containts_message_type_topic_list;
+    for(const auto& i :topic_name_map){
+        QString topic_name_string =QString::fromStdString(i.first);
+        int name_slash_contains = topic_name_string.split("/").length();
+        // the name slash contains above 3 is currect formate
+        if (name_slash_contains >= 3)
+        {
+            // qDebug()<<QString(name_slash_contains);
+            bool contain_current_text_flag=false;
+            for (int j = 0; j < i.second.size(); j++)
+            {
+                QString message_type =QString::fromStdString(i.second[j]);
+                if(message_type.contains(Selected_message_type)){
+                    contain_current_text_flag = true;
+                }
+
+            }
+            if(contain_current_text_flag || Selected_message_type.contains("All")){
+                containts_message_type_topic_list.append(QString::fromStdString(i.first));
+            }
+        }
+    }
+    for(QString topic :containts_message_type_topic_list){
+        vehicle_interfaces::srv::QosReg::Request req;
+        req.topic_name = topic.toStdString();
+        req.remove_profile = true;
+        bool qos_requst_success = control->requestQosReg(std::make_shared<vehicle_interfaces::srv::QosReg::Request>(req));
+        if (!qos_requst_success)
+        {
+            qDebug()<<"remove requestQosReq not success.";
+            QMessageBox RemoveMeassage;
+            RemoveMeassage.setText("移除失敗");
+            RemoveMeassage.exec();
+        }
+    }
+}
+
+void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_clicked(){
+
+
+    QString Selected_message_type = ui->comboBox_6->currentText();
+    
+    if(name_node== nullptr){
+        name_node =rclcpp::Node::make_shared("get_name_on_qos");
+    }
+    auto topic_name_map = name_node->get_topic_names_and_types();;
+    QList<QString> containts_message_type_topic_list;
+    for(const auto& i :topic_name_map){
+        QString topic_name_string =QString::fromStdString(i.first);
+        int name_slash_contains = topic_name_string.split("/").length();
+        // the name slash contains above 3 is currect formate
+        if (name_slash_contains >= 3)
+        {
+            // qDebug()<<QString(name_slash_contains);
+            bool contain_current_text_flag=false;
+            for (int j = 0; j < i.second.size(); j++)
+            {
+                QString message_type =QString::fromStdString(i.second[j]);
+                if(message_type.contains(Selected_message_type)){
+                    contain_current_text_flag = true;
+                }
+
+            }
+            if(contain_current_text_flag || Selected_message_type.contains("All")){
+                containts_message_type_topic_list.append(QString::fromStdString(i.first));
+            }
+        }
+    }
+    for(QString topic :containts_message_type_topic_list){
+
+        vehicle_interfaces::srv::QosReg::Request req;
+        req.topic_name = topic.toStdString();
+
+        req.qos_profile.history = ui->comboBox_2->currentIndex();
+        req.qos_profile.depth = ui->lineEdit->text().toInt();
+        req.qos_profile.reliability = ui->comboBox_3->currentIndex();
+        req.qos_profile.durability = ui->comboBox_4->currentIndex();
+
+        req.qos_profile.deadline_ms = ui->lineEdit_2->text().toDouble();
+        req.qos_profile.lifespan_ms = ui->lineEdit_3->text().toDouble();
+        req.qos_profile.liveliness = ui->comboBox_5->currentIndex();
+
+        req.qos_profile.liveliness_lease_duration_ms = ui->lineEdit_4->text().toDouble();
+
+
+        qDebug()<<"Add"+topic;
+        bool qos_requst_success = control->requestQosReg(std::make_shared<vehicle_interfaces::srv::QosReg::Request>(req));
+        if (!qos_requst_success)
+        {
+            qDebug()<<"Add"+topic+" requestQosReq not success.";
+            QMessageBox AddMeassage;
+            AddMeassage.setText("新增失敗");
+            AddMeassage.exec();
+        }
+    }
+
+
 
 }
 void QosDeviceDialog::on_current_topic_name_choose(const QString &text){

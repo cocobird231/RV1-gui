@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>604</width>
-    <height>524</height>
+    <width>675</width>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -373,8 +373,8 @@
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>440</y>
+     <x>30</x>
+     <y>520</y>
      <width>151</width>
      <height>17</height>
     </rect>
@@ -386,8 +386,8 @@
   <widget class="QLineEdit" name="lineEdit_5">
    <property name="geometry">
     <rect>
-     <x>190</x>
-     <y>440</y>
+     <x>200</x>
+     <y>520</y>
      <width>131</width>
      <height>25</height>
     </rect>
@@ -399,8 +399,8 @@
   <widget class="QPushButton" name="pushButton_6">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>440</y>
+     <x>460</x>
+     <y>520</y>
      <width>131</width>
      <height>25</height>
     </rect>
@@ -412,14 +412,113 @@
   <widget class="QPushButton" name="pushButton_7">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>440</y>
+     <x>350</x>
+     <y>520</y>
      <width>91</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
     <string>set</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>440</y>
+     <width>111</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Message Type：</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_6">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>440</y>
+     <width>271</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>All</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Distance</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Environment</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>GPS</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>GroundDetect</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Image</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>IMU</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>MotorSteering</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>UPS</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>WheelState</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QPushButton" name="pushButton_8">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>440</y>
+     <width>91</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add </string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_9">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>440</y>
+     <width>89</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Remove</string>
    </property>
   </widget>
  </widget>

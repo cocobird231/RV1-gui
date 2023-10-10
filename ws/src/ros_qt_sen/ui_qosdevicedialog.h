@@ -49,12 +49,16 @@ public:
     QLineEdit *lineEdit_5;
     QPushButton *pushButton_6;
     QPushButton *pushButton_7;
+    QLabel *label_11;
+    QComboBox *comboBox_6;
+    QPushButton *pushButton_8;
+    QPushButton *pushButton_9;
 
     void setupUi(QDialog *QosDeviceDialog)
     {
         if (QosDeviceDialog->objectName().isEmpty())
             QosDeviceDialog->setObjectName(QString::fromUtf8("QosDeviceDialog"));
-        QosDeviceDialog->resize(604, 524);
+        QosDeviceDialog->resize(675, 609);
         comboBox = new QComboBox(QosDeviceDialog);
         comboBox->setObjectName(QString::fromUtf8("comboBox"));
         comboBox->setGeometry(QRect(180, 20, 281, 31));
@@ -143,16 +147,38 @@ public:
         pushButton_5->setGeometry(QRect(480, 20, 71, 25));
         label_10 = new QLabel(QosDeviceDialog);
         label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setGeometry(QRect(20, 440, 151, 17));
+        label_10->setGeometry(QRect(30, 520, 151, 17));
         lineEdit_5 = new QLineEdit(QosDeviceDialog);
         lineEdit_5->setObjectName(QString::fromUtf8("lineEdit_5"));
-        lineEdit_5->setGeometry(QRect(190, 440, 131, 25));
+        lineEdit_5->setGeometry(QRect(200, 520, 131, 25));
         pushButton_6 = new QPushButton(QosDeviceDialog);
         pushButton_6->setObjectName(QString::fromUtf8("pushButton_6"));
-        pushButton_6->setGeometry(QRect(450, 440, 131, 25));
+        pushButton_6->setGeometry(QRect(460, 520, 131, 25));
         pushButton_7 = new QPushButton(QosDeviceDialog);
         pushButton_7->setObjectName(QString::fromUtf8("pushButton_7"));
-        pushButton_7->setGeometry(QRect(340, 440, 91, 25));
+        pushButton_7->setGeometry(QRect(350, 520, 91, 25));
+        label_11 = new QLabel(QosDeviceDialog);
+        label_11->setObjectName(QString::fromUtf8("label_11"));
+        label_11->setGeometry(QRect(20, 440, 111, 17));
+        comboBox_6 = new QComboBox(QosDeviceDialog);
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->addItem(QString());
+        comboBox_6->setObjectName(QString::fromUtf8("comboBox_6"));
+        comboBox_6->setGeometry(QRect(170, 440, 271, 25));
+        pushButton_8 = new QPushButton(QosDeviceDialog);
+        pushButton_8->setObjectName(QString::fromUtf8("pushButton_8"));
+        pushButton_8->setGeometry(QRect(450, 440, 91, 25));
+        pushButton_9 = new QPushButton(QosDeviceDialog);
+        pushButton_9->setObjectName(QString::fromUtf8("pushButton_9"));
+        pushButton_9->setGeometry(QRect(550, 440, 89, 25));
 
         retranslateUi(QosDeviceDialog);
 
@@ -201,6 +227,20 @@ public:
         lineEdit_5->setText(QApplication::translate("QosDeviceDialog", "10000", nullptr));
         pushButton_6->setText(QApplication::translate("QosDeviceDialog", "Enable Publish", nullptr));
         pushButton_7->setText(QApplication::translate("QosDeviceDialog", "set", nullptr));
+        label_11->setText(QApplication::translate("QosDeviceDialog", "Message Type\357\274\232", nullptr));
+        comboBox_6->setItemText(0, QApplication::translate("QosDeviceDialog", "All", nullptr));
+        comboBox_6->setItemText(1, QApplication::translate("QosDeviceDialog", "Distance", nullptr));
+        comboBox_6->setItemText(2, QApplication::translate("QosDeviceDialog", "Environment", nullptr));
+        comboBox_6->setItemText(3, QApplication::translate("QosDeviceDialog", "GPS", nullptr));
+        comboBox_6->setItemText(4, QApplication::translate("QosDeviceDialog", "GroundDetect", nullptr));
+        comboBox_6->setItemText(5, QApplication::translate("QosDeviceDialog", "Image", nullptr));
+        comboBox_6->setItemText(6, QApplication::translate("QosDeviceDialog", "IMU", nullptr));
+        comboBox_6->setItemText(7, QApplication::translate("QosDeviceDialog", "MotorSteering", nullptr));
+        comboBox_6->setItemText(8, QApplication::translate("QosDeviceDialog", "UPS", nullptr));
+        comboBox_6->setItemText(9, QApplication::translate("QosDeviceDialog", "WheelState", nullptr));
+
+        pushButton_8->setText(QApplication::translate("QosDeviceDialog", "Add ", nullptr));
+        pushButton_9->setText(QApplication::translate("QosDeviceDialog", "Remove", nullptr));
     } // retranslateUi
 
 };
