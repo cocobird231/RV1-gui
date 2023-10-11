@@ -35,7 +35,6 @@
 #include "install_option/install_option.h"
 QList<QNetworkAddressEntry> entryList;
 QString selected_self_IP;
-QJsonDocument install_setting_json_document ;
 QList<QString> is_opened_host_address;
 QList<QString> is_opened_host_name;
 QList<QString> is_opened_host;
@@ -61,6 +60,7 @@ using namespace std::chrono_literals;
     ui->lineEdit_2->setEnabled(false);
     ui->lineEdit->setEnabled(false);
     ui->lineEdit_7->setEnabled(false);
+    ui->lineEdit_8->setEnabled(false);
 
     connect(ui->pushButton, &QPushButton::clicked, this, &install_shell::on_Interface_Update_PushButtun_clicked);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &install_shell::on_Interface_Choose_PushButtun_clicked);
@@ -92,11 +92,11 @@ using namespace std::chrono_literals;
         qDebug() <<"install_setting File open!";
     }
     QByteArray install_setting_file = install_file.readAll();
-    install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject root = install_setting_json_document.object();
 
     if(!(root["default_interface"].toString()=="" || root["default_ip"].toString()==""|| root["default_net_mask"].toString()=="")){
-        ui->comboBox->addItem("Interface: "+root["default_interface"].toString()+"/ IP Address: "+root["default_ip"].toString()+"/ NetMask: "+root["default_net_mask"].toString());
+        ui->comboBox->addItem("Interface: "+root["default_interface"].toString()+"／ IP Address: "+root["default_ip"].toString()+"／ NetMask: "+root["default_net_mask"].toString());
         install_file.close();
         
         QList<QNetworkInterface> interface_list = QNetworkInterface::allInterfaces();
@@ -108,10 +108,10 @@ using namespace std::chrono_literals;
                 //IPV6 drop
                 if(entry.netmask().toString().contains("f"))
                     continue;
-                QString temp_default_interface ="Interface: "+root["default_interface"].toString()+"/ IP Address: "+root["default_ip"].toString()+"/ NetMask: "+root["default_net_mask"].toString();
-                QString temp_interface = "Interface: "+interface.name()+"/ IP Address: "+entry.ip().toString()+"/ NetMask: "+entry.netmask().toString();
+                QString temp_default_interface ="Interface: "+root["default_interface"].toString()+"／ IP Address: "+root["default_ip"].toString()+"／ NetMask: "+root["default_net_mask"].toString();
+                QString temp_interface = "Interface: "+interface.name()+"／ IP Address: "+entry.ip().toString()+"／ NetMask: "+entry.netmask().toString();
                 if(!(temp_default_interface ==temp_interface)){
-                    ui->comboBox->addItem("Interface: "+interface.name()+"/ IP Address: "+entry.ip().toString()+"/ NetMask: "+entry.netmask().toString());
+                    ui->comboBox->addItem("Interface: "+interface.name()+"／ IP Address: "+entry.ip().toString()+"／ NetMask: "+entry.netmask().toString());
                 }else{
                     ui->comboBox->setCurrentText(temp_default_interface);
                 }
@@ -163,13 +163,13 @@ void install_shell::on_reboot_push_button_clicked(){
         qDebug() <<"install_setting File open!";
     }
     QByteArray install_setting_file = install_file.readAll();
-    install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject root = install_setting_json_document.object();
     QJsonObject install_config = root["install_config"].toObject();
     
     for(int i=0;i<task_count;i++){
         QListWidgetItem* listwidget_current = ui->listWidget_2->item(i);
-        mac_array[i] =  listwidget_current->text().split("/")[1].toStdString();
+        mac_array[i] =  listwidget_current->text().split("／")[1].toStdString();
         QJsonObject host_object=install_config[ QString::fromStdString(mac_array[i])].toObject();
         if (!install_config.contains(QString::fromStdString(mac_array[i])))
         {
@@ -240,7 +240,7 @@ void install_shell::on_save_default_user_push_button(){
         qDebug() <<"install_setting File open!";
     }
     QByteArray install_setting_file = install_file.readAll();
-    install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject root = install_setting_json_document.object();
     root["default_user_name"] = ui->lineEdit_5->text();
     root["default_password"] = ui->lineEdit_6->text();
@@ -270,7 +270,7 @@ void install_shell::on_Interface_Update_PushButtun_clicked(){
         {
             continue;
         }
-        ui->comboBox->addItem("Interface: "+interface.name()+"/ IP Address: "+entry.ip().toString()+"/ NetMask: "+entry.netmask().toString());
+        ui->comboBox->addItem("Interface: "+interface.name()+"／ IP Address: "+entry.ip().toString()+"／ NetMask: "+entry.netmask().toString());
 
         
         }
@@ -300,24 +300,26 @@ void install_shell::on_Interface_Choose_PushButtun_clicked(){
         QString the_item_select = ui->comboBox->currentText();
         the_item_select= the_item_select.remove(" ");
         the_item_select = the_item_select.trimmed();
-        QList<QString> select_prop =the_item_select.split("/");
+        QList<QString> select_prop =the_item_select.split("／");
         QString interface_string = select_prop[0].split(":")[1];
         QString IP_address_string = select_prop[1].split(":")[1];
         selected_self_IP = IP_address_string;
         QString Mask = select_prop[2].split(":")[1];
-
-        QJsonObject root = install_setting_json_document.object();
-        root["default_interface"] = interface_string;
-        root["default_ip"] = IP_address_string;
-        root["default_net_mask"] = Mask;
-        install_setting_json_document.setObject(root);
-
+        
         QFile install_file("install_setting.json");
         if(!install_file.open(QIODevice::ReadWrite)) {
         qDebug() << "File open error,the premission may denied.";
         } else {
         qDebug() <<"install_setting File open!";
         }
+        QByteArray install_setting_file = install_file.readAll();
+        QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+        QJsonObject install_root = install_setting_json_document.object();
+        install_root["default_interface"] = interface_string;
+        install_root["default_ip"] = IP_address_string;
+        install_root["default_net_mask"] = Mask;
+        install_setting_json_document.setObject(install_root);
+
         install_file.resize(0);
         install_file.write(install_setting_json_document.toJson());
         install_file.close();
@@ -485,9 +487,9 @@ void install_shell::on_host_check_infor_push_button_clicked(){
     foreach(QListWidgetItem* item, items)
     {
         QString online_Device_text = item->text();
-        QString mac_address=item->text().split("/")[1];
-        QString host_name=item->text().split("/")[0];
-        std::string ip_address = item->text().split("/")[2].toStdString();
+        QString mac_address=item->text().split("／")[1];
+        QString host_name=item->text().split("／")[0];
+        std::string ip_address = item->text().split("／")[2].toStdString();
 
         std::string device_type = "";
         QFile host_list_file("host_list.json");
@@ -502,10 +504,10 @@ void install_shell::on_host_check_infor_push_button_clicked(){
         QJsonArray host_name_json_list = root["host_name_array"].toArray();
         QJsonObject contant=root["mac_list"].toObject();
         QString DNS_replace = "";
-        // if (online_Device_text.contains("/"))
+        // if (online_Device_text.contains("／"))
         // {
-        //     DNS_replace=online_Device_text.split("/")[0];
-        //     hostname= online_Device_text.split("/")[1].toStdString();
+        //     DNS_replace=online_Device_text.split("／")[0];
+        //     hostname= online_Device_text.split("／")[1].toStdString();
         //     for(int i =0;i<host_name_json_list.size();i++){
         //         QJsonObject host_object =contant[host_name_json_list[i].toString()].toObject();
         //         std::string host_ip = host_object["ip_address"].toString().toStdString();
@@ -525,7 +527,7 @@ void install_shell::on_host_check_infor_push_button_clicked(){
         qDebug() <<"install_setting File open!";
         }
         QByteArray install_setting_file = install_file.readAll();
-        install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+        QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
         QJsonObject install_root = install_setting_json_document.object();
         QJsonObject install_config = install_root["install_config"].toObject();
         QJsonObject host;
@@ -744,6 +746,9 @@ void install_shell::check_ssh_device_information(std::string ip_address ,std::st
 
 }
 void install_shell::check_icmp_has_open(QString host_name){
+
+
+
             QProcess ping_process;
 
             QString command_string = "ping "+host_name+" -c 1 -w 1 -W 1 ";
@@ -758,25 +763,75 @@ void install_shell::check_icmp_has_open(QString host_name){
                 std::string search_mac_address_command_string = "arp -a "+host_name.toStdString();
                 QString QS_search_mac_address_command_string = QString::fromStdString(search_mac_address_command_string);
                 qDebug()<<QS_search_mac_address_command_string;
-
-                mac_address_process.start(QS_search_mac_address_command_string,QIODevice::ReadOnly);
-                mac_address_process.waitForFinished(-1);
-                QString mac_result = QString::fromLocal8Bit(mac_address_process.readAllStandardOutput());
-                qDebug()<<mac_result;
-                if(mac_result.contains("no match found")){
-                    return;
-                }
-                mac_result = mac_result.split("at ")[1].split(" [")[0];
+                QString mac_result;
+                QString mac_result_substring;
+                do
+                {
+                    do
+                    {
+                        mac_address_process.start(QS_search_mac_address_command_string,QIODevice::ReadOnly);
+                        mac_address_process.waitForFinished(-1);
+                        mac_result = QString::fromLocal8Bit(mac_address_process.readAllStandardOutput());
+                        qDebug()<<mac_result;
+                        if(mac_result.contains("no match found")){
+                            return;
+                        }
+                        qDebug()<<QString(mac_result.split("at ").length());
+                    } while (mac_result.split("at ").length() != 2);
+                    mac_result_substring =mac_result.split("at ")[1];
+                    qDebug()<<QString(mac_result_substring.split(" [").length());
+                } while (mac_result_substring.split(" [").length() != 2);
+                
+                mac_result = mac_result_substring.split(" [")[0];
                 mac_address_process.kill();
                 qDebug()<<mac_result;
+
+
+            QFile install_file("install_setting.json");
+            if(!install_file.open(QIODevice::ReadWrite)) {
+            qDebug() << "File open error,the premission may denied.";
+            } else {
+            qDebug() <<"install_setting File open!";
+            }
+            QByteArray install_byte = install_file.readAll();
+            QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_byte);
+            QJsonObject install_root = install_setting_json_document.object();
+            QJsonObject install_config = install_root["install_config"].toObject();
+            QJsonObject host = install_config[mac_result].toObject();
+            QString node_name = host["node_name"].toString();
+            QString has_host_name = host["host_name"].toString();
+
+            install_file.close();
+
+
+
 
                 is_opened_host_address.append(host_name);
                 // Host Name
                 QProcess dns_process;
                 QString dns_command_string = "nslookup "+host_name;
-                dns_process.start(dns_command_string,QIODevice::ReadOnly);
-                dns_process.waitForFinished(-1);
-                QString dns_result = QString::fromLocal8Bit(dns_process.readAllStandardOutput());
+                QString dns_result ="";
+                QString dns_result_substring = "";
+                do
+                {
+                    do
+                    {
+                            dns_process.start(dns_command_string,QIODevice::ReadOnly);
+                            dns_process.waitForFinished(-1);
+                            dns_result = QString::fromLocal8Bit(dns_process.readAllStandardOutput());
+                            qDebug()<<dns_result;
+                            if(!dns_result.contains("name = ")){
+                                break;
+                            }
+                    } while (dns_result.split("name = ").length() < 2);
+                    if(!dns_result.contains("name = ")){
+                        break;
+                    }
+                    dns_result_substring =dns_result.split("name = ")[1];
+                    if(!dns_result_substring.contains(".")){
+                        break;
+                    }
+                } while (dns_result_substring.split(".").length() < 2);
                 dns_process.kill();
 
 
@@ -795,25 +850,9 @@ void install_shell::check_icmp_has_open(QString host_name){
                     QJsonObject contant=root["mac_list"].toObject();
                     QJsonObject currentItem_object =contant[mac_result].toObject();
 
-                    QFile install_file("install_setting.json");
-                    if(!install_file.open(QIODevice::ReadWrite)) {
-                    qDebug() << "File open error,the premission may denied.";
-                    } else {
-                    qDebug() <<"install_setting File open!";
-                    }
-                    QByteArray install_byte = install_file.readAll();
-                    install_setting_json_document = QJsonDocument::fromJson(install_byte);
-                    QJsonObject install_root = install_setting_json_document.object();
-                    QJsonObject install_config = install_root["install_config"].toObject();
-                    QJsonObject host = install_config[mac_result].toObject();
-                    QString message_type = host["message_type"].toString();
-
-                    install_file.close();
-
-
-                    QString DNS_host_name =dns_result.split("name = ")[1].split(".")[0];
-                    is_opened_host_name.append(DNS_host_name+"/"+mac_result+"/"+host_name+"/"+message_type);
-                    is_opened_host.append(DNS_host_name+"/"+mac_result+"/"+host_name+"/"+message_type);
+                    QString DNS_host_name =dns_result_substring.split(".")[0];
+                    is_opened_host_name.append(DNS_host_name+"／"+mac_result+"／"+host_name+"／"+node_name);
+                    is_opened_host.append(DNS_host_name+"／"+mac_result+"／"+host_name+"／"+node_name);
                     QString function_in_call_host_name  = host_name;
                     is_opened_host_map[DNS_host_name]=function_in_call_host_name;
 
@@ -842,11 +881,11 @@ void install_shell::check_icmp_has_open(QString host_name){
                     qDebug() <<"install_setting File open!";
                     }
                     QByteArray install_byte = install_file.readAll();
-                    install_setting_json_document = QJsonDocument::fromJson(install_byte);
+                    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_byte);
                     QJsonObject install_root = install_setting_json_document.object();
                     QJsonObject install_config = install_root["install_config"].toObject();
                     QJsonObject host = install_config[mac_result].toObject();
-                    QString message_type = host["message_type"].toString();
+                    QString node_name = host["node_name"].toString();
 
                     install_file.close();
 
@@ -854,9 +893,9 @@ void install_shell::check_icmp_has_open(QString host_name){
                     //     QJsonObject host_obj = mac_list[key].toObject();
                     //     QString ip_value =host_obj["ip_address"].toString();
                     //     // host_name is ip
-                    //     QString mac_address_in_list = key.split("/")[1];
-                    //     QString host_name_in_list = key.split("/")[0];
-                    //     QString ip_address_in_list = key.split("/")[2];
+                    //     QString mac_address_in_list = key.split("／")[1];
+                    //     QString host_name_in_list = key.split("／")[0];
+                    //     QString ip_address_in_list = key.split("／")[2];
 
                     //     if (ip_value == host_name){
                     //         Dns_name=ip_value;
@@ -865,8 +904,11 @@ void install_shell::check_icmp_has_open(QString host_name){
                     if(Dns_name.isEmpty()){
                         Dns_name ="Unkown";
                     }
-                    is_opened_host.append(Dns_name+"/"+mac_result+"/"+host_name+"/"+message_type);
-                    is_opened_host_name.append(Dns_name+"/"+mac_result+"/"+host_name+"/"+message_type);
+                    if(node_name != "" || !node_name.isEmpty()){
+                        Dns_name = has_host_name;
+                    }
+                    is_opened_host.append(Dns_name+"／"+mac_result+"／"+host_name+"／"+node_name);
+                    is_opened_host_name.append(Dns_name+"／"+mac_result+"／"+host_name+"／"+node_name);
                 }
             }
 
@@ -905,9 +947,9 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         for(QString host_information : is_opened_host_name){
             qDebug()<<host_information;
             
-            QString mac_address = host_information.split("/")[1];
-            QString current_host_name = host_information.split("/")[0];
-            QString ip_address = host_information.split("/")[2];
+            QString mac_address = host_information.split("／")[1];
+            QString current_host_name = host_information.split("／")[0];
+            QString ip_address = host_information.split("／")[2];
             bool check_flag = true;
                 for(int i =0;i<=host_name_json_list.size();i++){
                     if(host_name_json_list[i].toString().contains(mac_address)){
@@ -1000,13 +1042,13 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         qDebug() <<"install_setting File open!";
     }
     QByteArray install_setting_file = install_file.readAll();
-    install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject root = install_setting_json_document.object();
     QJsonObject install_config = root["install_config"].toObject();
     
     for(int i=0;i<task_count;i++){
         QListWidgetItem* listwidget_current = ui->listWidget_2->item(i);
-        mac_array[i] =  listwidget_current->text().split("/")[1].toStdString();
+        mac_array[i] =  listwidget_current->text().split("／")[1].toStdString();
         QJsonObject host_object=install_config[ QString::fromStdString(mac_array[i])].toObject();
         if (!install_config.contains(QString::fromStdString(mac_array[i])))
         {
@@ -1178,9 +1220,10 @@ void install_shell::install_misson(std::string user_name,std::string Password,st
 void install_shell::on_current_host_information_changed(QListWidgetItem * item){
     
         host_name_item=item;
-        QString host_name = item->text().split("/")[0];
-        QString mac_address =item->text().split("/")[1];
-        QString ip_address = item->text().split("/")[2];
+
+        QString host_name = item->text().split("／")[0];
+        QString mac_address =item->text().split("／")[1];
+        QString ip_address = item->text().split("／")[2];
 
         QFile host_list_file("host_list.json");
         if(!host_list_file.open(QIODevice::ReadWrite)) {
@@ -1202,12 +1245,12 @@ void install_shell::on_current_host_information_changed(QListWidgetItem * item){
         qDebug() <<"install_setting File open!";
         }
         QByteArray install_byte = install_file.readAll();
-        install_setting_json_document = QJsonDocument::fromJson(install_byte);
+        QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_byte);
         QJsonObject install_root = install_setting_json_document.object();
         QJsonObject install_config = install_root["install_config"].toObject();
         QJsonObject host = install_config[mac_address].toObject();
         QString user_name = host["user"].toString();
-        QString message_type = host["message_type"].toString();
+        QString node_name = host["node_name"].toString();
         QString password = host["password"].toString();
         install_file.close();
 
@@ -1216,7 +1259,7 @@ void install_shell::on_current_host_information_changed(QListWidgetItem * item){
 
         ui->lineEdit_2->setText(host_name);
         ui->lineEdit_7->setText(mac_address);
-        ui->lineEdit_8->setText(message_type);
+        ui->lineEdit_8->setText(node_name);
 
         ui->lineEdit->setText(currentItem_object["ip_address"].toString());
         ui->comboBox_2->setCurrentText(currentItem_object["Device"].toString());
@@ -1227,7 +1270,7 @@ void install_shell::on_update_host_information_push_button_clicked(){
     QString host_name = ui->lineEdit_2->text();
     QString user_name= ui->lineEdit_3->text();
     QString password = ui->lineEdit_4->text();
-    QString message_type = ui->lineEdit_8->text();
+    QString node_name = ui->lineEdit_8->text();
     QString ip = ui->lineEdit->text();
     QString device = ui->comboBox_2->currentText();
     if(host_name_item ==nullptr){
@@ -1279,8 +1322,10 @@ void install_shell::on_update_host_information_push_button_clicked(){
     } else {
       qDebug() <<"install_setting File open!";
     }
-    QJsonObject root = install_setting_json_document.object();
-    QJsonObject install_config = root["install_config"].toObject();
+    QByteArray install_setting_file = install_file.readAll();
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonObject install_setting_root = install_setting_json_document.object();
+    QJsonObject install_config = install_setting_root["install_config"].toObject();
     QString install_config_mac = mac_address;
     QJsonObject host = install_config[install_config_mac].toObject();
 
@@ -1288,12 +1333,12 @@ void install_shell::on_update_host_information_push_button_clicked(){
     host["ip_address"]=ip;
     host["user"]=user_name;
     host["password"]=password;
-    host["message_type"]=message_type;
+    host["node_name"]=node_name;
     host["device"]=device;
 
     install_config[install_config_mac]=host;
-    root["install_config"]=install_config;
-    install_setting_json_document.setObject(root);
+    install_setting_root["install_config"]=install_config;
+    install_setting_json_document.setObject(install_setting_root);
     install_file.resize(0);
 
     install_file.write(install_setting_json_document.toJson());
@@ -1430,6 +1475,8 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     } else {
       qDebug() <<"install_setting File open!";
     }
+    QByteArray install_setting_file = install_file.readAll();
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject install_root = install_setting_json_document.object();
     QJsonObject install_config = install_root["install_config"].toObject();
     install_config.remove(host_name);
@@ -1455,7 +1502,6 @@ void install_shell::on_install_option_push_button_clicked(){
     {
         qDebug()<<QString("null");
         return;
-        /* code */
     }
     
     QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
@@ -1487,11 +1533,11 @@ void install_shell::on_install_option_push_button_clicked(){
     qDebug() <<"install_setting File open!";
     }
     QByteArray install_byte = install_file.readAll();
-    install_setting_json_document = QJsonDocument::fromJson(install_byte);
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_byte);
     QJsonObject install_root = install_setting_json_document.object();
     QJsonObject install_config = install_root["install_config"].toObject();
-    QString SetHost = item->text().split("/")[1];
-    mac_address=item_text.split("/")[1];
+    QString SetHost = item->text().split("／")[1];
+    mac_address=item_text.split("／")[1];
 
 
 
@@ -1522,14 +1568,93 @@ void install_shell::on_scan_ros2_device_infor_push_button(){
     reqDevInfo.node_name = "all";
     bool reqSuccess = DeviceInforcontrol->reqDeviceInfor(reqDevInfo,devInfoVec);
     if(reqSuccess){
-        for (const auto& i : devInfoVec){
-            // printf("%s[%s]\t%s/%s\n", 
-            //     i.node_name.c_str(), 
-            //     i.hostname.c_str(), 
-            //     i.ipv4_addr.c_str(), 
-            //     i.mac_addr.c_str());
-            qDebug()<<QString::fromStdString(i.node_name)+"/"+QString::fromStdString(i.mac_addr);
+        QFile install_file("install_setting.json");
+        if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
+        } else {
+        qDebug() <<"install_setting File open!";
         }
+        QByteArray install_byte = install_file.readAll();
+        QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_byte);
+        QJsonObject install_root = install_setting_json_document.object();
+        QJsonObject install_config = install_root["install_config"].toObject();
+
+
+
+         QFile host_list_file("host_list.json");
+        if(!host_list_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "ip_mapping open error,the premission may denied.";
+        } else {
+        qDebug() <<"ip_mapping File open!";
+        }
+        QByteArray host_list_file_BA_file = host_list_file.readAll();
+        QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
+        QJsonObject root = host_list_doc.object();
+        QJsonArray host_name_json_list = root["host_name_array"].toArray();
+        QJsonObject contant=root["mac_list"].toObject();
+        for (const vehicle_interfaces::msg::DevInfo & i : devInfoVec){
+            QString mac_address = QString::fromStdString(i.mac_addr);
+            QString node_name = QString::fromStdString(i.node_name);
+            QString host_name = QString::fromStdString(i.hostname);
+            QString ip_address = QString::fromStdString(i.ipv4_addr);
+            QString Package_Name = "";
+            QString device = "";
+
+            qDebug()<<QString::fromStdString(i.hostname)+"／"+QString::fromStdString(i.mac_addr)+"／"+QString::fromStdString(i.ipv4_addr)+"／"+QString::fromStdString(i.node_name);
+            QJsonObject host= install_config[mac_address].toObject();
+            QJsonObject host_contant = contant[mac_address].toObject();
+            host["host_name"] = host_name;
+            host["ip_address"]=ip_address;
+            host["node_name"]=node_name;
+
+            if(node_name.contains("zed")){
+                Package_Name = "cpp_zedcam";
+                device = "jetson";
+            }
+            if(node_name.contains("ultrasound")){
+                Package_Name = "py_ultrasound";
+                device = "raspberry pi";
+            }
+            if(node_name.contains("webcam")){
+                Package_Name = "cpp_webcam";
+                device = "raspberry pi";
+            }
+            if(node_name.contains("gps")){
+                Package_Name = "py_gps";
+                device = "raspberry pi";
+            }
+            if(node_name.contains("imu")||node_name.contains("environment")||node_name.contains("sense")){
+                Package_Name = "py_sense";
+                device = "raspberry pi";
+            }
+            if(node_name.contains("rfcommsend")||node_name.contains("rfcommrecv")||node_name.contains("rfcomm")){
+                Package_Name = "py_singlerf";
+                device = "raspberry pi";
+            }
+            if(node_name.contains("rfcommsend")||node_name.contains("rfcommrecv")||node_name.contains("rfcomm")){
+                Package_Name = "py_singlerf";
+                device = "raspberry pi";
+            }
+            host_contant["Device"] = device;
+            contant[mac_address]=host_contant;
+            host["Package_Name"]=Package_Name;
+            host["device"]=device;
+            install_config[mac_address]=host;
+
+        }
+        root["mac_list"]=contant;
+        host_list_doc.setObject(root);
+        host_list_file.resize(0);
+        host_list_file.write(host_list_doc.toJson());
+        host_list_file.close();
+
+        install_root["install_config"] =install_config;
+        install_setting_json_document.setObject(install_root);
+        install_file.resize(0);
+        install_file.write(install_setting_json_document.toJson());
+        install_file.close();
+
+
     }
 
 }
@@ -1559,7 +1684,7 @@ bool install_shell::DeviceInforControlNode::reqDeviceInfor(const vehicle_interfa
             RCLCPP_INFO(this->get_logger(), "[DevInfoControlNode::reqDevInfo] Response: %d, size: %ld", res->response, res->dev_info_vec.size());
             if (res->response)
             {
-                for (const auto& i : res->dev_info_vec){
+                for (const vehicle_interfaces::msg::DevInfo & i : res->dev_info_vec){
                     // printf("%s[%s]\t%s/%s\n", 
                     //     i.node_name.c_str(), 
                     //     i.hostname.c_str(), 

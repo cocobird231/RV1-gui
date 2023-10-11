@@ -43,15 +43,7 @@ QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
     params = std::make_shared<vehicle_interfaces::GenericParams>("qoscontrol_params_node");
     control = std::make_shared<QoSControlNode>("gui_qos_0_node", "/V0/qos_0");
 
-        if(name_node== nullptr){
-        name_node =rclcpp::Node::make_shared("get_name_on_qos");
-    }
-    auto topic_name_map = name_node->get_topic_names_and_types();;
-    QList<QString> topic_list;
-    for(const auto& i :topic_name_map){
-        topic_list.append(QString::fromStdString(i.first));        
-    }
-    ui->comboBox->addItems(topic_list);
+
 
 }
 
@@ -178,13 +170,13 @@ void QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_
 
 
 
-    QString Selected_message_type = ui->comboBox_6->currentText();
+    QString Selected_node_name = ui->comboBox_6->currentText();
     
     if(name_node== nullptr){
         name_node =rclcpp::Node::make_shared("get_name_on_qos");
     }
     auto topic_name_map = name_node->get_topic_names_and_types();;
-    QList<QString> containts_message_type_topic_list;
+    QList<QString> containts_node_name_topic_list;
     for(const auto& i :topic_name_map){
         QString topic_name_string =QString::fromStdString(i.first);
         int name_slash_contains = topic_name_string.split("/").length();
@@ -195,18 +187,18 @@ void QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_
             bool contain_current_text_flag=false;
             for (int j = 0; j < i.second.size(); j++)
             {
-                QString message_type =QString::fromStdString(i.second[j]);
-                if(message_type.contains(Selected_message_type)){
+                QString node_name =QString::fromStdString(i.second[j]);
+                if(node_name.contains(Selected_node_name)){
                     contain_current_text_flag = true;
                 }
 
             }
-            if(contain_current_text_flag || Selected_message_type.contains("All")){
-                containts_message_type_topic_list.append(QString::fromStdString(i.first));
+            if(contain_current_text_flag || Selected_node_name.contains("All")){
+                containts_node_name_topic_list.append(QString::fromStdString(i.first));
             }
         }
     }
-    for(QString topic :containts_message_type_topic_list){
+    for(QString topic :containts_node_name_topic_list){
         vehicle_interfaces::srv::QosReg::Request req;
         req.topic_name = topic.toStdString();
         req.remove_profile = true;
@@ -224,13 +216,13 @@ void QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_
 void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_clicked(){
 
 
-    QString Selected_message_type = ui->comboBox_6->currentText();
+    QString Selected_node_name = ui->comboBox_6->currentText();
     
     if(name_node== nullptr){
         name_node =rclcpp::Node::make_shared("get_name_on_qos");
     }
     auto topic_name_map = name_node->get_topic_names_and_types();;
-    QList<QString> containts_message_type_topic_list;
+    QList<QString> containts_node_name_topic_list;
     for(const auto& i :topic_name_map){
         QString topic_name_string =QString::fromStdString(i.first);
         int name_slash_contains = topic_name_string.split("/").length();
@@ -241,18 +233,18 @@ void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_cli
             bool contain_current_text_flag=false;
             for (int j = 0; j < i.second.size(); j++)
             {
-                QString message_type =QString::fromStdString(i.second[j]);
-                if(message_type.contains(Selected_message_type)){
+                QString node_name =QString::fromStdString(i.second[j]);
+                if(node_name.contains(Selected_node_name)){
                     contain_current_text_flag = true;
                 }
 
             }
-            if(contain_current_text_flag || Selected_message_type.contains("All")){
-                containts_message_type_topic_list.append(QString::fromStdString(i.first));
+            if(contain_current_text_flag || Selected_node_name.contains("All")){
+                containts_node_name_topic_list.append(QString::fromStdString(i.first));
             }
         }
     }
-    for(QString topic :containts_message_type_topic_list){
+    for(QString topic :containts_node_name_topic_list){
 
         vehicle_interfaces::srv::QosReg::Request req;
         req.topic_name = topic.toStdString();
