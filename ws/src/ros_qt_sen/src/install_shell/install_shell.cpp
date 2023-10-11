@@ -81,6 +81,8 @@ using namespace std::chrono_literals;
     connect(ui->pushButton_8,&QPushButton::clicked,this,&install_shell::on_add_mission_pushButton_clicked);
     connect(ui->pushButton_9,&QPushButton::clicked,this,&install_shell::on_delet_mission_pushButton_clicked);
     connect(ui->pushButton_11,&QPushButton::clicked,this,&install_shell::on_save_default_user_push_button);
+    connect(ui->pushButton_13,&QPushButton::clicked,this,&install_shell::on_quick_upgrade_mission_dispatch_push_button_clicked);
+    connect(ui->pushButton_14,&QPushButton::clicked,this,&install_shell::on_quick_depoly_mission_dispatch_push_button_clicked);
 
     DeviceInforcontrol = std::make_shared<DeviceInforControlNode>("gui_DeviceInfor_0_node", "/V0/devinfo_0");
 
@@ -798,7 +800,11 @@ void install_shell::check_icmp_has_open(QString host_name){
             QJsonObject install_root = install_setting_json_document.object();
             QJsonObject install_config = install_root["install_config"].toObject();
             QJsonObject host = install_config[mac_result].toObject();
-            QString node_name = host["node_name"].toString();
+            QString node_name ="";
+            if(host["node_name"].toArray().size()>0){
+            QJsonValue node_name_element = host["node_name"].toArray().at(0);
+            node_name = node_name_element.toString();
+            }
             QString has_host_name = host["host_name"].toString();
 
             install_file.close();
@@ -885,7 +891,11 @@ void install_shell::check_icmp_has_open(QString host_name){
                     QJsonObject install_root = install_setting_json_document.object();
                     QJsonObject install_config = install_root["install_config"].toObject();
                     QJsonObject host = install_config[mac_result].toObject();
-                    QString node_name = host["node_name"].toString();
+                    QString node_name ="";
+                    if(host["node_name"].toArray().size()>0){
+                        QJsonValue node_name_element = host["node_name"].toArray().at(0);
+                        node_name = node_name_element.toString();
+                    }
 
                     install_file.close();
 
@@ -1013,6 +1023,7 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         }        
         ui->listWidget->addItems(is_opened_host);
 }
+
 void install_shell::on_install_mission_dispatch_push_button_clicked(){
 
     int task_count = ui->listWidget_2->count();
@@ -1030,7 +1041,7 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
     bool* update = new bool[task_count];
     bool* install = new bool[task_count];
     bool* preserve = new bool[task_count];
-    bool* update_deployment = new bool[task_count];
+    bool* update_depolyment = new bool[task_count];
 
     if(task_count ==0){
         return;
@@ -1062,7 +1073,7 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         update[i] = host_object["update"].toBool();
         install[i] = host_object["install"].toBool();
         preserve[i] = host_object["preserve"].toBool();
-        update_deployment[i] = host_object["update_deployment"].toBool();
+        update_depolyment[i] = host_object["update_depolyment"].toBool();
 
 
         user_name_array[i]=host_object["user"].toString().toStdString();
@@ -1105,11 +1116,11 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
         bool update_ = update[i];
         bool install_ = install[i];
         bool preserve_ = preserve[i];
-        bool update_deployment_ = update_deployment[i];
+        bool update_depolyment_ = update_depolyment[i];
 
         qDebug()<<"test for install";
         qDebug()<<QString::fromStdString(host_name_);
-        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_,update_deployment_);
+        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_,update_depolyment_,false);
         Install_process->show();
         // install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
 
@@ -1119,6 +1130,229 @@ void install_shell::on_install_mission_dispatch_push_button_clicked(){
     // }
 
 }
+
+void install_shell::on_quick_depoly_mission_dispatch_push_button_clicked(){
+
+
+    int task_count = ui->listWidget_2->count();
+    qDebug()<<QString(task_count);
+    std::string* mac_array =new std::string[task_count];
+    std::string* ip_address_array =new std::string[task_count];
+    std::string* Device_array =new std::string[task_count];
+    std::string* host_name_array =new std::string[task_count];
+    std::string* user_name_array =new std::string[task_count];
+    std::string* Password_array =new std::string[task_count];
+    std::string* pack_name_array =new std::string[task_count];
+    std::string* interface_array =new std::string[task_count];
+    std::string* ip_array =new std::string[task_count];
+    bool* remove = new bool[task_count];
+    bool* update = new bool[task_count];
+    bool* install = new bool[task_count];
+    bool* preserve = new bool[task_count];
+    bool* update_depolyment = new bool[task_count];
+    bool* depoly = new bool[task_count];
+
+    if(task_count ==0){
+        return;
+    }
+    QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
+    } else {
+        qDebug() <<"install_setting File open!";
+    }
+    QByteArray install_setting_file = install_file.readAll();
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonObject root = install_setting_json_document.object();
+    QJsonObject install_config = root["install_config"].toObject();
+    
+    for(int i=0;i<task_count;i++){
+        QListWidgetItem* listwidget_current = ui->listWidget_2->item(i);
+        mac_array[i] =  listwidget_current->text().split("／")[1].toStdString();
+        QJsonObject host_object=install_config[ QString::fromStdString(mac_array[i])].toObject();
+        if (!install_config.contains(QString::fromStdString(mac_array[i])))
+        {
+            qDebug()<<QString("install_config no mac in list.");
+            return;
+        }
+        host_name_array[i] = host_object["host_name"].toString().toStdString();
+        ip_address_array[i] = host_object["ip_address"].toString().toStdString();
+        
+        Device_array[i] = host_object["device"].toString().toStdString();
+
+        remove[i] = true;
+        update[i] = false;
+        install[i] = false;
+        preserve[i] = false;
+        update_depolyment[i] = false;
+        depoly[i] = true;
+
+        user_name_array[i]=host_object["user"].toString().toStdString();
+        Password_array[i]=host_object["password"].toString().toStdString();
+                qDebug()<<QString("Def");
+
+        qDebug()<<QString::fromStdString(user_name_array[i]) ;
+        qDebug()<<QString::fromStdString(Password_array[i]);
+
+        if (user_name_array[i]==""||Password_array[i]=="")
+        {
+            user_name_array[i]=root["default_user_name"].toString().toStdString();
+            Password_array[i] =root["default_password"].toString().toStdString();
+        qDebug()<<QString("De2f");
+        qDebug()<<QString::fromStdString(user_name_array[i]) ;
+        qDebug()<<QString::fromStdString(Password_array[i]);
+
+        }
+        pack_name_array[i]="auto";
+        interface_array[i]=host_object["interface"].toString().toStdString();
+        ip_array[i]=host_object["IP"].toString().toStdString();
+
+    }
+    install_file.close();
+    qDebug() <<"install_mission_threads";
+    // std::shared_ptr<std::thread>* install_mission_threads = new std::shared_ptr<std::thread>[task_count];
+    for(int i=0;i<task_count;i++){
+        std::string host_name_ =host_name_array[i];
+        std::string mac_address =mac_array[i];
+        std::string ip_address =ip_address_array[i];
+        std::string device =Device_array[i];
+
+        std::string user_name_ =user_name_array[i];
+        std::string Password_ =Password_array[i];
+        std::string pack_name_ =pack_name_array[i];
+        std::string interface_ =interface_array[i];
+
+        std::string ip_ =ip_array[i];
+        bool remove_ = remove[i];
+        bool update_ = update[i];
+        bool install_ = install[i];
+        bool preserve_ = preserve[i];
+        bool update_depolyment_ = update_depolyment[i];
+        bool depoly_ = depoly[i];
+
+        qDebug()<<"test for install";
+        qDebug()<<QString::fromStdString(host_name_);
+        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_,update_depolyment_,depoly_);
+        Install_process->show();
+    }
+}
+
+
+void install_shell::on_quick_upgrade_mission_dispatch_push_button_clicked(){
+
+    int task_count = ui->listWidget_2->count();
+    qDebug()<<QString(task_count);
+    std::string* mac_array =new std::string[task_count];
+    std::string* ip_address_array =new std::string[task_count];
+    std::string* Device_array =new std::string[task_count];
+    std::string* host_name_array =new std::string[task_count];
+    std::string* user_name_array =new std::string[task_count];
+    std::string* Password_array =new std::string[task_count];
+    std::string* pack_name_array =new std::string[task_count];
+    std::string* interface_array =new std::string[task_count];
+    std::string* ip_array =new std::string[task_count];
+    bool* remove = new bool[task_count];
+    bool* update = new bool[task_count];
+    bool* install = new bool[task_count];
+    bool* preserve = new bool[task_count];
+    bool* update_depolyment = new bool[task_count];
+
+    if(task_count ==0){
+        return;
+    }
+    QFile install_file("install_setting.json");
+    if(!install_file.open(QIODevice::ReadWrite)) {
+        qDebug() << "File open error,the premission may denied.";
+    } else {
+        qDebug() <<"install_setting File open!";
+    }
+    QByteArray install_setting_file = install_file.readAll();
+    QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
+    QJsonObject root = install_setting_json_document.object();
+    QJsonObject install_config = root["install_config"].toObject();
+    
+    for(int i=0;i<task_count;i++){
+        QListWidgetItem* listwidget_current = ui->listWidget_2->item(i);
+        mac_array[i] =  listwidget_current->text().split("／")[1].toStdString();
+        QJsonObject host_object=install_config[ QString::fromStdString(mac_array[i])].toObject();
+        if (!install_config.contains(QString::fromStdString(mac_array[i])))
+        {
+            qDebug()<<QString("install_config no mac in list.");
+            return;
+        }
+        host_name_array[i] = host_object["host_name"].toString().toStdString();
+        ip_address_array[i] = host_object["ip_address"].toString().toStdString();
+        
+        Device_array[i] = host_object["device"].toString().toStdString();
+
+        remove[i] = false;
+        update[i] = true;
+        install[i] = true;
+        preserve[i] = true;
+
+        update_depolyment[i] = true;
+
+
+        user_name_array[i]=host_object["user"].toString().toStdString();
+        Password_array[i]=host_object["password"].toString().toStdString();
+                qDebug()<<QString("Def");
+
+        qDebug()<<QString::fromStdString(user_name_array[i]) ;
+        qDebug()<<QString::fromStdString(Password_array[i]);
+
+        if (user_name_array[i]==""||Password_array[i]=="")
+        {
+            user_name_array[i]=root["default_user_name"].toString().toStdString();
+            Password_array[i] =root["default_password"].toString().toStdString();
+        qDebug()<<QString("De2f");
+        qDebug()<<QString::fromStdString(user_name_array[i]) ;
+        qDebug()<<QString::fromStdString(Password_array[i]);
+
+        }
+        pack_name_array[i]="auto";
+        interface_array[i]=host_object["interface"].toString().toStdString();
+        ip_array[i]=host_object["IP"].toString().toStdString();
+
+    }
+    install_file.close();
+    qDebug() <<"install_mission_threads";
+    // std::shared_ptr<std::thread>* install_mission_threads = new std::shared_ptr<std::thread>[task_count];
+    for(int i=0;i<task_count;i++){
+        std::string host_name_ =host_name_array[i];
+        std::string mac_address =mac_array[i];
+        std::string ip_address =ip_address_array[i];
+        std::string device =Device_array[i];
+
+        std::string user_name_ =user_name_array[i];
+        std::string Password_ =Password_array[i];
+        std::string pack_name_ =pack_name_array[i];
+        std::string interface_ =interface_array[i];
+
+        std::string ip_ =ip_array[i];
+        bool remove_ = remove[i];
+        bool update_ = update[i];
+        bool install_ = install[i];
+        bool preserve_ = preserve[i];
+        bool update_depolyment_ = update_depolyment[i];
+
+        qDebug()<<"test for install";
+        qDebug()<<QString::fromStdString(host_name_);
+        install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_,update_depolyment_,false);
+        Install_process->show();
+        // install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
+
+    }
+    // for(int i =0;i<task_count;i++){
+    //     install_mission_threads[i]->detach();
+    // }
+
+}
+
+
+
+
+
+
 void install_shell::install_misson(std::string user_name,std::string Password,std::string ip_address,std::string pack_name,std::string interface,std::string ip){
 
     qDebug()<<QString::fromStdString(user_name);
@@ -1250,7 +1484,12 @@ void install_shell::on_current_host_information_changed(QListWidgetItem * item){
         QJsonObject install_config = install_root["install_config"].toObject();
         QJsonObject host = install_config[mac_address].toObject();
         QString user_name = host["user"].toString();
-        QString node_name = host["node_name"].toString();
+        QString node_name ="";
+        if(host["node_name"].toArray().size()>0){
+            QJsonValue node_name_element = host["node_name"].toArray().at(0);
+            node_name = node_name_element.toString();
+        }
+
         QString password = host["password"].toString();
         install_file.close();
 
@@ -1333,7 +1572,13 @@ void install_shell::on_update_host_information_push_button_clicked(){
     host["ip_address"]=ip;
     host["user"]=user_name;
     host["password"]=password;
-    host["node_name"]=node_name;
+
+    QJsonArray node_name_array = host["node_name"].toArray();
+    if(!node_name_array.contains(node_name)){
+    node_name_array.append(node_name);
+    }
+    host["node_name"]=node_name_array;
+
     host["device"]=device;
 
     install_config[install_config_mac]=host;
@@ -1343,78 +1588,12 @@ void install_shell::on_update_host_information_push_button_clicked(){
 
     install_file.write(install_setting_json_document.toJson());
     install_file.close();
-    // if(ui->pushButton_2->isEnabled()){
-    // on_Interface_Choose_PushButtun_clicked();
-    // }
+
 
 }
-// void install_shell::on_creat_host_information_push_button_clicked(){
-//     QString host_name = ui->lineEdit_2->text();
-//     QString mac_address = ui->lineEdit_7->text();
-//     QString user_name= ui->lineEdit_3->text();
-//     QString password = ui->lineEdit_4->text();
-//     QString ip = ui->lineEdit->text();
-//     QString device = ui->comboBox_2->currentText();
-//     bool manual = !ui->checkBox->isChecked();
-//     QFile host_list_file("host_list.json");
-//     if(!host_list_file.open(QIODevice::ReadWrite)) {
-//     qDebug() << "ip_mapping open error,the premission may denied.";
-//     } else {
-//     qDebug() <<"ip_mapping File open!";
-//     }
-//     QByteArray host_list_file_BA_file = host_list_file.readAll();
-//     QJsonDocument host_list_doc = QJsonDocument::fromJson(host_list_file_BA_file);
-//     QJsonObject root = host_list_doc.object();
-//     QJsonArray host_name_json_list = root["host_name_array"].toArray();
-//     QJsonObject contant=root["mac_list"].toObject();
-//     QJsonObject host_contant = contant[host_name].toObject();
-//     bool array_duplication_check = false;
-//     for(int i =0;i<host_name_json_list.size();i++){
-//         if(host_name_json_list[i].toString()==host_name){
-//             array_duplication_check = true;
-//         };
-//     }
-//     if(!array_duplication_check){
-//         host_name_json_list.append(host_name);
-//     }
-//     host_contant["ip_address"] = ip;
-//     host_contant["Device"] = device;
-//     host_contant["manual"] = manual;
-//     contant[host_name] = host_contant;
-//     root["mac_list"]=contant;
-//     root["host_name_array"]=host_name_json_list;
-//     host_list_doc.setObject(root);
-//     host_list_file.resize(0);
-//     host_list_file.write(host_list_doc.toJson());
-//     host_list_file.close();
 
 
-//     QFile install_file("install_setting.json");
-//     if(!install_file.open(QIODevice::ReadWrite)) {
-//       qDebug() << "File open error,the premission may denied.";
-//     } else {
-//       qDebug() <<"install_setting File open!";
-//     }
-//     QJsonObject install_root = install_setting_json_document.object();
-//     QJsonObject install_config = install_root["install_config"].toObject();
-//     QJsonObject host = install_config[host_name].toObject();
-//     host["user"]=user_name;
-//     host["password"]=password;
-//     host["device"]=device;
 
-//     install_config[host_name]=host;
-//     install_root["install_config"]=install_config;
-//     install_setting_json_document.setObject(install_root);
-//     install_file.resize(0);
-//     install_file.write(install_setting_json_document.toJson());
-//     install_file.close();
-
-//     ui->listWidget_3->addItem(host_name);
-
-//     if(ui->pushButton_2->isEnabled()){
-//     on_Interface_Choose_PushButtun_clicked();
-//     }
-// }
 
 void install_shell::on_delet_host_information_push_button_clicked(){
 
@@ -1443,7 +1622,7 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     foreach(QListWidgetItem* item, items)
     {
 
-    QString host_name = ui->listWidget_3->takeItem(ui->listWidget_3->row(item))->text();;
+    QString host_item = ui->listWidget_3->takeItem(ui->listWidget_3->row(item))->text();;
     QFile host_list_file("host_list.json");
     if(!host_list_file.open(QIODevice::ReadWrite)) {
     qDebug() << "ip_mapping open error,the premission may denied.";
@@ -1455,10 +1634,10 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     QJsonObject root = host_list_doc.object();
     QJsonArray host_name_json_list = root["host_name_array"].toArray();
     QJsonObject contant=root["mac_list"].toObject();
-    QJsonObject host_contant = contant[host_name].toObject();
-    contant.remove(host_name);
+    QJsonObject host_contant = contant[host_item].toObject();
+    contant.remove(host_item);
     for(int i =0;i<host_name_json_list.size();i++){
-        if(host_name_json_list[i].toString()==host_name){
+        if(host_name_json_list[i].toString()==host_item){
             host_name_json_list.removeAt(i);
         };
     }
@@ -1479,7 +1658,7 @@ void install_shell::on_delet_host_information_push_button_clicked(){
     QJsonDocument install_setting_json_document = QJsonDocument::fromJson(install_setting_file);
     QJsonObject install_root = install_setting_json_document.object();
     QJsonObject install_config = install_root["install_config"].toObject();
-    install_config.remove(host_name);
+    install_config.remove(host_item);
     install_root["install_config"]=install_config;
     install_setting_json_document.setObject(install_root);
     install_file.resize(0);
@@ -1600,12 +1779,18 @@ void install_shell::on_scan_ros2_device_infor_push_button(){
             QString Package_Name = "";
             QString device = "";
 
+
+
             qDebug()<<QString::fromStdString(i.hostname)+"／"+QString::fromStdString(i.mac_addr)+"／"+QString::fromStdString(i.ipv4_addr)+"／"+QString::fromStdString(i.node_name);
             QJsonObject host= install_config[mac_address].toObject();
             QJsonObject host_contant = contant[mac_address].toObject();
             host["host_name"] = host_name;
             host["ip_address"]=ip_address;
-            host["node_name"]=node_name;
+            QJsonArray node_name_array = host["node_name"].toArray();
+            if(!node_name_array.contains(node_name)){
+            node_name_array.append(node_name);
+            }
+            host["node_name"]=node_name_array;
 
             if(node_name.contains("zed")){
                 Package_Name = "cpp_zedcam";
@@ -1642,6 +1827,8 @@ void install_shell::on_scan_ros2_device_infor_push_button(){
             install_config[mac_address]=host;
 
         }
+
+        
         root["mac_list"]=contant;
         host_list_doc.setObject(root);
         host_list_file.resize(0);

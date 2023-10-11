@@ -374,7 +374,7 @@
    <property name="geometry">
     <rect>
      <x>990</x>
-     <y>330</y>
+     <y>360</y>
      <width>111</width>
      <height>17</height>
     </rect>
@@ -387,7 +387,7 @@
    <property name="geometry">
     <rect>
      <x>1000</x>
-     <y>370</y>
+     <y>400</y>
      <width>91</width>
      <height>17</height>
     </rect>
@@ -400,7 +400,7 @@
    <property name="geometry">
     <rect>
      <x>1020</x>
-     <y>410</y>
+     <y>440</y>
      <width>51</width>
      <height>17</height>
     </rect>
@@ -413,7 +413,7 @@
    <property name="geometry">
     <rect>
      <x>1100</x>
-     <y>370</y>
+     <y>400</y>
      <width>141</width>
      <height>25</height>
     </rect>
@@ -423,7 +423,7 @@
    <property name="geometry">
     <rect>
      <x>1100</x>
-     <y>410</y>
+     <y>440</y>
      <width>141</width>
      <height>25</height>
     </rect>
@@ -433,7 +433,7 @@
    <property name="geometry">
     <rect>
      <x>1000</x>
-     <y>460</y>
+     <y>490</y>
      <width>241</width>
      <height>25</height>
     </rect>
@@ -515,6 +515,32 @@
    </property>
    <property name="text">
     <string>更新</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_13">
+   <property name="geometry">
+    <rect>
+     <x>1130</x>
+     <y>230</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>quick upgrade</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_14">
+   <property name="geometry">
+    <rect>
+     <x>1130</x>
+     <y>270</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>quick depoly</string>
    </property>
   </widget>
  </widget>

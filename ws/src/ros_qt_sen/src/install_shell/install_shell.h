@@ -72,7 +72,8 @@ private slots:
     void on_save_default_user_push_button();
     void on_reboot_push_button_clicked();
     void on_scan_ros2_device_infor_push_button();
-
+    void on_quick_upgrade_mission_dispatch_push_button_clicked();
+    void on_quick_depoly_mission_dispatch_push_button_clicked();
 
 };
 

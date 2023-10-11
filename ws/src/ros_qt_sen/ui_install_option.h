@@ -116,7 +116,7 @@ public:
         checkBox_2->setText(QApplication::translate("install_option", "update", nullptr));
         checkBox_3->setText(QApplication::translate("install_option", "remove", nullptr));
         checkBox_4->setText(QApplication::translate("install_option", "preserve", nullptr));
-        checkBox_5->setText(QApplication::translate("install_option", "update deployment", nullptr));
+        checkBox_5->setText(QApplication::translate("install_option", "update depolyment", nullptr));
     } // retranslateUi
 
 };

@@ -26,7 +26,7 @@ private:
     bool update = false;
     bool install = false;
     bool preserve =false;
-    bool update_deployment = false;
+    bool update_depolyment = false;
 private slots:
     void on_save_and_close_push_button_clicked();
     void on_close_push_button_clicked();
