@@ -100,6 +100,7 @@ void install_process::depoly(std::string user_name,std::string Password,std::str
     }
     if(device =="jetson"){
         depoly_string.append("./jetson_sensors/install.sh -rm");
+        depoly_string.append("echo "+Password+" | sudo -S rm -rf jetson_sensors");
         depoly_string.append("curl -fsSL ftp://61.220.23.239/rv-11/get-jetson-sensors-install.sh | bash");
     }
 
