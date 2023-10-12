@@ -43,6 +43,9 @@ private:
     bool enable =false;
     void Qos_execut();
     Ui::QosDeviceDialog *ui;
+    void add_for_message_type( QString message_type);
+    void remove_for_message_type( QString message_type);
+
 
 private slots:
     void on_current_topic_name_choose(const QString &text);
@@ -55,7 +58,6 @@ private slots:
     void on_set_publish_push_button_clicked();
     void on_add_for_message_tpye_option_qos_profile_push_button_clicked();
     void on_remove_for_message_tpye_option_qos_profile_push_button_clicked();
-
 };
 
 #endif // QOSDEVICEDIALOG_H

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>675</width>
-    <height>609</height>
+    <height>690</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -373,8 +373,8 @@
   <widget class="QLabel" name="label_10">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>520</y>
+     <x>40</x>
+     <y>610</y>
      <width>151</width>
      <height>17</height>
     </rect>
@@ -386,8 +386,8 @@
   <widget class="QLineEdit" name="lineEdit_5">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>520</y>
+     <x>210</x>
+     <y>610</y>
      <width>131</width>
      <height>25</height>
     </rect>
@@ -399,8 +399,8 @@
   <widget class="QPushButton" name="pushButton_6">
    <property name="geometry">
     <rect>
-     <x>460</x>
-     <y>520</y>
+     <x>470</x>
+     <y>610</y>
      <width>131</width>
      <height>25</height>
     </rect>
@@ -412,8 +412,8 @@
   <widget class="QPushButton" name="pushButton_7">
    <property name="geometry">
     <rect>
-     <x>350</x>
-     <y>520</y>
+     <x>360</x>
+     <y>610</y>
      <width>91</width>
      <height>25</height>
     </rect>
@@ -435,71 +435,11 @@
     <string>Message Type：</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="comboBox_6">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>440</y>
-     <width>271</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <item>
-    <property name="text">
-     <string>All</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Distance</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Environment</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>GPS</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>GroundDetect</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>Image</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>IMU</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>MotorSteering</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>UPS</string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>WheelState</string>
-    </property>
-   </item>
-  </widget>
   <widget class="QPushButton" name="pushButton_8">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>440</y>
+     <x>200</x>
+     <y>560</y>
      <width>91</width>
      <height>25</height>
     </rect>
@@ -511,14 +451,131 @@
   <widget class="QPushButton" name="pushButton_9">
    <property name="geometry">
     <rect>
-     <x>550</x>
-     <y>440</y>
+     <x>300</x>
+     <y>560</y>
      <width>89</width>
      <height>25</height>
     </rect>
    </property>
    <property name="text">
     <string>Remove</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>480</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Distance</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_2">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>480</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Environment</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_3">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>480</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>GPS</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_4">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>480</y>
+     <width>121</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>GroundDetect</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_5">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>480</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Image</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_6">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>510</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>IMU</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_7">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>510</y>
+     <width>121</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>MotorSteering</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_8">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>510</y>
+     <width>61</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>UPS</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_9">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>510</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>WheelState</string>
    </property>
   </widget>
  </widget>

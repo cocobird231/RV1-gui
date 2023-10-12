@@ -6,6 +6,7 @@
 #include <QDebug>
 #include "./../../ui_qosdevicedialog.h"
 #include <string>
+#include <unistd.h>
 #include <QMessageBox>
 std::shared_ptr<std::thread> Qos_thread;
 
@@ -18,7 +19,6 @@ QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("QoS模式設定");
-    connect(ui->comboBox,&QComboBox::currentTextChanged,this,&QosDeviceDialog::on_current_topic_name_choose);
     connect(ui->pushButton,&QPushButton::clicked,this,&QosDeviceDialog::on_save_qos_profile_push_button_clicked);
 
     connect(ui->pushButton_2,&QPushButton::clicked,this,&QosDeviceDialog::on_add_qos_profile_push_button_clicked);
@@ -98,8 +98,13 @@ void QosDeviceDialog::on_update_topic_name_push_button_clicked(){
     auto topic_name_map = name_node->get_topic_names_and_types();;
     QList<QString> topic_list;
     for(const auto& i :topic_name_map){
+        QString topic_string = QString::fromStdString(i.first);
+        if (topic_string.split("/").length()>2)
+        {
         topic_list.append(QString::fromStdString(i.first));
-        qDebug()<<QString::fromStdString(i.first);        
+        qDebug()<<QString::fromStdString(i.first);   
+        }
+    
     }
     ui->comboBox->addItems(topic_list);
     
@@ -169,9 +174,38 @@ void QosDeviceDialog::on_add_qos_profile_push_button_clicked(){
 void QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_clicked(){
 
 
+    QList<QString> message_types; 
+    if(ui->checkBox->isChecked()){
+        message_types.append(ui->checkBox->text());
+    }
+    if(ui->checkBox_2->isChecked()){
+        message_types.append(ui->checkBox_2->text());
+    }
+    if(ui->checkBox_3->isChecked()){
+        message_types.append(ui->checkBox_3->text());
+    }
+    if(ui->checkBox_4->isChecked()){
+        message_types.append(ui->checkBox_4->text());
+    }
+    if(ui->checkBox_5->isChecked()){
+        message_types.append(ui->checkBox_5->text());
+    }
+    if(ui->checkBox_6->isChecked()){
+        message_types.append(ui->checkBox_6->text());
+    }
+    if(ui->checkBox_7->isChecked()){
+        message_types.append(ui->checkBox_7->text());
+    }
+    if(ui->checkBox_8->isChecked()){
+        message_types.append(ui->checkBox_8->text());
+    }
+    for(QString message_type :message_types){
+        remove_for_message_type(message_type);
+    }
 
-    QString Selected_node_name = ui->comboBox_6->currentText();
-    
+}
+void QosDeviceDialog::remove_for_message_type( QString message_type){
+
     if(name_node== nullptr){
         name_node =rclcpp::Node::make_shared("get_name_on_qos");
     }
@@ -188,12 +222,12 @@ void QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_
             for (int j = 0; j < i.second.size(); j++)
             {
                 QString node_name =QString::fromStdString(i.second[j]);
-                if(node_name.contains(Selected_node_name)){
+                if(node_name.contains(message_type)){
                     contain_current_text_flag = true;
                 }
 
             }
-            if(contain_current_text_flag || Selected_node_name.contains("All")){
+            if(contain_current_text_flag || message_type.contains("All")){
                 containts_node_name_topic_list.append(QString::fromStdString(i.first));
             }
         }
@@ -212,12 +246,8 @@ void QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_
         }
     }
 }
+void QosDeviceDialog::add_for_message_type( QString message_type){
 
-void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_clicked(){
-
-
-    QString Selected_node_name = ui->comboBox_6->currentText();
-    
     if(name_node== nullptr){
         name_node =rclcpp::Node::make_shared("get_name_on_qos");
     }
@@ -234,12 +264,12 @@ void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_cli
             for (int j = 0; j < i.second.size(); j++)
             {
                 QString node_name =QString::fromStdString(i.second[j]);
-                if(node_name.contains(Selected_node_name)){
+                if(node_name.contains(message_type)){
                     contain_current_text_flag = true;
                 }
 
             }
-            if(contain_current_text_flag || Selected_node_name.contains("All")){
+            if(contain_current_text_flag || message_type.contains("All")){
                 containts_node_name_topic_list.append(QString::fromStdString(i.first));
             }
         }
@@ -262,6 +292,7 @@ void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_cli
 
 
         qDebug()<<"Add"+topic;
+        sleep(1);
         bool qos_requst_success = control->requestQosReg(std::make_shared<vehicle_interfaces::srv::QosReg::Request>(req));
         if (!qos_requst_success)
         {
@@ -271,9 +302,38 @@ void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_cli
             AddMeassage.exec();
         }
     }
+}
 
+void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_clicked(){
 
-
+    QList<QString> message_types; 
+    if(ui->checkBox->isChecked()){
+        message_types.append(ui->checkBox->text());
+    }
+    if(ui->checkBox_2->isChecked()){
+        message_types.append(ui->checkBox_2->text());
+    }
+    if(ui->checkBox_3->isChecked()){
+        message_types.append(ui->checkBox_3->text());
+    }
+    if(ui->checkBox_4->isChecked()){
+        message_types.append(ui->checkBox_4->text());
+    }
+    if(ui->checkBox_5->isChecked()){
+        message_types.append(ui->checkBox_5->text());
+    }
+    if(ui->checkBox_6->isChecked()){
+        message_types.append(ui->checkBox_6->text());
+    }
+    if(ui->checkBox_7->isChecked()){
+        message_types.append(ui->checkBox_7->text());
+    }
+    if(ui->checkBox_8->isChecked()){
+        message_types.append(ui->checkBox_8->text());
+    }
+    for(QString message_type :message_types){
+        add_for_message_type(message_type);
+    }
 }
 void QosDeviceDialog::on_current_topic_name_choose(const QString &text){
     qDebug()<<text;
