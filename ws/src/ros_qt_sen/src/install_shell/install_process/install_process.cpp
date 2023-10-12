@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <iostream>
 #include <QScrollBar>
+std::shared_ptr<std::thread> install_mission_threads;
+std::shared_ptr<std::thread> depoly_threads;
 install_process::install_process(QWidget *parent,std::string user_name,std::string Password,std::string host_name,std::string mac_address,std::string ip_address,std::string pack_name,std::string interface,std::string ip,std::string device,bool remove, bool update,bool install ,bool preserve,bool update_depolyment,bool depoly) :
     QWidget(parent),
     ui(new Ui::install_process)
@@ -30,10 +32,10 @@ install_process::install_process(QWidget *parent,std::string user_name,std::stri
     connect(ui->pushButton,&QPushButton::clicked,this,&install_process::on_close_push_button_clicked);
     timmer.start(2000);
     if(!depoly){
-    std::shared_ptr<std::thread> install_mission_threads = std::make_shared<std::thread>(std::bind(&install_process::install_misson,this,user_name,Password,ip_address,pack_name,interface,ip,device));
+    install_mission_threads = std::make_shared<std::thread>(std::bind(&install_process::install_misson,this,user_name,Password,ip_address,pack_name,interface,ip,device));
     install_mission_threads->detach();
     }else{
-    std::shared_ptr<std::thread> depoly_threads = std::make_shared<std::thread>(std::bind(&install_process::depoly,this,user_name,Password,ip_address,pack_name,interface,ip,device));
+    depoly_threads = std::make_shared<std::thread>(std::bind(&install_process::depoly,this,user_name,Password,ip_address,pack_name,interface,ip,device));
     depoly_threads->detach();
     }
 
@@ -100,7 +102,7 @@ void install_process::depoly(std::string user_name,std::string Password,std::str
     }
     if(device =="jetson"){
         depoly_string.append("./jetson_sensors/install.sh -rm");
-        depoly_string.append("echo "+Password+" | sudo -S rm -rf jetson_sensors");
+        depoly_string.append("echo "+QString::fromStdString(Password) +" | sudo -S rm -rf jetson_sensors");
         depoly_string.append("curl -fsSL ftp://61.220.23.239/rv-11/get-jetson-sensors-install.sh | bash");
     }
 
@@ -360,5 +362,14 @@ void install_process::setText(QString contants){
 }
 install_process::~install_process()
 {
+    if (install_mission_threads!= nullptr)
+    {
+        delete install_mission_threads;
+    }
+    if (depoly_threads!= nullptr)
+    {
+        delete depoly_threads;
+    }
+    
     delete ui;
 }
