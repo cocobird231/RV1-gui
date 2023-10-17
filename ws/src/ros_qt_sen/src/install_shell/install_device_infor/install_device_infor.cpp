@@ -14,7 +14,6 @@ install_device_infor::install_device_infor(QWidget *parent,QString ip_address,QS
     ui->label_2->setText(ip_address);
     ui->textBrowser->setText(infor);
     connect(ui->pushButton_2,&QPushButton::clicked,this,&install_device_infor::on_open_expolrer_push_button);
-
     connect(ui->pushButton,&QPushButton::clicked,this,&install_device_infor::on_close_push_button_clicked);
 }
 void install_device_infor::on_open_expolrer_push_button(){
@@ -23,7 +22,7 @@ void install_device_infor::on_open_expolrer_push_button(){
     open_expolrer->startDetached(open_expolrer_cmd);
 }
 void install_device_infor::on_close_push_button_clicked(){
-    delete this;
+    this->close();
 }
 install_device_infor::~install_device_infor()
 {

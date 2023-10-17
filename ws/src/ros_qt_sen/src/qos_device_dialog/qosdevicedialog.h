@@ -58,6 +58,8 @@ private slots:
     void on_set_publish_push_button_clicked();
     void on_add_for_message_tpye_option_qos_profile_push_button_clicked();
     void on_remove_for_message_tpye_option_qos_profile_push_button_clicked();
+    void on_checkBox_change();
+
 };
 
 #endif // QOSDEVICEDIALOG_H

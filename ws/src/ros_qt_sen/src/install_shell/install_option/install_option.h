@@ -31,6 +31,8 @@ private slots:
     void on_save_and_close_push_button_clicked();
     void on_close_push_button_clicked();
     void on_reset_push_button_clicked();
+    void on_current_package_name_changed();
+
 };
 
 #endif // INSTALL_OPTION_H

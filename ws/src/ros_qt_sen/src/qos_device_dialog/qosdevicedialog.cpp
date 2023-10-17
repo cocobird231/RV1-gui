@@ -12,7 +12,7 @@ std::shared_ptr<std::thread> Qos_thread;
 
 std::shared_ptr<QosDeviceDialog::QoSControlNode> control;
 std::shared_ptr<vehicle_interfaces::GenericParams> params;
-
+std::map<std::string, std::vector<std::string>> topic_name_map;
 QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::QosDeviceDialog)
@@ -30,6 +30,17 @@ QosDeviceDialog::QosDeviceDialog(QWidget *parent) :
     connect(ui->pushButton_7,&QPushButton::clicked,this,&QosDeviceDialog::on_set_publish_push_button_clicked);
     connect(ui->pushButton_8,&QPushButton::clicked,this,&QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_clicked);
     connect(ui->pushButton_9,&QPushButton::clicked,this,&QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_clicked);
+    connect(ui->comboBox,&QComboBox::currentTextChanged,this,&QosDeviceDialog::on_current_topic_name_choose);
+    connect(ui->checkBox,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_2,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_3,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_4,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_5,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_6,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_7,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_8,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_9,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
+    connect(ui->checkBox_10,&QCheckBox::stateChanged,this,&QosDeviceDialog::on_checkBox_change);
 
     QValidator *UIntDepthValidator = new QIntValidator(0, 999, this);
     ui->lineEdit->setValidator(UIntDepthValidator);
@@ -95,7 +106,7 @@ void QosDeviceDialog::on_update_topic_name_push_button_clicked(){
     if(name_node== nullptr){
         name_node =rclcpp::Node::make_shared("get_name_on_qos");
     }
-    auto topic_name_map = name_node->get_topic_names_and_types();;
+    topic_name_map = name_node->get_topic_names_and_types();;
     QList<QString> topic_list;
     for(const auto& i :topic_name_map){
         QString topic_string = QString::fromStdString(i.first);
@@ -108,6 +119,66 @@ void QosDeviceDialog::on_update_topic_name_push_button_clicked(){
     }
     ui->comboBox->addItems(topic_list);
     
+}
+void QosDeviceDialog::on_checkBox_change(){
+
+    QList<QString> message_types; 
+    if(ui->checkBox->isChecked()){
+        message_types.append(ui->checkBox->text());
+    }
+    if(ui->checkBox_2->isChecked()){
+        message_types.append(ui->checkBox_2->text());
+    }
+    if(ui->checkBox_3->isChecked()){
+        message_types.append(ui->checkBox_3->text());
+    }
+    if(ui->checkBox_4->isChecked()){
+        message_types.append(ui->checkBox_4->text());
+    }
+    if(ui->checkBox_5->isChecked()){
+        message_types.append(ui->checkBox_5->text());
+    }
+    if(ui->checkBox_6->isChecked()){
+        message_types.append(ui->checkBox_6->text());
+    }
+    if(ui->checkBox_7->isChecked()){
+        message_types.append(ui->checkBox_7->text());
+    }
+    if(ui->checkBox_8->isChecked()){
+        message_types.append(ui->checkBox_8->text());
+    }
+    if(ui->checkBox_9->isChecked()){
+        message_types.append(ui->checkBox_9->text());
+    }
+    if(ui->checkBox_10->isChecked()){
+        message_types.append(ui->checkBox_10->text());
+    }
+
+    QList<QString> containts_node_name_topic_list;
+    for(const auto& i :topic_name_map){
+        QString topic_name_string =QString::fromStdString(i.first);
+        int name_slash_contains = topic_name_string.split("/").length();
+        // the name slash contains above 3 is currect formate
+        if (name_slash_contains >= 3)
+        {
+            // qDebug()<<QString(name_slash_contains);
+            bool contain_current_text_flag=false;
+            for (int j = 0; j < i.second.size(); j++)
+            {
+                QString node_name =QString::fromStdString(i.second[j]);
+                for(QString message_type :message_types){
+                    if(node_name.contains(message_type)){
+                        contain_current_text_flag = true;
+                    }
+                }
+            }
+            if(contain_current_text_flag){
+                containts_node_name_topic_list.append(QString::fromStdString(i.first));
+            }
+        }
+    }
+    ui->comboBox->clear();
+    ui->comboBox->addItems(containts_node_name_topic_list);
 }
 void QosDeviceDialog::on_save_qos_profile_push_button_clicked(){
     vehicle_interfaces::srv::QosReg::Request req;
@@ -199,6 +270,12 @@ void QosDeviceDialog::on_remove_for_message_tpye_option_qos_profile_push_button_
     if(ui->checkBox_8->isChecked()){
         message_types.append(ui->checkBox_8->text());
     }
+    if(ui->checkBox_9->isChecked()){
+        message_types.append(ui->checkBox_9->text());
+    }
+    if(ui->checkBox_10->isChecked()){
+        message_types.append(ui->checkBox_10->text());
+    }
     for(QString message_type :message_types){
         remove_for_message_type(message_type);
     }
@@ -209,7 +286,7 @@ void QosDeviceDialog::remove_for_message_type( QString message_type){
     if(name_node== nullptr){
         name_node =rclcpp::Node::make_shared("get_name_on_qos");
     }
-    auto topic_name_map = name_node->get_topic_names_and_types();;
+    topic_name_map = name_node->get_topic_names_and_types();;
     QList<QString> containts_node_name_topic_list;
     for(const auto& i :topic_name_map){
         QString topic_name_string =QString::fromStdString(i.first);
@@ -252,7 +329,7 @@ void QosDeviceDialog::add_for_message_type( QString message_type){
     if(name_node== nullptr){
         name_node =rclcpp::Node::make_shared("get_name_on_qos");
     }
-    auto topic_name_map = name_node->get_topic_names_and_types();;
+    topic_name_map = name_node->get_topic_names_and_types();;
     QList<QString> containts_node_name_topic_list;
     for(const auto& i :topic_name_map){
         QString topic_name_string =QString::fromStdString(i.first);
@@ -331,6 +408,12 @@ void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_cli
     }
     if(ui->checkBox_8->isChecked()){
         message_types.append(ui->checkBox_8->text());
+    }
+    if(ui->checkBox_9->isChecked()){
+        message_types.append(ui->checkBox_9->text());
+    }
+    if(ui->checkBox_10->isChecked()){
+        message_types.append(ui->checkBox_10->text());
     }
     for(QString message_type :message_types){
         add_for_message_type(message_type);

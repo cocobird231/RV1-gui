@@ -132,7 +132,7 @@ using namespace std::chrono_literals;
             for(auto host_name_in_json : host_name_json_list){
                 ui->listWidget_3->addItem(host_name_in_json.toString());
             }
-            ui->listWidget_3->setCurrentRow(0);
+            // ui->listWidget_3->setCurrentRow(0);
             host_list_file.close();
     }
     ui->lineEdit_5->setText(root["default_user_name"].toString());
@@ -388,10 +388,7 @@ void install_shell::check_ssh_has_open(QString host_name,QString user_name){
 
     }
 }
-// void install_shell::on_current_online_device_changed(QListWidgetItem * item){
-//     online_device_item =std::make_shared<QListWidgetItem>(*item);
-    
-// }
+
 void install_shell::on_add_mission_pushButton_clicked(){
 
 
@@ -933,11 +930,13 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
                 }
             }
         } 
+        qDebug()<<"unjoin";
         for(int i =0; i !=net_list.length(); i++){
             if(threads[i]->joinable()){
             threads[i]->join();
             }
         } 
+        qDebug()<<" is join";
         ui->pushButton_2->setEnabled(true);
         QFile host_list_file("host_list.json");
         if(!host_list_file.open(QIODevice::ReadWrite)) {
@@ -1006,22 +1005,55 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         host_list_file.write(host_list_doc.toJson());
         host_list_file.close();
         int list_count_3=ui->listWidget_3->count();
-        for (int i = list_count_3 - 1; i >= 0; --i) {
+        // for (int i = list_count_3 - 1; i >= 0; --i) {
+        //     QListWidgetItem *item3 = ui->listWidget_3->takeItem(i);
+        //     delete item3; // Remember to delete the item manually
+        // }
+
+        int itemNo = 0;
+        for(auto host_name_in_json : host_name_json_list){
+            QListWidgetItem *the_item =ui->listWidget_3->item(itemNo);
+            if (!(the_item == nullptr))
+            {
+               the_item->setText(host_name_in_json.toString());
+            }else{
+                ui->listWidget_3->addItem(host_name_in_json.toString());
+            }
+            itemNo = itemNo +1;
+        }
+        if(host_name_json_list.count() < ui->listWidget_3->count()){
+            int sub = ui->listWidget_3->count() - host_name_json_list.count();
+            for(int i =ui->listWidget_3->count()-1; i<host_name_json_list.count();i++){
             QListWidgetItem *item3 = ui->listWidget_3->takeItem(i);
-            delete item3; // Remember to delete the item manually
+            delete item3; 
+            }
         }
 
-        for(auto host_name_in_json : host_name_json_list){
-                ui->listWidget_3->addItem(host_name_in_json.toString());
-        }
-                ui->listWidget_3->setCurrentRow(0);
+                // ui->listWidget_3->setCurrentRow(0);
 
        int list_count_1=ui->listWidget->count();
         for (int i = list_count_1 - 1; i >= 0; --i) {
             QListWidgetItem *item1 = ui->listWidget->takeItem(i);
             delete item1; // Remember to delete the item manually
-        }        
-        ui->listWidget->addItems(is_opened_host);
+        }
+
+        for(int k =0 ;k < is_opened_host.length();k++){
+            QListWidgetItem *the_item = ui->listWidget->takeItem(k);
+            if(!(the_item == nullptr)){
+                the_item->setText(is_opened_host[k]);
+            }else{
+                ui->listWidget->addItem(is_opened_host[k]);
+            }
+        }
+
+        if(is_opened_host.count() < ui->listWidget->count()){
+            int sub = ui->listWidget->count() - is_opened_host.count();
+            for(int i =ui->listWidget->count()-1; i<is_opened_host.count();i++){
+            QListWidgetItem *item = ui->listWidget->takeItem(i);
+            delete item; 
+            }
+        }
+
 }
 
 void install_shell::on_install_mission_dispatch_push_button_clicked(){
@@ -1203,7 +1235,12 @@ void install_shell::on_quick_depoly_mission_dispatch_push_button_clicked(){
         qDebug()<<QString::fromStdString(Password_array[i]);
 
         }
-        pack_name_array[i]="auto";
+        if(host_object["Package_Name"].toString()!="py_chassis"){
+            pack_name_array[i]="auto";
+
+        }else{
+            pack_name_array[i]="py_chassis";
+        }
         interface_array[i]=host_object["interface"].toString().toStdString();
         ip_array[i]=host_object["IP"].toString().toStdString();
 
@@ -1309,7 +1346,12 @@ void install_shell::on_quick_upgrade_mission_dispatch_push_button_clicked(){
         qDebug()<<QString::fromStdString(Password_array[i]);
 
         }
-        pack_name_array[i]="auto";
+        if(host_object["Package_Name"].toString()!="py_chassis"){
+            pack_name_array[i]="auto";
+
+        }else{
+            pack_name_array[i]="py_chassis";
+        }
         interface_array[i]=host_object["interface"].toString().toStdString();
         ip_array[i]=host_object["IP"].toString().toStdString();
 
@@ -1337,6 +1379,7 @@ void install_shell::on_quick_upgrade_mission_dispatch_push_button_clicked(){
 
         qDebug()<<"test for install";
         qDebug()<<QString::fromStdString(host_name_);
+        qDebug()<<QString::fromStdString(pack_name_);
         install_process* Install_process = new install_process(nullptr,user_name_,Password_,host_name_,mac_address,ip_address,pack_name_,interface_,ip_,device,remove_,update_,install_,preserve_,update_depolyment_,false);
         Install_process->show();
         // install_mission_threads[i]= std::make_shared<std::thread>(std::bind(&install_shell::install_misson,this,user_name_,Password_,host_name_,pack_name_,interface_,ip_));
@@ -1347,10 +1390,6 @@ void install_shell::on_quick_upgrade_mission_dispatch_push_button_clicked(){
     // }
 
 }
-
-
-
-
 
 
 void install_shell::install_misson(std::string user_name,std::string Password,std::string ip_address,std::string pack_name,std::string interface,std::string ip){
@@ -1448,7 +1487,6 @@ void install_shell::install_misson(std::string user_name,std::string Password,st
     qDebug().noquote()<<ssh_infor_string;
     qDebug()<<QString("Done"); 
 }
-
 
 
 void install_shell::on_current_host_information_changed(QListWidgetItem * item){
@@ -1591,9 +1629,6 @@ void install_shell::on_update_host_information_push_button_clicked(){
 
 
 }
-
-
-
 
 void install_shell::on_delet_host_information_push_button_clicked(){
 
@@ -1787,7 +1822,7 @@ void install_shell::on_scan_ros2_device_infor_push_button(){
             host["host_name"] = host_name;
             host["ip_address"]=ip_address;
             QJsonArray node_name_array = host["node_name"].toArray();
-            if(!node_name_array.contains(node_name)){
+            if((!node_name_array.contains(node_name)) && node_name !=""){
             node_name_array.append(node_name);
             }
             host["node_name"]=node_name_array;
@@ -1825,10 +1860,7 @@ void install_shell::on_scan_ros2_device_infor_push_button(){
             host["Package_Name"]=Package_Name;
             host["device"]=device;
             install_config[mac_address]=host;
-
         }
-
-        
         root["mac_list"]=contant;
         host_list_doc.setObject(root);
         host_list_file.resize(0);
@@ -1853,9 +1885,7 @@ install_shell::DeviceInforControlNode::DeviceInforControlNode(const std::string&
     this->reqClientNode_ = rclcpp::Node::make_shared(nodeName + "_DeviceInforReq_client");
     this->reqClient_ = this->reqClientNode_->create_client<vehicle_interfaces::srv::DevInfoReq>(DeviceInforServiceName + "_Req");
 }
-// bool install_shell::DeviceInforControlNode::regDeviceInfor(const std::shared_ptr<vehicle_interfaces::srv::DevInfoReg::Request> request, std::shared_ptr<vehicle_interfaces::srv::DevInfoReg::Response> response){
 
-// }
 bool install_shell::DeviceInforControlNode::reqDeviceInfor(const vehicle_interfaces::msg::DevInfo& reqDevInfo, std::vector<vehicle_interfaces::msg::DevInfo>& devInfoVec){
 
         auto request = std::make_shared<vehicle_interfaces::srv::DevInfoReq::Request>();

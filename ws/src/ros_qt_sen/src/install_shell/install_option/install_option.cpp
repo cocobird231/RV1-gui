@@ -52,6 +52,7 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
     connect(ui->pushButton,&QPushButton::clicked,this,&install_option::on_close_push_button_clicked);
     connect(ui->pushButton_2,&QPushButton::clicked,this,&install_option::on_save_and_close_push_button_clicked);
     connect(ui->pushButton_3,&QPushButton::clicked,this,&install_option::on_reset_push_button_clicked);
+    connect(ui->comboBox,&QComboBox::currentTextChanged,this,&install_option::on_current_package_name_changed);
 
     QFile install_option_file("install_option.json");
     if(!install_option_file.open(QIODevice::ReadWrite)) {
@@ -90,6 +91,12 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
     }else{
         ui->comboBox->setCurrentIndex(0);
     }
+
+    if (ui->comboBox->currentText() =="py_chassis")
+    {
+        ui->lineEdit->setText("wlan0");
+    }
+    
     
 }
 
@@ -134,10 +141,10 @@ void install_option::on_save_and_close_push_button_clicked(){
     install_file.resize(0);
     install_file.write(install_setting_json_document.toJson());
     install_file.close();
-    delete this;
+    this->close();
 }
 void install_option::on_close_push_button_clicked(){
-    delete this;
+    this->close();
 
 }
 void install_option::on_reset_push_button_clicked(){
@@ -172,6 +179,15 @@ void install_option::on_reset_push_button_clicked(){
     ui->lineEdit->setText(this->Interface!="" ? this->Interface:"eth0");
     ui->lineEdit_2->setText(this->Ip!="" ? this->Ip:"dhcp");
     install_file.close();
+}
+void install_option::on_current_package_name_changed(){
+    if (ui->comboBox->currentText() =="py_chassis")
+    {
+        ui->lineEdit->setText("wlan0");
+    }else{
+        ui->lineEdit->setText("eth0");
+
+    }
 }
 
 install_option::~install_option()

@@ -570,12 +570,25 @@
     <rect>
      <x>360</x>
      <y>510</y>
-     <width>92</width>
+     <width>111</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
     <string>WheelState</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_10">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>510</y>
+     <width>92</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>MotorAxle</string>
    </property>
   </widget>
  </widget>

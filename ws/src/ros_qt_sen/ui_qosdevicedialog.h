@@ -62,6 +62,7 @@ public:
     QCheckBox *checkBox_7;
     QCheckBox *checkBox_8;
     QCheckBox *checkBox_9;
+    QCheckBox *checkBox_10;
 
     void setupUi(QDialog *QosDeviceDialog)
     {
@@ -202,6 +203,9 @@ public:
         checkBox_9 = new QCheckBox(QosDeviceDialog);
         checkBox_9->setObjectName(QString::fromUtf8("checkBox_9"));
         checkBox_9->setGeometry(QRect(360, 510, 92, 23));
+        checkBox_10 = new QCheckBox(QosDeviceDialog);
+        checkBox_10->setObjectName(QString::fromUtf8("checkBox_10"));
+        checkBox_10->setGeometry(QRect(480, 510, 92, 23));
 
         retranslateUi(QosDeviceDialog);
 
@@ -262,6 +266,7 @@ public:
         checkBox_7->setText(QApplication::translate("QosDeviceDialog", "MotorSteering", nullptr));
         checkBox_8->setText(QApplication::translate("QosDeviceDialog", "UPS", nullptr));
         checkBox_9->setText(QApplication::translate("QosDeviceDialog", "WheelState", nullptr));
+        checkBox_10->setText(QApplication::translate("QosDeviceDialog", "MotorAxle", nullptr));
     } // retranslateUi
 
 };
