@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>data_server_record</class>
+ <class>data_serve_record</class>
  <widget class="QWidget" name="data_serve_record">
   <property name="geometry">
    <rect>

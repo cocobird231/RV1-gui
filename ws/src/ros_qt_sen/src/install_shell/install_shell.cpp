@@ -47,7 +47,6 @@ QListWidgetItem* mission_install_item ;
 
 std::shared_ptr<QListWidgetItem> online_device_item ;
 
-std::shared_ptr<install_shell::DeviceInforControlNode> DeviceInforcontrol;
 
 std::shared_ptr<std::thread> the_thread;
 using namespace std::chrono_literals;
@@ -356,7 +355,6 @@ QList<QString> install_shell::getSubnetList(const QString& ipAddress, const QStr
 }
 install_shell::~install_shell()
 {   
- 
     delete ui;
 }
 
@@ -1004,11 +1002,7 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
         host_list_file.resize(0);
         host_list_file.write(host_list_doc.toJson());
         host_list_file.close();
-        int list_count_3=ui->listWidget_3->count();
-        // for (int i = list_count_3 - 1; i >= 0; --i) {
-        //     QListWidgetItem *item3 = ui->listWidget_3->takeItem(i);
-        //     delete item3; // Remember to delete the item manually
-        // }
+
 
         int itemNo = 0;
         for(auto host_name_in_json : host_name_json_list){
@@ -1022,7 +1016,6 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
             itemNo = itemNo +1;
         }
         if(host_name_json_list.count() < ui->listWidget_3->count()){
-            int sub = ui->listWidget_3->count() - host_name_json_list.count();
             for(int i =ui->listWidget_3->count()-1; i<host_name_json_list.count();i++){
             QListWidgetItem *item3 = ui->listWidget_3->takeItem(i);
             delete item3; 
@@ -1901,14 +1894,14 @@ bool install_shell::DeviceInforControlNode::reqDeviceInfor(const vehicle_interfa
             RCLCPP_INFO(this->get_logger(), "[DevInfoControlNode::reqDevInfo] Response: %d, size: %ld", res->response, res->dev_info_vec.size());
             if (res->response)
             {
-                for (const vehicle_interfaces::msg::DevInfo & i : res->dev_info_vec){
+                // for (const vehicle_interfaces::msg::DevInfo & i : res->dev_info_vec){
                     // printf("%s[%s]\t%s/%s\n", 
                     //     i.node_name.c_str(), 
                     //     i.hostname.c_str(), 
                     //     i.ipv4_addr.c_str(), 
                     //     i.mac_addr.c_str());
                 devInfoVec = res->dev_info_vec;
-                }
+                // }
 
             }
 

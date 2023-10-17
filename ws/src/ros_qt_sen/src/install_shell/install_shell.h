@@ -42,6 +42,8 @@ public:
             std::shared_ptr<rclcpp::Node> reqClientNode_;
             rclcpp::Client<vehicle_interfaces::srv::DevInfoReq>::SharedPtr reqClient_;
     };
+    std::shared_ptr<install_shell::DeviceInforControlNode> DeviceInforcontrol;
+
     ~install_shell();
 
 private:
