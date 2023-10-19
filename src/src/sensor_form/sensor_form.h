@@ -1,6 +1,6 @@
 #ifndef FORM_H
 #define FORM_H
-#include "../include/ros_qt_sen/gui_node.h"
+#include "../include/node/gui_node.h"
 #include <QtCharts/QLineSeries>
 #include <QtWidgets/QLayout>
 
@@ -16,7 +16,6 @@
 
 #include <QtCharts/QLogValueAxis>
 #include <QDebug>
-#include "../include/ros_qt_sen/gui_node.h"
 #include "rclcpp/rclcpp.hpp"
 #include <QWidget>
 

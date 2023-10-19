@@ -1,4 +1,4 @@
-#include"../include/ros_qt_sen/gui_node.h"
+#include"../include/node/gui_node.h"
 #include <string>
 #include<QDebug>
 using std::placeholders::_1;

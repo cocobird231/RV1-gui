@@ -5,10 +5,6 @@
             "includePath": [
                 "/opt/ros/foxy/include/**",
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/ws/src/**",
-                "${workspaceFolder}/ws/src/ros_qt_sen/src/**",
-                "${workspaceFolder}/ws/src/ros_qt_sen/include/ros_qt_sen/**",
-                "${workspaceFolder}/ws/install/vehicle_interfaces/include/**",
                 "/usr/include/x86_64-linux-gnu/qt5",
                 "/usr/include/x86_64-linux-gnu/qt5/QtWidgets",
                 "/usr/include/x86_64-linux-gnu/qt5/QtCore",

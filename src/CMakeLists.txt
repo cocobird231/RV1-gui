@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(ros_qt_sen)
+project(cpp_gui)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -47,7 +47,7 @@ qt5_wrap_cpp(header_SRC
     src/install_shell/install_process/install_process.h
 
 
-    include/${PROJECT_NAME}/gui_node.h
+    include/node/gui_node.h
 )
 qt5_wrap_ui(UIS_HDRS 
 	src/mainwindow.ui
@@ -63,7 +63,7 @@ qt5_wrap_ui(UIS_HDRS
 )
 
 ## Build
-add_executable(ros_qt_sen
+add_executable(ros2_gui
     src/main.cpp
     src/qos_device_dialog/qosdevicedialog.cpp
     src/data_server_record/data_server_record.cpp
@@ -81,13 +81,13 @@ add_executable(ros_qt_sen
     ${UIS_HDRS}
 )
 
-ament_target_dependencies(ros_qt_sen rclcpp vehicle_interfaces )
+ament_target_dependencies(ros2_gui rclcpp vehicle_interfaces )
 
-target_link_libraries(ros_qt_sen  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network ssh -lstdc++fs)
+target_link_libraries(ros2_gui  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network ssh -lstdc++fs)
 
 ## Install
 install(TARGETS
-  ros_qt_sen
+  ros2_gui
   DESTINATION lib/${PROJECT_NAME}
 )
 
