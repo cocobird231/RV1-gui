@@ -21,6 +21,9 @@ public:
 private slots:
     void on_QosPushButton_clicked();
     void on_SensorPushButton_clicked();
+    void on_data_server_record_puchButton_clicked();
+    void on_install_shell_PushButton_clicked();
+
 
 private:
     Ui::MainWindow *ui;

@@ -1,6 +1,7 @@
 #include "data_server_record.h"
 #include "./../../ui_data_server_record.h"
 #include <QDoubleValidator>
+#include <QDebug>
 data_server_record::data_server_record(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::data_server_record)
@@ -64,9 +65,9 @@ bool data_server_record::data_server_node::_sendRequest(const rcl_interfaces::ms
     request->parameters.push_back(param);
     auto future = this->paramClient_->async_send_request(request);
 #if ROS_DISTRO == 0
-        if (rclcpp::spin_until_future_complete(this->paramNode_, future, 10s) != rclcpp::executor::FutureReturnCode::SUCCESS)
+        if (rclcpp::spin_until_future_complete(this->paramNode_, future, 3s) != rclcpp::executor::FutureReturnCode::SUCCESS)
 #else
-        if (rclcpp::spin_until_future_complete(this->paramNode_, future, 10s) != rclcpp::FutureReturnCode::SUCCESS)
+        if (rclcpp::spin_until_future_complete(this->paramNode_, future, 3s) != rclcpp::FutureReturnCode::SUCCESS)
 #endif
     {
         RCLCPP_ERROR(this->get_logger(), "service call failed :(");
@@ -89,7 +90,7 @@ void data_server_record::on_sampling_step_push_button_clicked()
     rcl_interfaces::msg::Parameter param;
     param.name = "samplingStep_ms";
     param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
-    param.value.integer_value = this->samplingStep_ms;
+    param.value.double_value = this->samplingStep_ms;
     this->data_server_node_->_sendRequest(param);
 }
 void data_server_record::on_Auto_save_time_push_button_clicked()
@@ -98,7 +99,7 @@ void data_server_record::on_Auto_save_time_push_button_clicked()
     rcl_interfaces::msg::Parameter param;
     param.name = "autoSaveTime_s";
     param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
-    param.value.integer_value = this->autoSaveTime_s;
+    param.value.double_value = this->autoSaveTime_s;
     this->data_server_node_->_sendRequest(param);
 }
 void data_server_record::on_record_time_push_button_clicked()
@@ -107,7 +108,7 @@ void data_server_record::on_record_time_push_button_clicked()
     rcl_interfaces::msg::Parameter param;
     param.name = "recordTime_s";
     param.value.type = rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE;
-    param.value.integer_value = this->recordTime_s;
+    param.value.double_value = this->recordTime_s;
     this->data_server_node_->_sendRequest(param);
 }
 
