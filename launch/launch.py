@@ -15,7 +15,7 @@ def generate_launch_description():
         Node(
             package="cpp_gui",
             namespace=data['generic_prop']['namespace'],
-            executable="ro2_gui",
+            executable="ros2_gui",
             output="screen",
             emulate_tty=True,
             parameters=[
