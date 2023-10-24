@@ -370,7 +370,7 @@ void QosDeviceDialog::add_for_message_type( QString message_type){
 
 
         qDebug()<<"Add"+topic;
-        sleep(1);
+        usleep(100000);
         bool qos_requst_success = control->requestQosReg(std::make_shared<vehicle_interfaces::srv::QosReg::Request>(req));
         if (!qos_requst_success)
         {
