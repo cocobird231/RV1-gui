@@ -33,53 +33,53 @@ public:
     QPushButton *pushButton_4;
     QLabel *label_4;
 
-    void setupUi(QWidget *data_serve_record)
+    void setupUi(QWidget *data_server_record)
     {
-        if (data_serve_record->objectName().isEmpty())
-            data_serve_record->setObjectName(QString::fromUtf8("data_serve_record"));
-        data_serve_record->resize(521, 321);
-        label = new QLabel(data_serve_record);
+        if (data_server_record->objectName().isEmpty())
+            data_server_record->setObjectName(QString::fromUtf8("data_server_record"));
+        data_server_record->resize(521, 321);
+        label = new QLabel(data_server_record);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(60, 30, 141, 17));
-        label_2 = new QLabel(data_serve_record);
+        label_2 = new QLabel(data_server_record);
         label_2->setObjectName(QString::fromUtf8("label_2"));
         label_2->setGeometry(QRect(60, 90, 131, 17));
-        label_3 = new QLabel(data_serve_record);
+        label_3 = new QLabel(data_server_record);
         label_3->setObjectName(QString::fromUtf8("label_3"));
         label_3->setGeometry(QRect(70, 140, 121, 17));
-        lineEdit = new QLineEdit(data_serve_record);
+        lineEdit = new QLineEdit(data_server_record);
         lineEdit->setObjectName(QString::fromUtf8("lineEdit"));
         lineEdit->setGeometry(QRect(220, 30, 161, 25));
-        lineEdit_2 = new QLineEdit(data_serve_record);
+        lineEdit_2 = new QLineEdit(data_server_record);
         lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
         lineEdit_2->setGeometry(QRect(220, 90, 161, 25));
-        lineEdit_3 = new QLineEdit(data_serve_record);
+        lineEdit_3 = new QLineEdit(data_server_record);
         lineEdit_3->setObjectName(QString::fromUtf8("lineEdit_3"));
         lineEdit_3->setGeometry(QRect(220, 140, 161, 25));
-        pushButton = new QPushButton(data_serve_record);
+        pushButton = new QPushButton(data_server_record);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
         pushButton->setGeometry(QRect(400, 30, 89, 25));
-        pushButton_2 = new QPushButton(data_serve_record);
+        pushButton_2 = new QPushButton(data_server_record);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
         pushButton_2->setGeometry(QRect(400, 90, 89, 25));
-        pushButton_3 = new QPushButton(data_serve_record);
+        pushButton_3 = new QPushButton(data_server_record);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
         pushButton_3->setGeometry(QRect(400, 140, 89, 25));
-        pushButton_4 = new QPushButton(data_serve_record);
+        pushButton_4 = new QPushButton(data_server_record);
         pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
         pushButton_4->setGeometry(QRect(220, 190, 151, 25));
-        label_4 = new QLabel(data_serve_record);
+        label_4 = new QLabel(data_server_record);
         label_4->setObjectName(QString::fromUtf8("label_4"));
         label_4->setGeometry(QRect(90, 190, 67, 17));
 
-        retranslateUi(data_serve_record);
+        retranslateUi(data_server_record);
 
-        QMetaObject::connectSlotsByName(data_serve_record);
+        QMetaObject::connectSlotsByName(data_server_record);
     } // setupUi
 
-    void retranslateUi(QWidget *data_serve_record)
+    void retranslateUi(QWidget *data_server_record)
     {
-        data_serve_record->setWindowTitle(QApplication::translate("data_server_record", "Form", nullptr));
+        data_server_record->setWindowTitle(QApplication::translate("data_server_record", "Form", nullptr));
         label->setText(QApplication::translate("data_server_record", "Sampling Step(ms):", nullptr));
         label_2->setText(QApplication::translate("data_server_record", "Auto Save Time(s):", nullptr));
         label_3->setText(QApplication::translate("data_server_record", "Record Time(s):", nullptr));

@@ -76,6 +76,7 @@ private slots:
     void on_scan_ros2_device_infor_push_button();
     void on_quick_upgrade_mission_dispatch_push_button_clicked();
     void on_quick_depoly_mission_dispatch_push_button_clicked();
+    void on_setting_commmom_pushbutton_change();
 
 };
 

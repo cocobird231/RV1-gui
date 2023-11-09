@@ -82,7 +82,7 @@ using namespace std::chrono_literals;
     connect(ui->pushButton_11,&QPushButton::clicked,this,&install_shell::on_save_default_user_push_button);
     connect(ui->pushButton_13,&QPushButton::clicked,this,&install_shell::on_quick_upgrade_mission_dispatch_push_button_clicked);
     connect(ui->pushButton_14,&QPushButton::clicked,this,&install_shell::on_quick_depoly_mission_dispatch_push_button_clicked);
-
+    connect(ui->pushButton_15,&QPushButton::clicked,this,&install_shell::on_setting_commmom_pushbutton_change);
     DeviceInforcontrol = std::make_shared<DeviceInforControlNode>("gui_DeviceInfor_0_node", "/V0/devinfo_0");
 
 
@@ -138,7 +138,10 @@ using namespace std::chrono_literals;
     ui->lineEdit_6->setText(root["default_password"].toString());
 
 }
-
+void install_shell::on_setting_commmom_pushbutton_change(){
+ 
+    
+}
 void install_shell::on_reboot_push_button_clicked(){
 
     int task_count = ui->listWidget_2->count();
@@ -547,9 +550,6 @@ void install_shell::on_host_check_infor_push_button_clicked(){
             qDebug()<<QString::fromStdString(user);
         }
         device_type = host["device"].toString().toStdString();
-
-        install_setting_json_document.setObject(root);
-
         install_file.close();
         qDebug()<<QString("test for ssh");
         qDebug()<<QString::fromStdString(ip_address);
@@ -1911,3 +1911,4 @@ bool install_shell::DeviceInforControlNode::reqDeviceInfor(const vehicle_interfa
         return false;
     
 }
+

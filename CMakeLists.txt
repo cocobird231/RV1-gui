@@ -45,6 +45,7 @@ qt5_wrap_cpp(header_SRC
     src/install_shell/install_option/install_option.h
     src/install_shell/install_device_infor/install_device_infor.h
     src/install_shell/install_process/install_process.h
+    src/install_shell/install_common/install_common.h
 
 
     include/node/gui_node.h
@@ -59,6 +60,8 @@ qt5_wrap_ui(UIS_HDRS
   src/install_shell/install_option/install_option.ui
   src/install_shell/install_device_infor/install_device_infor.ui
   src/install_shell/install_process/install_process.ui
+  src/install_shell/install_common/install_common.ui
+
 
 )
 
@@ -72,6 +75,8 @@ add_executable(ros2_gui
     src/install_shell/install_option/install_option.cpp
     src/install_shell/install_device_infor/install_device_infor.cpp
     src/install_shell/install_process/install_process.cpp
+
+    src/install_shell/install_common/install_common.cpp
 
     src/mainwindow.cpp
     src/node/gui_node.cpp

@@ -65,6 +65,7 @@ public:
     QPushButton *pushButton_12;
     QPushButton *pushButton_13;
     QPushButton *pushButton_14;
+    QPushButton *pushButton_15;
 
     void setupUi(QWidget *install_shell)
     {
@@ -82,10 +83,10 @@ public:
         pushButton_2->setGeometry(QRect(870, 20, 91, 25));
         pushButton_3 = new QPushButton(install_shell);
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
-        pushButton_3->setGeometry(QRect(520, 90, 121, 25));
+        pushButton_3->setGeometry(QRect(520, 130, 121, 25));
         pushButton_4 = new QPushButton(install_shell);
         pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
-        pushButton_4->setGeometry(QRect(520, 130, 121, 25));
+        pushButton_4->setGeometry(QRect(520, 170, 121, 25));
         label = new QLabel(install_shell);
         label->setObjectName(QString::fromUtf8("label"));
         label->setGeometry(QRect(30, 300, 67, 17));
@@ -152,7 +153,7 @@ public:
         label_11->setGeometry(QRect(690, 60, 131, 17));
         pushButton_8 = new QPushButton(install_shell);
         pushButton_8->setObjectName(QString::fromUtf8("pushButton_8"));
-        pushButton_8->setGeometry(QRect(520, 170, 121, 25));
+        pushButton_8->setGeometry(QRect(520, 210, 121, 25));
         pushButton_9 = new QPushButton(install_shell);
         pushButton_9->setObjectName(QString::fromUtf8("pushButton_9"));
         pushButton_9->setGeometry(QRect(1130, 90, 111, 25));
@@ -202,6 +203,9 @@ public:
         pushButton_14 = new QPushButton(install_shell);
         pushButton_14->setObjectName(QString::fromUtf8("pushButton_14"));
         pushButton_14->setGeometry(QRect(1130, 270, 111, 25));
+        pushButton_15 = new QPushButton(install_shell);
+        pushButton_15->setObjectName(QString::fromUtf8("pushButton_15"));
+        pushButton_15->setGeometry(QRect(520, 90, 121, 25));
 
         retranslateUi(install_shell);
 
@@ -245,6 +249,7 @@ public:
         pushButton_12->setText(QApplication::translate("install_shell", "\346\233\264\346\226\260", nullptr));
         pushButton_13->setText(QApplication::translate("install_shell", "quick upgrade", nullptr));
         pushButton_14->setText(QApplication::translate("install_shell", "quick depoly", nullptr));
+        pushButton_15->setText(QApplication::translate("install_shell", "setting", nullptr));
     } // retranslateUi
 
 };
