@@ -33,6 +33,7 @@
 #include "install_device_infor/install_device_infor.h"
 #include "install_process/install_process.h"
 #include "install_option/install_option.h"
+#include "install_common/install_common.h"
 QList<QNetworkAddressEntry> entryList;
 QString selected_self_IP;
 QList<QString> is_opened_host_address;
@@ -139,7 +140,9 @@ using namespace std::chrono_literals;
 
 }
 void install_shell::on_setting_commmom_pushbutton_change(){
- 
+    install_common* install_common_ = new install_common(nullptr);
+    install_common_->show();
+
     
 }
 void install_shell::on_reboot_push_button_clicked(){
@@ -292,11 +295,11 @@ void install_shell::on_Interface_Choose_PushButtun_clicked(){
         }
         
         ui->pushButton_2->setEnabled(false);
-        int list_count=ui->listWidget->count();
+        // int list_count=ui->listWidget->count();
 
-        for (int i = list_count - 1; i >0; --i) {
-          ui->listWidget->takeItem(i);
-        }
+        // for (int i = list_count - 1; i >0; --i) {
+        //   ui->listWidget->takeItem(i);
+        // }
         is_opened_host_address.clear();
         is_opened_host_name.clear();
         is_opened_host.clear();
@@ -393,12 +396,14 @@ void install_shell::check_ssh_has_open(QString host_name,QString user_name){
 void install_shell::on_add_mission_pushButton_clicked(){
 
 
-    if (ui->listWidget==nullptr)
+    if (ui->listWidget_3==nullptr)
     {
         return;
     }
     
-    QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
+    QList<QListWidgetItem*> items = ui->listWidget_3->selectedItems();
+
+    
     if (items.count()==0)
     {
     QMessageBox mission_install_is_empty;
@@ -425,11 +430,14 @@ void install_shell::on_add_mission_pushButton_clicked(){
             mission_is_in_list.exec();
             return;
         }
+        if(item->backgroundColor() != Qt::green){
+            QMessageBox mission_is_in_list;
+            mission_is_in_list.setText("it is not online device.");
+            mission_is_in_list.exec();
+            return;
+        }
         ui->listWidget_2->addItem(add_string);
     }
-
-
-    
 }
 
 void install_shell::on_delet_mission_pushButton_clicked(){
@@ -465,12 +473,12 @@ qDebug()<<item->text();
 
 }
 void install_shell::on_host_check_infor_push_button_clicked(){
-    if (ui->listWidget==nullptr)
+    if (ui->listWidget_3==nullptr)
     {
         return;
     }
     
-    QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
+    QList<QListWidgetItem*> items = ui->listWidget_3->selectedItems();
     if (items.count()==0)
     {
     QMessageBox mission_install_is_empty;
@@ -1024,28 +1032,43 @@ void install_shell::icmp_thread_patch(QList<QString> net_list){
 
                 // ui->listWidget_3->setCurrentRow(0);
 
-       int list_count_1=ui->listWidget->count();
-        for (int i = list_count_1 - 1; i >= 0; --i) {
-            QListWidgetItem *item1 = ui->listWidget->takeItem(i);
-            delete item1; // Remember to delete the item manually
-        }
+    //    int list_count_1=ui->listWidget->count();
+    //     for (int i = list_count_1 - 1; i >= 0; --i) {
+    //         QListWidgetItem *item1 = ui->listWidget->takeItem(i);
+    //         delete item1; // Remember to delete the item manually
+    //     }
 
-        for(int k =0 ;k < is_opened_host.length();k++){
-            QListWidgetItem *the_item = ui->listWidget->takeItem(k);
-            if(!(the_item == nullptr)){
-                the_item->setText(is_opened_host[k]);
+    //     for(int k =0 ;k < is_opened_host.length();k++){
+    //         QListWidgetItem *the_item = ui->listWidget->takeItem(k);
+    //         if(!(the_item == nullptr)){
+    //             the_item->setText(is_opened_host[k]);
+    //         }else{
+    //             ui->listWidget->addItem(is_opened_host[k]);
+    //         }
+    //     }
+        // when listWidget_3 in is_opened_host change the item color
+        for(int i =0;i<ui->listWidget_3->count();i++){
+            QListWidgetItem *the_item = ui->listWidget_3->item(i);
+            if(is_opened_host.contains(the_item->text())){
+                //green
+                the_item->setBackground(QBrush(Qt::green));
+                QListWidgetItem *the_item = ui->listWidget_3->takeItem(i);
+                ui->listWidget_3->insertItem(-1,the_item);
             }else{
-                ui->listWidget->addItem(is_opened_host[k]);
+                //red
+                the_item->setBackground(QBrush(QColor(255, 0, 0)));
             }
         }
 
-        if(is_opened_host.count() < ui->listWidget->count()){
-            int sub = ui->listWidget->count() - is_opened_host.count();
-            for(int i =ui->listWidget->count()-1; i<is_opened_host.count();i++){
-            QListWidgetItem *item = ui->listWidget->takeItem(i);
-            delete item; 
-            }
-        }
+
+
+        // if(is_opened_host.count() < ui->listWidget->count()){
+        //     int sub = ui->listWidget->count() - is_opened_host.count();
+        //     for(int i =ui->listWidget->count()-1; i<is_opened_host.count();i++){
+        //     QListWidgetItem *item = ui->listWidget->takeItem(i);
+        //     delete item; 
+        //     }
+        // }
 
 }
 
@@ -1705,13 +1728,13 @@ void install_shell::on_delet_host_information_push_button_clicked(){
 
 void install_shell::on_install_option_push_button_clicked(){
 
-   if (ui->listWidget==nullptr)
+   if (ui->listWidget_2==nullptr)
     {
         qDebug()<<QString("null");
         return;
     }
     
-    QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
+    QList<QListWidgetItem*> items = ui->listWidget_2->selectedItems();
     if (items.count()==0)
     {
     QMessageBox mission_install_is_empty;

@@ -1,0 +1,17 @@
+{
+    "default_interface": "enp4s0",
+    "default_ip": "192.168.4.100",
+    "default_net_mask": "255.255.255.0",
+    "install_config": {
+        "dc:a6:32:28:15:86": {
+            "device": "raspberry pi",
+            "host_name": "Unkown",
+            "ip_address": "192.168.4.104",
+            "node_name": [
+                ""
+            ],
+            "password": "",
+            "user": ""
+        }
+    }
+}
