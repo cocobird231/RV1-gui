@@ -19,6 +19,11 @@ int main(int argc, char * argv[])
     if(exists_test1("./mirdc.ico")){
     a.setWindowIcon(QIcon("./mirdc.ico"));
     }
+    if (exists_test1("/ros2_ws/src/cpp_gui/mirdc.ico")))
+    {
+        a.setWindowIcon(QIcon("/ros2_ws/src/cpp_gui/mirdc.ico"));
+    }
+    
     MainWindow w;
     w.setWindowTitle("無人載具圖形化介面顯示");
     w.show(); //TO DO
