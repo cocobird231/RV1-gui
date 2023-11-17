@@ -53,16 +53,25 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
     connect(ui->pushButton_2,&QPushButton::clicked,this,&install_option::on_save_and_close_push_button_clicked);
     connect(ui->pushButton_3,&QPushButton::clicked,this,&install_option::on_reset_push_button_clicked);
     connect(ui->comboBox,&QComboBox::currentTextChanged,this,&install_option::on_current_package_name_changed);
-
+    
     QFile install_option_file("ros2_ws/src/cpp_gui/install_option.json");
+    QFile install_option_file_2("install_option.json");
+    QByteArray install_byte;
     if(!install_option_file.open(QIODevice::ReadOnly)) {
     qDebug() << "File open error,the premission may denied.";
-    QFile install_option_file("install_option.json");
-
     } else {
     qDebug() <<"install_setting File open!";
+    install_byte = install_option_file.readAll();
+
     }
-    QByteArray install_byte = install_option_file.readAll();
+    if(!install_option_file_2.open(QIODevice::ReadOnly)) {
+    qDebug() << "File open error,the premission may denied.";
+    } else {
+    qDebug() <<"install_setting File open!";
+    install_byte = install_option_file_2.readAll();
+
+    }
+
     install_option_file_json_document = QJsonDocument::fromJson(install_byte);
     QJsonObject install_option_root = install_option_file_json_document.object();
     if(device =="raspberry pi"){
@@ -191,6 +200,7 @@ void install_option::on_current_package_name_changed(){
 
     }
 }
+
 
 install_option::~install_option()
 {

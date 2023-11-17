@@ -3,7 +3,7 @@
 //#include "form.h"
 #include <QApplication>
 
-inline bool exists_test1 (const std::string& name) {
+bool exists_test1 (const std::string& name) {
     if (FILE *file = fopen(name.c_str(), "r")) {
         fclose(file);
         return true;
