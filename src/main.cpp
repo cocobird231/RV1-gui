@@ -25,7 +25,6 @@ int main(int argc, char * argv[])
     }
     
     MainWindow w;
-    w.
     w.setWindowTitle("無人載具圖形化介面顯示");
     w.show(); //TO DO
     
