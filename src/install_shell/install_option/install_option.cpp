@@ -54,7 +54,7 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
     connect(ui->pushButton_3,&QPushButton::clicked,this,&install_option::on_reset_push_button_clicked);
     connect(ui->comboBox,&QComboBox::currentTextChanged,this,&install_option::on_current_package_name_changed);
 
-    QFile install_option_file("~/ros2_ws/src/cpp_gui/install_option.json");
+    QFile install_option_file("ros2_ws/src/cpp_gui/install_option.json");
     if(!install_option_file.open(QIODevice::ReadOnly)) {
     qDebug() << "File open error,the premission may denied.";
     QFile install_option_file("install_option.json");
