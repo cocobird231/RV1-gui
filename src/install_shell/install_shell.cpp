@@ -805,8 +805,17 @@ void install_shell::check_icmp_has_open(QString host_name){
             QJsonObject host = install_config[mac_result].toObject();
             QString node_name ="";
             if(host["node_name"].toArray().size()>0){
-            QJsonValue node_name_element = host["node_name"].toArray().at(0);
-            node_name = node_name_element.toString();
+                if (host["node_name"].toArray().at(0)!= "")
+                {
+                    QJsonValue node_name_element = host["node_name"].toArray().at(0);
+                    node_name = node_name_element.toString();
+                }
+                if (host["node_name"].toArray().at(1)!= "")
+                {
+                    QJsonValue node_name_element = host["node_name"].toArray().at(1);
+                    node_name = node_name_element.toString();
+                }
+
             }
             QString has_host_name = host["host_name"].toString();
 
