@@ -313,7 +313,7 @@ void QosDeviceDialog::remove_for_message_type( QString message_type){
         vehicle_interfaces::srv::QosReg::Request req;
         req.topic_name = topic.toStdString();
         req.remove_profile = true;
-        usleep(100000);
+        usleep(10000);
         bool qos_requst_success = control->requestQosReg(std::make_shared<vehicle_interfaces::srv::QosReg::Request>(req));
         if (!qos_requst_success)
         {
@@ -370,7 +370,7 @@ void QosDeviceDialog::add_for_message_type( QString message_type){
 
 
         qDebug()<<"Add"+topic;
-        usleep(100000);
+        usleep(10000);
         bool qos_requst_success = control->requestQosReg(std::make_shared<vehicle_interfaces::srv::QosReg::Request>(req));
         if (!qos_requst_success)
         {
