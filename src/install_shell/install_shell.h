@@ -20,7 +20,6 @@
 #include "vehicle_interfaces/srv/dev_info_reg.hpp"
 #include "vehicle_interfaces/srv/dev_info_req.hpp"
 #include <rclcpp/rclcpp.hpp>
-
 namespace Ui {
 class install_shell;
 }
@@ -43,7 +42,8 @@ public:
             rclcpp::Client<vehicle_interfaces::srv::DevInfoReq>::SharedPtr reqClient_;
     };
     std::shared_ptr<install_shell::DeviceInforControlNode> DeviceInforcontrol;
-
+    vehicle_interfaces::msg::DevInfo reqDevInfo = vehicle_interfaces::msg::DevInfo();
+    std::vector<vehicle_interfaces::msg::DevInfo> devInfoVec;
     ~install_shell();
 
 private:

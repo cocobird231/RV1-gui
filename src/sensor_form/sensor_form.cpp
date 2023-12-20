@@ -113,8 +113,9 @@ colorList << QColor(255, 0, 0)
     temperature_chartView->hide();
     relative_humidity_chartView->hide();
     pressure_chartView->hide();
-
-    main_gui_node = new gui_node();
+    name_node =rclcpp::Node::make_shared("get_name");
+    topic_name_map = name_node->get_topic_names_and_types();;
+    main_gui_node = new gui_node(topic_name_map);
     main_gui_node->start();
     connect(Distance_chart->scene(), &QGraphicsScene::changed,main_gui_node, &gui_node::handleSceneChanged);
 
@@ -125,9 +126,13 @@ colorList << QColor(255, 0, 0)
 
 void sensor_form::on_comboBox_currentIndexChanged(const QString &arg1)
 {
-
-
-    if(arg1=="topic_Ultrasound"){
+    qDebug() << arg1;
+    if (arg1.isEmpty())
+        return;
+    if (topic_name_map[arg1.toStdString()].empty())
+        return;
+    QString arg_message_type = QString::fromStdString(topic_name_map [arg1.toStdString()][0].c_str());
+    if(arg_message_type.contains("Distance")){
         Distance_chartView->show();
         connect(Distance_chart->scene(), &QGraphicsScene::changed,main_gui_node,  &gui_node::handleSceneChanged);
 
@@ -139,7 +144,7 @@ void sensor_form::on_comboBox_currentIndexChanged(const QString &arg1)
         disconnect(pressure_chart->scene(), &QGraphicsScene::changed,main_gui_node, 0);
     }
 
-    if(arg1=="topic_ENV"){
+    if(arg_message_type.contains("Environment")){
         temperature_chartView->show();
         relative_humidity_chartView->show();
         pressure_chartView->show();
@@ -154,13 +159,18 @@ void sensor_form::on_comboBox_currentIndexChanged(const QString &arg1)
 
 void sensor_form::on_PushButtun_clicked(){
     ui->comboBox->clear();
-    name_node =rclcpp::Node::make_shared("get_name");
-    auto topic_name_map = name_node->get_topic_names_and_types();;
+
+    topic_name_map = name_node->get_topic_names_and_types();;
     QList<QString> topic_list;
     for(const auto& i :topic_name_map){
-        topic_list.append(QString::fromStdString(i.first));
+        if (QString::fromStdString(i.second[0].c_str()).contains("Distance") || QString::fromStdString(i.second[0].c_str()).contains("Environment"))
+        {
+            topic_list.append(QString::fromStdString(i.first));
+        }
+        
     }
     ui->comboBox->addItems(topic_list);
+
 }
 
 

@@ -96,8 +96,7 @@ public:
     void retranslateUi(QWidget *sensor_form)
     {
         sensor_form->setWindowTitle(QApplication::translate("sensor_form", "MainWindow", nullptr));
-        comboBox->setItemText(0, QApplication::translate("sensor_form", "topic_Ultrasound", nullptr));
-        comboBox->setItemText(1, QApplication::translate("sensor_form", "topic_ENV", nullptr));
+
 
         pushButton->setText(QApplication::translate("sensor_form", "\346\233\264\346\226\260", nullptr));
     } // retranslateUi

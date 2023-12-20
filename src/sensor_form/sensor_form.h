@@ -49,6 +49,7 @@ private:
     QChart* pressure_chart ;
     QChartView* pressure_chartView;
     std::shared_ptr<rclcpp::Node> name_node;
+    std::map<std::string, std::vector<std::string>> topic_name_map;
 private slots:
     void on_comboBox_currentIndexChanged(const QString&);
     void on_PushButtun_clicked();

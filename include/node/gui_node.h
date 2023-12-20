@@ -21,7 +21,7 @@ class gui_node : public QThread
     Q_OBJECT
 
 public:
-    explicit gui_node();
+    explicit gui_node(std::map<std::string, std::vector<std::string>> topic_name_map);
     ~gui_node();
     void startUpdates(const QList<QLineSeries *> &seriesList);
     

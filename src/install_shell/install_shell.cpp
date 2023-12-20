@@ -28,7 +28,7 @@
 #include <atomic>
 #include <mutex>
 
-
+#include <unistd.h>
 
 #include "install_device_infor/install_device_infor.h"
 #include "install_process/install_process.h"
@@ -758,6 +758,7 @@ void install_shell::check_icmp_has_open(QString host_name){
 
             QString command_string = "ping "+host_name+" -c 1 -w 1 -W 1 ";
             ping_process.start(command_string,QIODevice::ReadOnly);
+            usleep(100000);
             ping_process.waitForFinished(-1);
             QString result = QString::fromLocal8Bit(ping_process.readAllStandardOutput());
             ping_process.kill();
@@ -775,6 +776,7 @@ void install_shell::check_icmp_has_open(QString host_name){
                     do
                     {
                         mac_address_process.start(QS_search_mac_address_command_string,QIODevice::ReadOnly);
+                        usleep(100000);
                         mac_address_process.waitForFinished(-1);
                         mac_result = QString::fromLocal8Bit(mac_address_process.readAllStandardOutput());
                         qDebug()<<mac_result;
@@ -1820,8 +1822,7 @@ void install_shell::on_install_option_push_button_clicked(){
 }
 
 void install_shell::on_scan_ros2_device_infor_push_button(){
-    vehicle_interfaces::msg::DevInfo reqDevInfo= vehicle_interfaces::msg::DevInfo();
-    std::vector<vehicle_interfaces::msg::DevInfo> devInfoVec;
+    reqDevInfo= vehicle_interfaces::msg::DevInfo();
     reqDevInfo.node_name = "all";
     bool reqSuccess = DeviceInforcontrol->reqDeviceInfor(reqDevInfo,devInfoVec);
     if(reqSuccess){

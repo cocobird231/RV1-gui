@@ -1,14 +1,22 @@
 #include"../include/node/gui_node.h"
 #include <string>
-#include<QDebug>
+#include <QDebug>
 using std::placeholders::_1;
 
-gui_node::gui_node()
+gui_node::gui_node(std::map<std::string, std::vector<std::string>> topic_name_map)
 
 {
     node = rclcpp::Node::make_shared("gui_subscriber");
-    topic_Ultrasound_subscription_ = node->create_subscription<vehicle_interfaces::msg::Distance>("topic_Ultrasound", 10, std::bind(&gui_node::topic_Ultrasound_callback, this, _1));
-    topic_Environment_subscription_=node->create_subscription<vehicle_interfaces::msg::Environment>("topic_ENV", 10, std::bind(&gui_node::topic_env_callback, this, _1));
+    for (auto i :topic_name_map){
+        if(QString::fromStdString(i.second[0].c_str()).contains("Distance")){
+            topic_Ultrasound_subscription_ = node->create_subscription<vehicle_interfaces::msg::Distance>(i.first.c_str(), 10, std::bind(&gui_node::topic_Ultrasound_callback, this, _1));
+        }
+        if(QString::fromStdString(i.second[0].c_str()).contains("Environment")){
+            topic_Environment_subscription_=node->create_subscription<vehicle_interfaces::msg::Environment>(i.first.c_str(), 10, std::bind(&gui_node::topic_env_callback, this, _1));
+        }
+    }
+    // topic_Ultrasound_subscription_ = node->create_subscription<vehicle_interfaces::msg::Distance>("topic_Ultrasound", 10, std::bind(&gui_node::topic_Ultrasound_callback, this, _1));
+    // topic_Environment_subscription_=node->create_subscription<vehicle_interfaces::msg::Environment>("topic_ENV", 10, std::bind(&gui_node::topic_env_callback, this, _1));
 }
 void gui_node::run(){
 
