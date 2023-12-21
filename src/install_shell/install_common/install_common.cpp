@@ -10,18 +10,28 @@
 #include <libssh/libssh.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <QFileDialog>
+#include <QTextStream>
+#include <QByteArray>
+
 // Good chunk size
 #define MAX_XFER_BUF_SIZE 16384
 
-install_common::install_common(QWidget *parent) :
+install_common::install_common(QWidget *parent,QString device) :
     QWidget(parent),
     ui(new Ui::install_common)
 {
     ui->setupUi(this);
     // ui->comboBox->addItem("v0-sensor-ultrasound-0／e4:5f:01:72:fe:6f／192.168.0.45／");
-    ui->comboBox->addItem("Unkown／dc:a6:32:28:15:86／192.168.4.104／");
+    // ui->comboBox->addItem("Unkown／dc:a6:32:28:15:86／192.168.4.104／");
+    ui->comboBox->addItem(device);
     connect(ui->pushButton,&QPushButton::clicked, this, &install_common::on_device_select_pushbutton_clicked);
     connect(ui->pushButton_2,&QPushButton::clicked, this, &install_common::on_save_pushbutton_clicked);
+    connect(ui->pushButton_3,&QPushButton::clicked, this, &install_common::on_load_file_pushbutton_clicked);
+    connect(ui->pushButton_4,&QPushButton::clicked, this, &install_common::on_save_file_pushbutton_clicked);
 }
 
 install_common::~install_common()
@@ -130,8 +140,9 @@ void install_common::on_device_select_pushbutton_clicked(){
     qDebug()<<QString::fromStdString(password);
     qDebug()<<QString::fromStdString(ip_address);
     qDebug()<<QString::fromStdString(device_type);
-    
-    file = sftp_open(sftp, "ros2_docker/common.yaml",
+    std::string file_name;
+    file_name = "./ros2_docker/"+ui->comboBox_3->currentText().toStdString();
+    file = sftp_open(sftp, file_name.c_str(),
                     access_type, 0);
     if (file == NULL) {
         fprintf(stderr, "Can't open file for reading: %s\n",
@@ -272,8 +283,9 @@ QString device=ui->comboBox->currentText();
     }
   int access_type = O_WRONLY | O_CREAT | O_TRUNC;
   sftp_file file;
-  const char *helloworld = "Hello, World!\n";
-  int length = strlen(helloworld);
+    std::string wirte_text = ui->textEdit->toPlainText().toStdString();
+    const char *helloworld = "Hello, World!\n";
+    int length = wirte_text.length();
     char buffer[MAX_XFER_BUF_SIZE];
     int nbytes, nwritten;
     int fd;
@@ -283,30 +295,58 @@ QString device=ui->comboBox->currentText();
     qDebug()<<QString::fromStdString(ip_address);
     qDebug()<<QString::fromStdString(device_type);
     
-
-  file = sftp_open(sftp, "helloworld/helloworld.txt",
-                   access_type, S_IRWXU);
-  if (file == NULL)
-  {
-    fprintf(stderr, "Can't open file for writing: %s\n",
-            ssh_get_error(my_ssh_session));
-    return ;
-  }
+    std::string file_name;
+    file_name = "./ros2_docker/"+ui->comboBox_3->currentText().toStdString();
+    file = sftp_open(sftp, file_name.c_str(),
+                    access_type, S_IRWXU);
+    if (file == NULL)
+    {
+        fprintf(stderr, "Can't open file for writing: %s\n",
+                ssh_get_error(my_ssh_session));
+        return ;
+    }
  
-  nwritten = sftp_write(file, helloworld, length);
-  if (nwritten != length)
-  {
-    fprintf(stderr, "Can't write data to file: %s\n",
-            ssh_get_error(my_ssh_session));
-    sftp_close(file);
-    return ;
-  }
+    nwritten = sftp_write(file, wirte_text.c_str(), length);
+    if (nwritten != length)
+    {
+        fprintf(stderr, "Can't write data to file: %s\n",
+                ssh_get_error(my_ssh_session));
+        sftp_close(file);
+        return ;
+    }
  
-  rc = sftp_close(file);
-  if (rc != SSH_OK)
-  {
-    fprintf(stderr, "Can't close the written file: %s\n",
-            ssh_get_error(my_ssh_session));
-    return ;
-  }
+    rc = sftp_close(file);
+    if (rc != SSH_OK)
+    {
+        fprintf(stderr, "Can't close the written file: %s\n",
+                ssh_get_error(my_ssh_session));
+        return ;
+    }
+}
+void install_common::on_load_file_pushbutton_clicked(){
+    QString file_name = ui->comboBox_2->currentText()+"_"+ui->comboBox_3->currentText()+".txt";
+    file_name = file_name.replace("/","");
+    QFile file(file_name);
+    if(!file.open(QIODevice::ReadOnly)) {
+    qDebug() << "File open error,the premission may denied.";
+    } else {
+    qDebug() <<"File open!";
+    }
+    QByteArray file_byte = file.readAll();
+    QString file_string = file_byte;
+    ui->textEdit->setText(file_string);
+    file.close();
+}
+void install_common::on_save_file_pushbutton_clicked(){
+    QString file_name = ui->comboBox_2->currentText()+"_"+ui->comboBox_3->currentText()+".txt";
+    file_name = file_name.replace("/","");
+    QFile file(file_name);
+    if(!file.open(QIODevice::WriteOnly)) {
+    qDebug() << "File open error,the premission may denied.";
+    } else {
+    qDebug() <<"File open!";
+    }
+    QByteArray file_byte = ui->textEdit->toPlainText().toUtf8();
+    file.write(file_byte);
+    file.close();
 }

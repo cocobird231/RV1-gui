@@ -5,7 +5,7 @@
 #include <string>
 #include <rclcpp/rclcpp.hpp>
 #include <vehicle_interfaces/msg/image.hpp>
-
+#include <string>
 namespace Ui {
 class Image_form;
 }
@@ -15,7 +15,7 @@ class Image_form : public QWidget
     Q_OBJECT
 
 public:
-    explicit Image_form(QWidget *parent = nullptr);
+    explicit Image_form(QWidget *parent = nullptr ,int image_id=0);
     ~Image_form();
     void image_callback(const vehicle_interfaces::msg::Image::SharedPtr msg);
     void run();
@@ -28,6 +28,7 @@ private:
     QList<std::string>   topic_name_list;
     QString topic;
     std::thread image_spin;
+    std::string node_name ;
 
 private slots:
     void refresh_topic_name_list();

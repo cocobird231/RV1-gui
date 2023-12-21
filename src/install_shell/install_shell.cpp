@@ -140,7 +140,10 @@ using namespace std::chrono_literals;
 
 }
 void install_shell::on_setting_commmom_pushbutton_change(){
-    install_common* install_common_ = new install_common(nullptr);
+    if(ui->listWidget_3->currentItem()==nullptr){
+        return;
+    }
+    install_common* install_common_ = new install_common(nullptr,ui->listWidget_3->currentItem()->text());
     install_common_->show();
 
     

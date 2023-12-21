@@ -13,7 +13,7 @@ class install_common : public QWidget
     Q_OBJECT
 
 public:
-    explicit install_common(QWidget *parent = nullptr);
+    explicit install_common(QWidget *parent = nullptr,QString device="");
     ~install_common();
 
 private:
@@ -23,7 +23,8 @@ private:
 private slots:
     void on_device_select_pushbutton_clicked();
     void on_save_pushbutton_clicked();
-
+    void on_load_file_pushbutton_clicked();
+    void on_save_file_pushbutton_clicked();
 };
 
 #endif // install_common_H

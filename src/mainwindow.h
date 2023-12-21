@@ -41,5 +41,6 @@ private:
     QString device_info_message;
     QString topic;
     void refresh_topic_name_list();
+    int image_id=0;
 };
 #endif // MAINWINDOW_H

@@ -12,12 +12,13 @@
 #include <opencv2/opencv.hpp>
 
 
-Image_form::Image_form(QWidget *parent) :
+Image_form::Image_form(QWidget *parent,int image_id) :
     QWidget(parent),
     ui(new Ui::Image_form)
 {
     ui->setupUi(this);
-    node =rclcpp::Node::make_shared("get_image");
+    
+    node_name = "get_image"+std::to_string(image_id);
     connect(ui->pushButton, &QPushButton::clicked, this, &Image_form::refresh_topic_name_list);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &Image_form::connect_image_topic);
     connect(ui->pushButton_3, &QPushButton::clicked, this, &Image_form::on_pushButton_clicked);
@@ -40,6 +41,8 @@ void Image_form::refresh_topic_name_list(){
 
 }
 void Image_form::connect_image_topic(){
+    node =rclcpp::Node::make_shared(node_name);
+
     auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
     qos.best_effort();
     qos.durability_volatile();
@@ -81,4 +84,5 @@ void Image_form::on_pushButton_clicked()
 {
     image_sub.reset();
     image_spin.~thread();
+    node.~__shared_ptr();
 }

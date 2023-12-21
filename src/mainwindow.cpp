@@ -69,6 +69,7 @@ void MainWindow::on_install_shell_PushButton_clicked(){
     the_install_shell->show();
 }
 void MainWindow::on_image_display_PushButton_clicked(){
-    Image_form *the_image_form = new Image_form;
+    image_id++;
+    Image_form *the_image_form = new Image_form(nullptr,image_id);
     the_image_form->show();
 }
