@@ -19,6 +19,8 @@ Image_form::Image_form(QWidget *parent,int image_id) :
     ui->setupUi(this);
     
     node_name = "get_image"+std::to_string(image_id);
+    node_image =rclcpp::Node::make_shared(node_name);
+
     connect(ui->pushButton, &QPushButton::clicked, this, &Image_form::refresh_topic_name_list);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &Image_form::connect_image_topic);
     connect(ui->pushButton_3, &QPushButton::clicked, this, &Image_form::on_pushButton_clicked);
@@ -32,8 +34,12 @@ Image_form::~Image_form()
     image_spin.~thread();
 }
 void Image_form::refresh_topic_name_list(){
+
     ui->comboBox->clear();
-    auto topic_name_list = node->get_topic_names_and_types();
+    if(node_image == nullptr){
+        node_image =rclcpp::Node::make_shared(node_name);
+    }
+    auto topic_name_list = node_image->get_topic_names_and_types();
     for(const auto& i :topic_name_list){
         if(QString::fromStdString(i.second[0].c_str()).contains("Image"))
         ui->comboBox->addItem(QString::fromStdString(i.first.c_str()));
@@ -41,13 +47,12 @@ void Image_form::refresh_topic_name_list(){
 
 }
 void Image_form::connect_image_topic(){
-    node =rclcpp::Node::make_shared(node_name);
 
     auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
     qos.best_effort();
     qos.durability_volatile();
     qos.reliable();
-    image_sub = node->create_subscription<vehicle_interfaces::msg::Image>(ui->comboBox->currentText().toStdString(), qos, std::bind(&Image_form::image_callback, this, std::placeholders::_1));
+    image_sub = node_image->create_subscription<vehicle_interfaces::msg::Image>(ui->comboBox->currentText().toStdString(), qos, std::bind(&Image_form::image_callback, this, std::placeholders::_1));
     qDebug()<<ui->comboBox->currentText();
 
     image_spin = std::thread(std::bind(&Image_form::run, this));
@@ -55,7 +60,7 @@ void Image_form::connect_image_topic(){
 }
 void Image_form::run(){
 
-        rclcpp::spin(node);
+        rclcpp::spin(node_image);
 
 }
 void Image_form::image_callback(const vehicle_interfaces::msg::Image::SharedPtr msg){
@@ -66,7 +71,7 @@ void Image_form::image_callback(const vehicle_interfaces::msg::Image::SharedPtr 
     // resize
     cv::resize(recvMat_,resizedMat_,cv::Size(1280,720));
     // mat to qimage
-    QImage image = QImage((const unsigned char*)(resizedMat_.data),resizedMat_.cols,resizedMat_.rows,QImage::Format_RGB888);
+    QImage image = QImage((const unsigned char*)(resizedMat_.data),resizedMat_.cols,resizedMat_.rows,QImage::Format_BGR888);
     // qimage to qpixmap
     QPixmap pixmap = QPixmap::fromImage(image);
     // qpixmap to qgraphicspixmapitem
@@ -84,5 +89,4 @@ void Image_form::on_pushButton_clicked()
 {
     image_sub.reset();
     image_spin.~thread();
-    node.~__shared_ptr();
 }

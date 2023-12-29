@@ -106,7 +106,7 @@ void QosDeviceDialog::on_update_topic_name_push_button_clicked(){
     if(name_node== nullptr){
         name_node =rclcpp::Node::make_shared("get_name_on_qos");
     }
-    topic_name_map = name_node->get_topic_names_and_types();;
+    topic_name_map = name_node->get_topic_names_and_types();
     QList<QString> topic_list;
     for(const auto& i :topic_name_map){
         QString topic_string = QString::fromStdString(i.first);

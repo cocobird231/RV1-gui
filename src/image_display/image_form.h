@@ -24,8 +24,7 @@ public:
 private:
     Ui::Image_form *ui;
     // name node
-    rclcpp::Node::SharedPtr node;
-    QList<std::string>   topic_name_list;
+    rclcpp::Node::SharedPtr node_image;
     QString topic;
     std::thread image_spin;
     std::string node_name ;
