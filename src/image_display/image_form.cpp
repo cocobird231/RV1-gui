@@ -12,6 +12,7 @@
 #include <opencv2/opencv.hpp>
 
 
+
 Image_form::Image_form(QWidget *parent,int image_id) :
     QWidget(parent),
     ui(new Ui::Image_form)
@@ -67,11 +68,37 @@ void Image_form::image_callback(const vehicle_interfaces::msg::Image::SharedPtr 
 
     cv::Mat recvMat_,resizedMat_;
     std::vector<uchar> data = msg->data;
-    recvMat_ = cv::imdecode(data, 1);
-    // resize
-    cv::resize(recvMat_,resizedMat_,cv::Size(1280,720));
-    // mat to qimage
-    QImage image = QImage((const unsigned char*)(resizedMat_.data),resizedMat_.cols,resizedMat_.rows,QImage::Format_BGR888);
+    QImage image;
+    int width = 1280;
+    int height = 720;
+    if (msg->format_type == vehicle_interfaces::msg::Image::FORMAT_JPEG)
+    {
+        recvMat_ = cv::imdecode(data, 1);
+        // resize
+        cv::resize(recvMat_,resizedMat_,cv::Size( width , height ));
+        //  convert BGR to RGB
+        // is foxy qt 5.12 need this
+        cv::cvtColor(resizedMat_, resizedMat_, cv::COLOR_BGR2RGB);
+        // mat to qimage
+        image = QImage((const unsigned char*)(resizedMat_.data),resizedMat_.cols,resizedMat_.rows,QImage::Format_RGB888);
+    }else if(msg->format_type == vehicle_interfaces::msg::Image::FORMAT_RAW && msg->cvmat_type == CV_32FC1){
+        float *depths = reinterpret_cast<float*>(&msg->data[0]);
+        recvMat_ = cv::Mat(msg->height, msg->width, CV_32FC1, depths);
+        cv::threshold(recvMat_, recvMat_, 20000.0, 20000.0, cv::THRESH_TRUNC);
+        // to zero
+        cv::threshold(recvMat_, recvMat_, 0.0, 0.0, cv::THRESH_TOZERO);
+        // normalize
+        cv::normalize(recvMat_, recvMat_, 0, 255, cv::NORM_MINMAX, CV_8U);
+        // convert to color
+        // cv::cvtColor(recvMat_, recvMat_, cv::COLOR_GRAY2BGR);
+            // resize
+        cv::resize(recvMat_,resizedMat_,cv::Size( width, height ));
+        // mat to qimage
+        image = QImage((const unsigned char*)(resizedMat_.data),resizedMat_.cols,resizedMat_.rows,QImage::Format_Grayscale8);
+    }
+
+    
+
     // qimage to qpixmap
     QPixmap pixmap = QPixmap::fromImage(image);
     // qpixmap to qgraphicspixmapitem

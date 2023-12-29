@@ -1,3 +1,4 @@
 nlohmann-json3-dev
 libqt5charts5-dev
 libssh-dev
+libopencv-dev
