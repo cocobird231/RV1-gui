@@ -194,11 +194,6 @@
      <string>jetson</string>
     </property>
    </item>
-   <item>
-    <property name="text">
-     <string>ADlink</string>
-    </property>
-   </item>
   </widget>
   <widget class="QPushButton" name="pushButton_7">
    <property name="geometry">
