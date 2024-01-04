@@ -112,7 +112,6 @@ public:
         comboBox_2->addItem(QString());
         comboBox_2->addItem(QString());
         comboBox_2->addItem(QString());
-        comboBox_2->addItem(QString());
         comboBox_2->setObjectName(QString::fromUtf8("comboBox_2"));
         comboBox_2->setGeometry(QRect(164, 480, 311, 25));
         pushButton_7 = new QPushButton(install_shell);
@@ -215,7 +214,6 @@ public:
         comboBox_2->setItemText(0, QApplication::translate("install_shell", "\346\234\252\345\256\232\347\276\251\344\270\273\346\251\237\351\241\236\345\236\213", nullptr));
         comboBox_2->setItemText(1, QApplication::translate("install_shell", "raspberry pi", nullptr));
         comboBox_2->setItemText(2, QApplication::translate("install_shell", "jetson", nullptr));
-        comboBox_2->setItemText(3, QApplication::translate("install_shell", "ADlink", nullptr));
 
         pushButton_7->setText(QApplication::translate("install_shell", "\345\210\252\351\231\244", nullptr));
         label_6->setText(QApplication::translate("install_shell", "\347\266\262\350\267\257\345\215\241\344\273\213\351\235\242\357\274\232", nullptr));

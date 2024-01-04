@@ -77,16 +77,18 @@ void Image_form::image_callback(const vehicle_interfaces::msg::Image::SharedPtr 
         // resize
         cv::resize(recvMat_,resizedMat_,cv::Size( width , height ));
         //  convert BGR to RGB
-        // is foxy qt 5.12 need this
+        // is foxy qt 5.12 need use cv::COLOR_BGR2RGB
         cv::cvtColor(resizedMat_, resizedMat_, cv::COLOR_BGR2RGB);
         // mat to qimage
         image = QImage((const unsigned char*)(resizedMat_.data),resizedMat_.cols,resizedMat_.rows,QImage::Format_RGB888);
     }else if(msg->format_type == vehicle_interfaces::msg::Image::FORMAT_RAW && msg->cvmat_type == CV_32FC1){
         float *depths = reinterpret_cast<float*>(&msg->data[0]);
         recvMat_ = cv::Mat(msg->height, msg->width, CV_32FC1, depths);
-        cv::threshold(recvMat_, recvMat_, 20000.0, 20000.0, cv::THRESH_TRUNC);
+        float min = msg->depth_valid_min;
+        float max = msg->depth_valid_max;
+        cv::threshold(recvMat_, recvMat_, max, max, cv::THRESH_TRUNC);
         // to zero
-        cv::threshold(recvMat_, recvMat_, 0.0, 0.0, cv::THRESH_TOZERO);
+        cv::threshold(recvMat_, recvMat_, min,min, cv::THRESH_TOZERO);
         // normalize
         cv::normalize(recvMat_, recvMat_, 0, 255, cv::NORM_MINMAX, CV_8U);
         // convert to color
