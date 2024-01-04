@@ -279,7 +279,7 @@ void install_process::install_misson(std::string user_name,std::string Password,
  
         qDebug()<<QString("ssh_channel_read get-rpi-sensors-install"); 
 
-        ssh_command= ". ~/ros2_docker/install.sh";
+        ssh_command= "sudo docker stop $(sudo docker ps -a -q) \n . ~/ros2_docker/install.sh";
         std::string shell_temp_command = "";
         if(this->update_depolyment){
             shell_temp_command = shell_temp_command+" --upgrade ";
