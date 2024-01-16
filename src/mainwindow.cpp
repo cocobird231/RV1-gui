@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    /** cocobird231*/
+    this->devInfoThPtr_ = nullptr;
+
     connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::on_QosPushButton_clicked);
     connect(ui->pushButton_5, &QPushButton::clicked, this, &MainWindow::on_SensorPushButton_clicked);
     connect(ui->pushButton_4, &QPushButton::clicked, this, &MainWindow::on_data_server_record_puchButton_clicked);
@@ -16,7 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_6, &QPushButton::clicked, this, &MainWindow::on_image_display_PushButton_clicked);
     name_node =rclcpp::Node::make_shared("get_the_name");
     QObject::connect(&timmer, &QTimer::timeout,this, &MainWindow::refresh_topic_name_list);
-    QObject::connect(&device_timer, &QTimer::timeout,this, &MainWindow::refresh_device_info);
+    /** cocobird231*/
+    QObject::connect(&device_timer, &QTimer::timeout,this, &MainWindow::_refresh_device_info_th);
     device_timer.start(10000);
     timmer.start(1000);
 }
@@ -27,6 +31,18 @@ MainWindow::~MainWindow()
     the_install_shell->close();
     delete ui;
 
+}
+/** cocobird231*/
+void MainWindow::_refresh_device_info_th()
+{
+    if (this->devInfoThPtr_ != nullptr)// Thread running
+    {
+        if (!this->devInfoThPtr_->joinable())
+            return;
+        this->devInfoThPtr_->join();
+        delete devInfoThPtr_;
+    }
+    this->devInfoThPtr_ = new std::thread(std::bind(&MainWindow::refresh_device_info, this));
 }
 void MainWindow::refresh_device_info()
 {

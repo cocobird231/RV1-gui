@@ -42,5 +42,9 @@ private:
     QString topic;
     void refresh_topic_name_list();
     int image_id=0;
+
+    /** cocobird231*/
+    std::thread *devInfoThPtr_;
+    void _refresh_device_info_th();
 };
 #endif // MAINWINDOW_H
