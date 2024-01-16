@@ -41,20 +41,24 @@ void MainWindow::_refresh_device_info_th()
             return;
         this->devInfoThPtr_->join();
         delete devInfoThPtr_;
+
+        // Update textbox
+        ui->textBrowser_2->setText(QString::fromStdString(this->devInfoMsg_));
     }
     this->devInfoThPtr_ = new std::thread(std::bind(&MainWindow::refresh_device_info, this));
 }
+/** cocobird231*/
 void MainWindow::refresh_device_info()
 {
-    device_info_message="";
-    the_install_shell->reqDevInfo.node_name = "all";
-    bool  reqSuccess = the_install_shell->DeviceInforcontrol->reqDeviceInfor(the_install_shell->reqDevInfo,the_install_shell->devInfoVec);
-    if(reqSuccess){
-        for (const vehicle_interfaces::msg::DevInfo & i : the_install_shell->devInfoVec){
-            // qDebug()<<QString::fromStdString(i.hostname)+"／"+QString::fromStdString(i.mac_addr)+"／"+QString::fromStdString(i.ipv4_addr)+"／"+QString::fromStdString(i.node_name);
-            device_info_message=device_info_message+QString::fromStdString(i.hostname)+"／"+QString::fromStdString(i.mac_addr)+"／"+QString::fromStdString(i.ipv4_addr)+"／"+QString::fromStdString(i.node_name)+"\n";
+    this->devInfoMsg_ = "";
+    this->the_install_shell->reqDevInfo.node_name = "all";
+    bool reqSuccess = the_install_shell->DeviceInforcontrol->reqDeviceInfor(the_install_shell->reqDevInfo, the_install_shell->devInfoVec);
+    if(reqSuccess)
+    {
+        for (const vehicle_interfaces::msg::DevInfo & i : the_install_shell->devInfoVec)
+        {
+            this->devInfoMsg_ = this->devInfoMsg_ + i.hostname + "／" + i.mac_addr + "／" + i.ipv4_addr + "／" + i.node_name + "\n";
         }
-        ui->textBrowser_2->setText(device_info_message);
     }
 }
 void MainWindow::refresh_topic_name_list(){

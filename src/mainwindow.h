@@ -9,6 +9,9 @@
 #include "image_display/image_form.h"
 #include <rclcpp/rclcpp.hpp>
 
+/** cocobird231*/
+#include <string>
+
 #include <QTimer>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -45,6 +48,7 @@ private:
 
     /** cocobird231*/
     std::thread *devInfoThPtr_;
+    std::string devInfoMsg_;
     void _refresh_device_info_th();
 };
 #endif // MAINWINDOW_H
