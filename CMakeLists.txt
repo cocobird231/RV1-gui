@@ -27,7 +27,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(vehicle_interfaces REQUIRED)
-find_package(Qt5  COMPONENTS Charts Core Gui Widgets Network REQUIRED)
+find_package(Qt5  COMPONENTS Charts Core Gui Widgets Network Svg REQUIRED)
 find_package(libssh REQUIRED)
 find_package(OpenCV ${VERSION_REQ_OCV} REQUIRED)
 include_directories(
@@ -50,6 +50,8 @@ qt5_wrap_cpp(header_SRC
     src/install_shell/install_common/install_common.h
     src/image_display/image_form.h
 
+    src/safety/safety.h
+
     include/node/gui_node.h
 )
 qt5_wrap_ui(UIS_HDRS 
@@ -64,6 +66,7 @@ qt5_wrap_ui(UIS_HDRS
   src/install_shell/install_device_infor/install_device_infor.ui
   src/install_shell/install_process/install_process.ui
   src/install_shell/install_common/install_common.ui
+  src/safety/safety.ui
 
 
 )
@@ -84,6 +87,8 @@ add_executable(ros2_gui
     src/mainwindow.cpp
     src/node/gui_node.cpp
     src/sensor_form/sensor_form.cpp
+    src/safety/safety.cpp
+
     ${header_SRC}
     ${SRC}
     ${UIS_HDRS}
@@ -92,7 +97,7 @@ add_executable(ros2_gui
 
 ament_target_dependencies(ros2_gui rclcpp vehicle_interfaces )
 
-target_link_libraries(ros2_gui  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network ssh -lstdc++fs ${OpenCV_LIBRARIES})
+target_link_libraries(ros2_gui  Qt5::Charts Qt5::Gui Qt5::Core Qt5::Widgets Qt5::Network Qt5::Svg ssh -lstdc++fs ${OpenCV_LIBRARIES})
 
 ## Install
 install(TARGETS

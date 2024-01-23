@@ -35,6 +35,7 @@ public:
     QTextBrowser *textBrowser_2;
     QLabel *label_2;
     QPushButton *pushButton_6;
+    QPushButton *pushButton_7;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -75,6 +76,9 @@ public:
         pushButton_6 = new QPushButton(centralwidget);
         pushButton_6->setObjectName(QString::fromUtf8("pushButton_6"));
         pushButton_6->setGeometry(QRect(600, 20, 89, 25));
+        pushButton_7 = new QPushButton(centralwidget);
+        pushButton_7->setObjectName(QString::fromUtf8("pushButton_7"));
+        pushButton_7->setGeometry(QRect(700, 20, 89, 25));
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -100,6 +104,7 @@ public:
         pushButton_5->setText(QApplication::translate("MainWindow", "\346\204\237\346\270\254\345\231\250\345\234\226\350\241\250", nullptr));
         label_2->setText(QApplication::translate("MainWindow", "Device Info \347\213\200\346\205\213\351\241\257\347\244\272", nullptr));
         pushButton_6->setText(QApplication::translate("MainWindow", "\345\275\261\345\203\217", nullptr));
+        pushButton_7->setText(QApplication::translate("MainWindow", "\345\256\211\345\205\250\351\201\270\351\240\205", nullptr));
     } // retranslateUi
 
 };

@@ -1,4 +1,6 @@
+net-tools
 nlohmann-json3-dev
 libqt5charts5-dev
 libssh-dev
 libopencv-dev
+libqt5svg5-dev

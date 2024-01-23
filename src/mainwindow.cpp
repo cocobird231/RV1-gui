@@ -17,11 +17,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_4, &QPushButton::clicked, this, &MainWindow::on_data_server_record_puchButton_clicked);
     connect(ui->pushButton_3, &QPushButton::clicked, this, &MainWindow::on_install_shell_PushButton_clicked);
     connect(ui->pushButton_6, &QPushButton::clicked, this, &MainWindow::on_image_display_PushButton_clicked);
+    connect(ui->pushButton_7, &QPushButton::clicked, this, &MainWindow::on_safety_PushButton_clicked);
     name_node =rclcpp::Node::make_shared("get_the_name");
     QObject::connect(&timmer, &QTimer::timeout,this, &MainWindow::refresh_topic_name_list);
     /** cocobird231*/
     QObject::connect(&device_timer, &QTimer::timeout,this, &MainWindow::_refresh_device_info_th);
-    device_timer.start(10000);
+    device_timer.start(5000);
     timmer.start(1000);
 }
 MainWindow::~MainWindow()
@@ -92,4 +93,8 @@ void MainWindow::on_image_display_PushButton_clicked(){
     image_id++;
     Image_form *the_image_form = new Image_form(nullptr,image_id);
     the_image_form->show();
+}
+void MainWindow:: on_safety_PushButton_clicked(){
+    the_safety = new safety;
+    the_safety->show();
 }

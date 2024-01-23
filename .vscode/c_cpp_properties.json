@@ -10,6 +10,7 @@
                 "/usr/include/x86_64-linux-gnu/qt5/QtCore",
                 "/usr/include/x86_64-linux-gnu/qt5/QtCharts",
                 "/usr/include/x86_64-linux-gnu/qt5/QtNetwork",
+                "/usr/include/x86_64-linux-gnu/qt5/QtSvg",
                 "~/ros2_ws/install/**/**"
             ],
             "defines": [],

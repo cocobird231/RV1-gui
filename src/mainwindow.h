@@ -7,6 +7,7 @@
 #include "install_shell/install_shell.h"
 #include "data_server_record/data_server_record.h"
 #include "image_display/image_form.h"
+#include "safety/safety.h"
 #include <rclcpp/rclcpp.hpp>
 
 /** cocobird231*/
@@ -30,7 +31,7 @@ private slots:
     void on_data_server_record_puchButton_clicked();
     void on_install_shell_PushButton_clicked();
     void on_image_display_PushButton_clicked();
-
+    void on_safety_PushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -38,6 +39,8 @@ private:
     sensor_form *the_sensor_form ;
     install_shell *the_install_shell = new install_shell;
     data_server_record *the_data_server_record =new data_server_record;
+    safety *the_safety ;
+
     std::shared_ptr<rclcpp::Node> name_node;
     QTimer timmer,device_timer;
     void refresh_device_info();
@@ -45,7 +48,6 @@ private:
     QString topic;
     void refresh_topic_name_list();
     int image_id=0;
-
     /** cocobird231*/
     std::thread *devInfoThPtr_;
     std::string devInfoMsg_;
