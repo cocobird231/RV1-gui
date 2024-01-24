@@ -118,7 +118,7 @@ void safety::refreshUI(){
         ui->label_2->setStyleSheet("background-color: #FFC000;");
         ui->label_10->setText("");
         ui->label_10->setStyleSheet("background-color: #FFC000;");
-    }else if ( emPs[4] > 0.0){
+    }else if ( emPs[4] >= 0.0){
         ui->label_2->setText("");
         ui->label_2->setStyleSheet("background-color: #90D151;");
         ui->label_10->setText("");
@@ -137,7 +137,7 @@ void safety::refreshUI(){
         ui->label_3->setText("");
         ui->label_3->setStyleSheet("background-color: #FFC000;");
     }
-    else if( emPs[0] > 0.0){
+    else if( emPs[0] >= 0.0){
         ui->label_3->setText("");
         ui->label_3->setStyleSheet("background-color: #90D151;");
     }else{
@@ -156,7 +156,7 @@ void safety::refreshUI(){
         ui->label_11->setText("");
         ui->label_11->setStyleSheet("background-color: #FFC000;");
     }
-    else if(emPs[5] > 0.0){
+    else if(emPs[5] >= 0.0){
         ui->label_4->setText("");
         ui->label_4->setStyleSheet("background-color: #90D151;");
         ui->label_11->setText("");
@@ -175,7 +175,7 @@ void safety::refreshUI(){
         ui->label_5->setText("");
         ui->label_5->setStyleSheet("background-color: #FFC000;");
     }
-    else if(emPs[2] > 0.0){
+    else if(emPs[2] >= 0.0){
         ui->label_5->setText("");
         ui->label_5->setStyleSheet("background-color: #90D151;");
     }else{
@@ -190,7 +190,7 @@ void safety::refreshUI(){
         ui->label_6->setText("");
         ui->label_6->setStyleSheet("background-color: #FFC000;");
     }
-    else if(emPs[6] > 0.0){
+    else if(emPs[6] >= 0.0){
         ui->label_6->setText("");
         ui->label_6->setStyleSheet("background-color: #90D151;");
     } else{
@@ -209,7 +209,7 @@ void safety::refreshUI(){
         ui->label_13->setText("");
         ui->label_13->setStyleSheet("background-color: #FFC000;");
     }
-    else if(emPs[7] > 0.0){
+    else if(emPs[7] >= 0.0){
         ui->label_7->setText("");
         ui->label_7->setStyleSheet("background-color: #90D151;");
         ui->label_13->setText("");
@@ -228,7 +228,7 @@ void safety::refreshUI(){
         ui->label_8->setText("");
         ui->label_8->setStyleSheet("background-color: #FFC000;");
     }
-    else if (emPs[1] > 0.0){
+    else if (emPs[1] >= 0.0){
         ui->label_8->setText("");
         ui->label_8->setStyleSheet("background-color: #90D151;");
     } else{
@@ -247,7 +247,7 @@ void safety::refreshUI(){
         ui->label_12->setText("");
         ui->label_12->setStyleSheet("background-color: #FFC000;");
     }
-    else if(emPs[3] > 0.0){
+    else if(emPs[3] >= 0.0){
         ui->label_9->setText("");
         ui->label_9->setStyleSheet("background-color: #90D151;");
         ui->label_12->setText("");
@@ -261,7 +261,7 @@ void safety::refreshUI(){
 
 }
 void safety::_timer0Callback(){
-        while (true)
+        while (the_safety->nodeEnableF_)
         {
         sleep(0.02);
         static std::uniform_real_distribution<> uniDistrib{0.0, 1.0};
@@ -272,7 +272,7 @@ void safety::_timer0Callback(){
 
 }
 void safety::_timer1Callback(){
-    while (true)
+    while (the_safety->nodeEnableF_)
     {
         sleep(0.1);
         if (the_safety->getEmergency("nearest", this->emPs))
@@ -454,5 +454,6 @@ safety::SafetyNode::SafetyNode(const std::string& nodeName, const std::string& s
 
 safety::~safety() 
 {
+
     delete ui;
 }

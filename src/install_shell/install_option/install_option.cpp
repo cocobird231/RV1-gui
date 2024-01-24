@@ -105,7 +105,7 @@ install_option::install_option(QWidget *parent,QString mac_address,QString devic
 
     if (ui->comboBox->currentText() =="py_chassis")
     {
-        ui->lineEdit->setText("wlan0");
+        ui->lineEdit->setText("eth0");
     }
     
     
@@ -194,7 +194,7 @@ void install_option::on_reset_push_button_clicked(){
 void install_option::on_current_package_name_changed(){
     if (ui->comboBox->currentText() =="py_chassis")
     {
-        ui->lineEdit->setText("wlan0");
+        ui->lineEdit->setText("eth0");
     }else{
         ui->lineEdit->setText("eth0");
 

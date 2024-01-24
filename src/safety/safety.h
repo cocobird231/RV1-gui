@@ -51,7 +51,6 @@ public:
             rclcpp::Client<vehicle_interfaces::srv::SafetyReg>::SharedPtr regClient_;
             std::shared_ptr<rclcpp::Node> reqClientNode_;
             rclcpp::Client<vehicle_interfaces::srv::SafetyReq>::SharedPtr reqClient_;
-            std::atomic<bool> nodeEnableF_;
             bool _regSurroundEmergency(vehicle_interfaces::srv::SafetyReg::Request::SharedPtr request);
             bool _reqSurroundEmergency(vehicle_interfaces::srv::SafetyReq::Request::SharedPtr request, std::vector<std::string>& deviceIDs, std::vector<vehicle_interfaces::msg::SurroundEmergency>& emergencies);
         public:
@@ -62,6 +61,8 @@ public:
             bool getEmergency(std::string deviceID, float& outEmP, safety::EmergencyScoreDirection direction);
             bool getEmergency(std::string deviceID, std::array<float, 8>& outEmPs);
             bool getEmergencies(std::map<std::string, vehicle_interfaces::msg::SurroundEmergency>& emergencies);
+            std::atomic<bool> nodeEnableF_;
+
     };
 
     
