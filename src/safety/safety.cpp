@@ -99,9 +99,9 @@ safety::safety(QWidget *parent) :
     params_safety = std::make_shared<vehicle_interfaces::GenericParams>("safetyserver_params_node");
     the_safety = std::make_shared<SafetyNode>("gui_safety_0_node", "/V0/safety_0");
 
-    this->th1 = std::thread(std::bind(&safety::_timer0Callback, this));
+    // this->th1 = std::thread(std::bind(&safety::_timer0Callback, this));
     this->th2 = std::thread(std::bind(&safety::_timer1Callback, this));
-    this->th1.detach();
+    // this->th1.detach();
     this->th2.detach();
     QObject::connect(&EmpTimmer, &QTimer::timeout,this, &safety::refreshUI);
     EmpTimmer.start(100);
@@ -244,10 +244,10 @@ void safety::_timer1Callback(){
     {
         sleep(0.1);
         if (the_safety->getEmergency("nearest", this->emPs))
-            printf("[SafetyTestNode::_timer1Callback] %1.2f %1.2f %1.2f %1.2f %1.2f %1.2f %1.2f %1.2f\n", 
+            printf("[SafetyGUINode::_timer1Callback] %1.2f %1.2f %1.2f %1.2f %1.2f %1.2f %1.2f %1.2f\n", 
                     this->emPs[0], this->emPs[1], this->emPs[2], this->emPs[3], this->emPs[4], this->emPs[5], this->emPs[6], this->emPs[7]);
         else
-            printf("[SafetyTestNode::_timer1Callback] getEmergency error.\n");
+            printf("[SafetyGUINode::_timer1Callback] getEmergency error.\n");
     }
     
 }
