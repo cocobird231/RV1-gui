@@ -118,11 +118,16 @@ void safety::refreshUI(){
         ui->label_2->setStyleSheet("background-color: #FFC000;");
         ui->label_10->setText("");
         ui->label_10->setStyleSheet("background-color: #FFC000;");
-    }else{
+    }else if ( emPs[4] > 0.0){
         ui->label_2->setText("");
         ui->label_2->setStyleSheet("background-color: #90D151;");
         ui->label_10->setText("");
         ui->label_10->setStyleSheet("background-color: #90D151;");
+    }else{
+        ui->label_2->setText("");
+        ui->label_2->setStyleSheet("background-color: #b8b6b6;");
+        ui->label_10->setText("");
+        ui->label_10->setStyleSheet("background-color: #b8b6b6;");
     }
 
     if (emPs[0] > 0.8){
@@ -132,9 +137,12 @@ void safety::refreshUI(){
         ui->label_3->setText("");
         ui->label_3->setStyleSheet("background-color: #FFC000;");
     }
-    else{
+    else if( emPs[0] > 0.0){
         ui->label_3->setText("");
         ui->label_3->setStyleSheet("background-color: #90D151;");
+    }else{
+        ui->label_3->setText("");
+        ui->label_3->setStyleSheet("background-color: #b8b6b6;");
     }
 
     if (emPs[5] > 0.8){
@@ -148,11 +156,16 @@ void safety::refreshUI(){
         ui->label_11->setText("");
         ui->label_11->setStyleSheet("background-color: #FFC000;");
     }
-    else{
+    else if(emPs[5] > 0.0){
         ui->label_4->setText("");
         ui->label_4->setStyleSheet("background-color: #90D151;");
         ui->label_11->setText("");
         ui->label_11->setStyleSheet("background-color: #90D151;");
+    }else{
+        ui->label_4->setText("");
+        ui->label_4->setStyleSheet("background-color: #b8b6b6;");
+        ui->label_11->setText("");
+        ui->label_11->setStyleSheet("background-color: #b8b6b6;");
     }
 
     if (emPs[2] > 0.8){
@@ -162,9 +175,12 @@ void safety::refreshUI(){
         ui->label_5->setText("");
         ui->label_5->setStyleSheet("background-color: #FFC000;");
     }
-    else{
+    else if(emPs[2] > 0.0){
         ui->label_5->setText("");
         ui->label_5->setStyleSheet("background-color: #90D151;");
+    }else{
+        ui->label_5->setText("");
+        ui->label_5->setStyleSheet("background-color: #b8b6b6;");
     }
 
     if (emPs[6] > 0.8){
@@ -174,9 +190,12 @@ void safety::refreshUI(){
         ui->label_6->setText("");
         ui->label_6->setStyleSheet("background-color: #FFC000;");
     }
-    else{
+    else if(emPs[6] > 0.0){
         ui->label_6->setText("");
         ui->label_6->setStyleSheet("background-color: #90D151;");
+    } else{
+        ui->label_6->setText("");
+        ui->label_6->setStyleSheet("background-color: #b8b6b6;");
     }
 
     if (emPs[7] > 0.8){
@@ -190,11 +209,16 @@ void safety::refreshUI(){
         ui->label_13->setText("");
         ui->label_13->setStyleSheet("background-color: #FFC000;");
     }
-    else{
+    else if(emPs[7] > 0.0){
         ui->label_7->setText("");
         ui->label_7->setStyleSheet("background-color: #90D151;");
         ui->label_13->setText("");
         ui->label_13->setStyleSheet("background-color: #90D151;");
+    }else{
+        ui->label_7->setText("");
+        ui->label_7->setStyleSheet("background-color: #b8b6b6;");
+        ui->label_13->setText("");
+        ui->label_13->setStyleSheet("background-color: #b8b6b6;");
     }
 
     if (emPs[1] > 0.8){
@@ -204,9 +228,12 @@ void safety::refreshUI(){
         ui->label_8->setText("");
         ui->label_8->setStyleSheet("background-color: #FFC000;");
     }
-    else{
+    else if (emPs[1] > 0.0){
         ui->label_8->setText("");
         ui->label_8->setStyleSheet("background-color: #90D151;");
+    } else{
+        ui->label_8->setText("");
+        ui->label_8->setStyleSheet("background-color: #b8b6b6;");
     }
 
     if (emPs[3] > 0.8){
@@ -220,11 +247,16 @@ void safety::refreshUI(){
         ui->label_12->setText("");
         ui->label_12->setStyleSheet("background-color: #FFC000;");
     }
-    else{
+    else if(emPs[3] > 0.0){
         ui->label_9->setText("");
         ui->label_9->setStyleSheet("background-color: #90D151;");
         ui->label_12->setText("");
         ui->label_12->setStyleSheet("background-color: #90D151;");
+    }else{
+        ui->label_9->setText("");
+        ui->label_9->setStyleSheet("background-color: #b8b6b6;");
+        ui->label_12->setText("");
+        ui->label_12->setStyleSheet("background-color: #b8b6b6;");
     }
 
 }
