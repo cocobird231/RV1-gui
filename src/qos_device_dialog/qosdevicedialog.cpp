@@ -422,7 +422,7 @@ void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_cli
 void QosDeviceDialog::on_current_topic_name_choose(const QString &text){
     qDebug()<<text;
     std::string topic_string =text.toStdString();
-    rmw_qos_profile_t qos_profile;
+    rmw_qos_profile_t[] qos_profile;
     bool response_success = control->requestQosReq(topic_string,qos_profile);
     if(!response_success){
         qDebug()<<"requestQosReq not success.";
@@ -435,14 +435,14 @@ void QosDeviceDialog::on_current_topic_name_choose(const QString &text){
         ui->comboBox_5->setCurrentIndex(0);
         ui->lineEdit_4->setText("");
     }else{
-        ui->comboBox_2->setCurrentIndex(qos_profile.history);
-        ui->lineEdit->setText(QString::fromStdString(std::to_string(qos_profile.depth)));
-        ui->comboBox_3->setCurrentIndex(qos_profile.reliability);
-        ui->comboBox_4->setCurrentIndex(qos_profile.durability);
-        ui->lineEdit_2->setText(QString::fromStdString(std::to_string(  vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.deadline))));
-        ui->lineEdit_3->setText(QString::fromStdString(std::to_string(vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.lifespan))));
-        ui->comboBox_5->setCurrentIndex(qos_profile.liveliness);
-        ui->lineEdit_4->setText(QString::fromStdString(std::to_string(  vehicle_interfaces::CvtRMWTimeToMsg(qos_profile.liveliness_lease_duration))));
+        ui->comboBox_2->setCurrentIndex(qos_profile[0].history);
+        ui->lineEdit->setText(QString::fromStdString(std::to_string(qos_profile[0].depth)));
+        ui->comboBox_3->setCurrentIndex(qos_profile[0].reliability);
+        ui->comboBox_4->setCurrentIndex(qos_profile[0].durability);
+        ui->lineEdit_2->setText(QString::fromStdString(std::to_string(  vehicle_interfaces::CvtRMWTimeToMsg(qos_profile[0].deadline))));
+        ui->lineEdit_3->setText(QString::fromStdString(std::to_string(vehicle_interfaces::CvtRMWTimeToMsg(qos_profile[0].lifespan))));
+        ui->comboBox_5->setCurrentIndex(qos_profile[0].liveliness);
+        ui->lineEdit_4->setText(QString::fromStdString(std::to_string(  vehicle_interfaces::CvtRMWTimeToMsg(qos_profile[0].liveliness_lease_duration))));
         //set ui 
     }
 }
