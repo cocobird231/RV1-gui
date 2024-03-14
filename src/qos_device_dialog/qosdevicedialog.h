@@ -34,7 +34,7 @@ public:
             // send qos setting message (Qos profile) response success or not and qid
             bool requestQosReg(const std::shared_ptr<vehicle_interfaces::srv::QosReg::Request>& req);
             //take topic name request QosProfile reponse
-            bool requestQosReq(const std::string& topicName, rmw_qos_profile_t& outQoSProfile);
+            bool requestQosReq(const std::string& topicName, std::vector<rmw_qos_profile_t>& outQoSProfile);
             // set qos server setting enable publish and publish interval
             bool setParam(const rcl_interfaces::msg::Parameter& param);
     };

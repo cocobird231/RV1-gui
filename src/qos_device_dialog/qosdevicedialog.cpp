@@ -422,7 +422,8 @@ void QosDeviceDialog::on_add_for_message_tpye_option_qos_profile_push_button_cli
 void QosDeviceDialog::on_current_topic_name_choose(const QString &text){
     qDebug()<<text;
     std::string topic_string =text.toStdString();
-    rmw_qos_profile_t[] qos_profile;
+
+    std::vector<rmw_qos_profile_t> qos_profile;
     bool response_success = control->requestQosReq(topic_string,qos_profile);
     if(!response_success){
         qDebug()<<"requestQosReq not success.";
@@ -511,10 +512,11 @@ bool QosDeviceDialog::QoSControlNode::setParam(const rcl_interfaces::msg::Parame
 
 }
 
-bool QosDeviceDialog::QoSControlNode::requestQosReq(const std::string& topicName, rmw_qos_profile_t& outQoSProfile){
+bool QosDeviceDialog::QoSControlNode::requestQosReq(const std::string& topicName, std::vector<rmw_qos_profile_t> & outQoSProfile){
         auto request = std::make_shared<vehicle_interfaces::srv::QosReq::Request>();
         request->topic_name = topicName;
         auto result = this->reqClient_->async_send_request(request);
+        rmw_qos_profile_t _inser_qos;
 #if ROS_DISTRO == 0
         if (rclcpp::spin_until_future_complete(this->reqClientNode_, result, 1000ms) == rclcpp::executor::FutureReturnCode::SUCCESS)
 #else
@@ -525,9 +527,9 @@ bool QosDeviceDialog::QoSControlNode::requestQosReq(const std::string& topicName
             RCLCPP_INFO(this->get_logger(), "[QoSControlNode::requestQosReq] Response: %d, qid: %ld", res->response, res->qid);
             if (res->response)
             {
-                outQoSProfile = vehicle_interfaces::CvtMsgToRMWQoS(res->qos_profile);
+                _inser_qos = vehicle_interfaces::CvtMsgToRMWQoS(res->qos_profile_vec[0]);
                 RCLCPP_INFO(this->get_logger(), "[QoSControlNode::requestQosReq] Profile get: %s, %d", 
-                    vehicle_interfaces::getQoSProfEnumName(outQoSProfile.reliability).c_str(), outQoSProfile.depth);
+                    vehicle_interfaces::getQoSProfEnumName(_inser_qos.reliability).c_str(), _inser_qos.depth);
             }
             return res->response;
         }
